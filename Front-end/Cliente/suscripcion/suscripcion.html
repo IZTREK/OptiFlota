@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiFlota - Suscripción</title>
+    <link rel="stylesheet" href="../../../Estilos/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-logo"><h2>OptiFlota</h2></div>
+            <nav class="sidebar-nav">
+                <a href="../index.html" class="nav-item">📊 Dashboard</a>
+                <a href="../vehiculos/vehiculos.html" class="nav-item">🚗 Vehículos</a>
+                <a href="../diagnosticos/diagnosticos.html" class="nav-item">📋 Diagnósticos</a>
+                <a href="../combustible/combustible.html" class="nav-item">⛽ Combustible</a>
+                <a href="../mantenimiento/mantenimiento.html" class="nav-item">🔧 Mantenimiento</a>
+                <a href="../siniestros/tickets.html" class="nav-item">🎫 Tickets</a>
+                <a href="../suscripcion/suscripcion.html" class="nav-item active">👤 Mi Suscripción</a>
+            </nav>
+        </aside>
+
+        <div class="main-content">
+            <header class="topbar"><h1>Mi Suscripción</h1></header>
+            
+            <main class="content-area">
+                <div class="modal-content" style="max-width: 800px; margin: 0 auto; padding: 20px;">
+                    
+                    <div style="background-color: #ecfdf5; border: 1px solid #10b981; padding: 15px; border-radius: 8px;">
+                        <p><strong>Plan Actual:</strong> Pro (Hasta 50 vehículos)</p>
+                        <p><strong>Estado:</strong> Activo (Vence: 31 Dic, 2026)</p>
+                    </div>
+
+                    <h3 style="margin-top: 30px;">Planes Disponibles</h3>
+                    <div class="plans-container">
+                        <div class="plan-card">
+                            <h4>Básico</h4>
+                            <p>$900 / mes</p>
+                            <small>Hasta 15 vehículos</small>
+                            <button class="btn-secondary" style="width: 100%;">Seleccionar</button>
+                        </div>
+                        <div class="plan-card" style="border: 2px solid var(--primary-color);">
+                            <h4>Pro</h4>
+                            <p>$1,500 / mes</p>
+                            <small>Hasta 50 vehículos</small>
+                            <button class="btn-primary" style="width: 100%;">Actual</button>
+                        </div>
+                        <div class="plan-card">
+                            <h4>Ilimitado</h4>
+                            <p>$2,500 / mes</p>
+                            <small>Flotillas grandes</small>
+                            <button class="btn-secondary" style="width: 100%;">Seleccionar</button>
+                        </div>
+                    </div>
+
+                    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #e5e7eb;">
+
+                    <h3>Confirmar Renovación o Cambio</h3>
+                    <form class="data-form" style="margin-top: 20px;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Plan a pagar</label>
+                                <select id="plan-pago">
+                                    <option>Básico ($900)</option>
+                                    <option selected>Pro ($1,500)</option>
+                                    <option>Ilimitado ($2,500)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Subir comprobante</label>
+                                <input type="file" required style="width: 100%; padding: 8px; border: 1px dashed #d1d5db; background-color: #f9fafb;">
+                            </div>
+                        </div>
+                        <button class="btn-primary" style="width: 100%; margin-top: 10px;">Enviar Comprobante</button>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

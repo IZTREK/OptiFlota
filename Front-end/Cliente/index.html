@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiFlota - Dashboard</title>
+    <link rel="stylesheet" href="../../Estilos/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <h2>OptiFlota</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="../Cliente/index.html" class="nav-item active">📊 Dashboard</a>
+                <a href="../Cliente/Vehiculos/vehiculos.html" class="nav-item">🚗 Vehículos</a>
+                <a href="../Cliente/Diagnosticos/diagnosticos.html" class="nav-item">📋 Diagnósticos</a>
+                <a href="../Cliente/Combustible/combustible.html" class="nav-item">⛽ Combustible</a>
+                <a href="../Cliente/Mantenimiento/mantenimiento.html" class="nav-item">🔧 Mantenimiento</a>
+                <a href="../Cliente/Siniestros/tickets.html" class="nav-item">🎫 Tickets</a>
+            </nav>
+        </aside>
+
+        <div class="main-content">
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Resumen Operativo</h1>
+                </div>
+                <div class="user-profile">
+                    <span>Transportes García</span>
+                    <div class="avatar">TG</div>
+                </div>
+            </header>
+
+            <main class="content-area">
+                <section class="kpi-grid">
+                    <div class="kpi-card">
+                        <h3>Total Vehículos</h3>
+                        <p class="kpi-value">45</p>
+                        <span class="kpi-status ok">Operativos</span>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Gasto Combustible (Mes)</h3>
+                        <p class="kpi-value">$120,500</p>
+                        <span class="kpi-status warning">Por encima del promedio</span>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Mantenimientos Pendientes</h3>
+                        <p class="kpi-value">3</p>
+                        <span class="kpi-status danger">Requieren atención</span>
+                    </div>
+                </section>
+                
+                <section class="recent-activity">
+                    <h2>Últimos Movimientos</h2>
+                    <div class="placeholder-box">
+                        <p>Tabla de últimos tickets de gasolina...</p>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

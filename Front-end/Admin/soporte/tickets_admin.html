@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiFlota Admin - Soporte Técnico Global</title>
+    <link rel="stylesheet" href="../../../Estilos/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <aside class="sidebar" style="background-color: #111827;">
+            <div class="sidebar-logo">
+                <h2>OptiFlota <span style="color: var(--primary-color); font-size: 14px;">ADMIN</span></h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="../admin_dashboard.html" class="nav-item">📊 Vista Global</a>
+                <a href="../empresas/empresas.html" class="nav-item">🏢 Empresas</a>
+                <a href="../pagos/pagos.html" class="nav-item">💳 Control de Pagos</a>
+                <a href="../soporte/tickets_admin.html" class="nav-item active">🎫 Soporte Técnico</a>
+            </nav>
+        </aside> 
+
+        <div class="main-content">
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Soporte Técnico Global</h1>
+                </div>
+                <div class="user-profile">
+                    <span>SuperAdministrador</span>
+                    <div class="avatar" style="background-color: #4b5563;">SA</div>
+                </div>
+            </header>
+
+            <main class="content-area">
+
+                <section class="kpi-grid">
+                    <div class="kpi-card">
+                        <h3>Tickets Pendientes</h3>
+                        <p class="kpi-value" style="color: var(--danger);">14</p>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Tickets en Proceso</h3>
+                        <p class="kpi-value">5</p>
+                    </div>
+                </section>
+                
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label>Cliente / Empresa</label>
+                        <input type="text" placeholder="Ej. Transportes García">
+                    </div>
+                    <div class="filter-group">
+                        <label>Estado</label>
+                        <select>
+                            <option>Todos</option>
+                            <option>Pendiente</option>
+                            <option>En Proceso</option>
+                            <option>Resuelto</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn-secondary">Limpiar</button>
+                        <button class="btn-primary">🔍 Filtrar</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Empresa</th>
+                                <th>Ticket ID</th>
+                                <th>Asunto</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>24/Jun/2026</td>
+                                <td><strong>Transportes García</strong></td>
+                                <td>#TK-0045</td>
+                                <td>Error al exportar reporte PDF</td>
+                                <td><span class="badge danger">Pendiente</span></td>
+                                <td class="actions">
+                                    <button class="btn-primary" style="padding: 5px 10px;" onclick="abrirAtencion()">Atender</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>23/Jun/2026</td>
+                                <td><strong>Logística del Centro</strong></td>
+                                <td>#TK-0044</td>
+                                <td>Duda sobre carga de combustible</td>
+                                <td><span class="badge warning">En Proceso</span></td>
+                                <td class="actions">
+                                    <button class="btn-primary" style="padding: 5px 10px;">Ver</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-atencion">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Gestión de Ticket</h2>
+                <button class="btn-close" onclick="cerrarAtencion()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Usuario:</strong> admin@transportesgarcia.com</p>
+                <div style="background: #f9fafb; padding: 15px; border-radius: 6px; margin: 10px 0; border: 1px solid #e5e7eb;">
+                    <p><strong>Mensaje:</strong> "Hola, intenté exportar el reporte de PDF y la pantalla se queda en blanco, ¿podrían ayudarme?"</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="mailto:admin@transportesgarcia.com" class="btn-secondary">Enviar Correo</a>
+                <a href="https://wa.me/521XXXXXXXXXX" target="_blank" class="btn-primary">Responder WhatsApp</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('modal-atencion');
+        function abrirAtencion() { modal.classList.add('active'); }
+        function cerrarAtencion() { modal.classList.remove('active'); }
+        
+        // Cierra al hacer clic fuera
+        window.onclick = (e) => { if (e.target == modal) cerrarAtencion(); }
+    </script>
+</body>
+</html>

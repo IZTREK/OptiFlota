@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiFlota - Combustible</title>
+    <link rel="stylesheet" href="../../../Estilos/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Menú Lateral -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <h2>OptiFlota</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="../index.html" class="nav-item">📊 Dashboard</a>
+                <a href="../vehiculos/vehiculos.html" class="nav-item">🚗 Vehículos</a>
+                <a href="../diagnosticos/diagnosticos.html" class="nav-item">📋 Diagnósticos</a>
+                <a href="../combustible/combustible.html" class="nav-item active">⛽ Combustible</a>
+                <a href="../mantenimiento/mantenimiento.html" class="nav-item">🔧 Mantenimiento</a>
+                <a href="../siniestros/tickets.html" class="nav-item">🎫 Tickets</a>
+            </nav>
+        </aside> 
+
+        <!-- Contenido Principal -->
+        <div class="main-content">
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Control de Combustible</h1>
+                </div>
+                <div class="user-profile">
+                    <span>Transportes García</span>
+                    <div class="avatar">TG</div>
+                </div>
+            </header>
+
+            <main class="content-area">
+
+                <section class="kpi-grid">
+                    <div class="kpi-card">
+                        <h3>Gasto Total (Este Mes)</h3>
+                        <p class="kpi-value">$45,200</p>
+                        <span class="badge warning">Revisar presupuesto</span>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Rendimiento Promedio</h3>
+                        <p class="kpi-value">8.5 km/l</p>
+                        <span class="badge ok">Dentro del rango</span>
+                    </div>
+                </section>
+                
+                <div class="section-header">
+                    <p class="subtitle">Historial de recargas de la flotilla</p>
+                    <button class="btn-primary btn-auto" id="btn-abrir-modal">+ Registrar Carga</button>
+                </div>
+
+                <!-- 🔍 BARRA DE BÚSQUEDA CORREGIDA -->
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label for="filtro-fecha-inicio">Desde</label>
+                        <input type="date" id="filtro-fecha-inicio">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filtro-fecha-fin">Hasta</label>
+                        <input type="date" id="filtro-fecha-fin">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filtro-placas">Vehículo</label>
+                        <input type="text" id="filtro-placas" placeholder="Ej. ABC-1234">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filtro-estacion">Estación Gasolinera</label>
+                        <!-- Usamos input con datalist para permitir texto libre con sugerencias -->
+                        <input type="text" id="filtro-estacion" list="marcas-gasolineras" placeholder="Nombre o marca...">
+                        <datalist id="marcas-gasolineras">
+                            <option value="Pemex">
+                            <option value="Oxxo Gas">
+                            <option value="Mobil">
+                            <option value="BP">
+                            <option value="G500">
+                            <option value="Shell">
+                            <option value="Chevron">
+                            <option value="Repsol">
+                        </datalist>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn-secondary">Limpiar</button>
+                        <button class="btn-primary">🔍 Buscar</button>
+                    </div>
+                </div>
+
+                <!-- Tabla de Datos -->
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Vehículo</th>
+                                <th>Litros</th>
+                                <th>Costo Total</th>
+                                <th>Odómetro</th>
+                                <th>Estación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>24/Jun/2026</td>
+                                <td><strong>ABC-1234</strong></td>
+                                <td>45 L</td>
+                                <td>$1,050.00</td>
+                                <td>45,045 km</td>
+                                <td>Oxxo Gas Centro</td>
+                                <td class="actions">
+                                    <button class="btn-icon">👁️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>23/Jun/2026</td>
+                                <td><strong>XYZ-9876</strong></td>
+                                <td>60 L</td>
+                                <td>$1,420.00</td>
+                                <td>112,460 km</td>
+                                <td>Pemex Salida Sur</td>
+                                <td class="actions">
+                                    <button class="btn-icon">👁️</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </main>
+        </div>
+        
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 🪟 MODAL: REGISTRAR COMBUSTIBLE -->
+    <!-- ========================================== -->
+    <div class="modal-overlay" id="modal-combustible">
+        <div class="modal-content">
+            
+            <div class="modal-header">
+                <h2>Registrar Carga de Combustible</h2>
+                <button class="btn-close" id="btn-cerrar-modal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form class="data-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="vehiculo-carga">Vehículo</label>
+                            <select id="vehiculo-carga" required>
+                                <option value="" disabled selected>Seleccione la unidad...</option>
+                                <option value="1">ABC-1234 (Nissan NP300)</option>
+                                <option value="2">XYZ-9876 (Ford Transit)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha-carga">Fecha de Carga</label>
+                            <input type="date" id="fecha-carga" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="litros">Litros Cargados</label>
+                            <input type="number" id="litros" step="0.01" placeholder="Ej. 40.5" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="costo">Costo Total ($)</label>
+                            <input type="number" id="costo" step="0.01" placeholder="Ej. 950.00" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="odometro">Odómetro (Kilometraje)</label>
+                            <input type="number" id="odometro" placeholder="Kms al momento de cargar" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="estacion">Estación / Gasolinera</label>
+                            <input type="text" id="estacion" list="marcas-gasolineras" placeholder="Ej. Pemex Carr. 57" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Comprobante (Ticket/Factura)</label>
+                        <input type="file" style="width: 100%; padding: 8px; border: 1px dashed #d1d5db; border-radius: 6px; background-color: #f9fafb;">
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn-secondary" id="btn-cancelar-modal">Cancelar</button>
+                <button class="btn-primary">Guardar Registro</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- ⚙️ SCRIPT PARA EL MODAL -->
+    <script>
+        const btnAbrir = document.getElementById('btn-abrir-modal');
+        const btnCerrar = document.getElementById('btn-cerrar-modal');
+        const btnCancelar = document.getElementById('btn-cancelar-modal');
+        const modal = document.getElementById('modal-combustible');
+
+        btnAbrir.addEventListener('click', () => {
+            modal.classList.add('active');
+        });
+
+        const cerrarModal = () => modal.classList.remove('active');
+        btnCerrar.addEventListener('click', cerrarModal);
+        btnCancelar.addEventListener('click', cerrarModal);
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                cerrarModal();
+            }
+        });
+    </script>
+
+</body>
+</html>

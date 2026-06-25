@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiFlota Admin - Pagos</title>
+    <link rel="stylesheet" href="../../../Estilos/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Menú Lateral SUPER ADMIN -->
+        <aside class="sidebar" style="background-color: #111827;">
+            <div class="sidebar-logo">
+                <h2>OptiFlota <span style="color: var(--primary-color); font-size: 14px;">ADMIN</span></h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="../admin_dashboard.html" class="nav-item">📊 Vista Global</a>
+                <a href="../empresas/empresas.html" class="nav-item">🏢 Empresas</a>
+                <a href="../pagos/pagos.html" class="nav-item active">💳 Control de Pagos</a>
+                <a href="../soporte/tickets_admin.html" class="nav-item active">🎫 Soporte Técnico</a>
+            </nav>
+        </aside> 
+
+        <div class="main-content">
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Historial de Pagos</h1>
+                </div>
+                <div class="user-profile">
+                    <span>SuperAdministrador</span>
+                    <div class="avatar" style="background-color: #4b5563;">SA</div>
+                </div>
+            </header>
+
+            <main class="content-area">
+
+                <section class="kpi-grid">
+                    <div class="kpi-card">
+                        <h3>Cobrado este Mes</h3>
+                        <p class="kpi-value">$185,000</p>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Pendientes de Validación</h3>
+                        <p class="kpi-value" style="color: var(--warning);">4</p>
+                    </div>
+                </section>
+
+                <div class="section-header">
+                    <p class="subtitle">Conciliación de transferencias y depósitos</p>
+                </div>
+
+                <!-- 🔍 BARRA DE BÚSQUEDA - PAGOS -->
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label for="filtro-cliente">Cliente</label>
+                        <input type="text" id="filtro-cliente" placeholder="Nombre de empresa...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filtro-estado-pago">Estado</label>
+                        <select id="filtro-estado-pago">
+                            <option value="">Todos</option>
+                            <option value="pendiente">Pendiente de Validar</option>
+                            <option value="aprobado">Aprobado</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn-secondary">Limpiar</button>
+                        <button class="btn-primary">🔍 Buscar</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha Registro</th>
+                                <th>Empresa</th>
+                                <th>Monto</th>
+                                <th>Referencia / Comprobante</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>24/Jun/2026</td>
+                                <td><strong>Transportes García</strong></td>
+                                <td>$1,500.00</td>
+                                <td><button class="btn-icon">📄 Ver Archivo</button></td>
+                                <td><span class="badge warning">Pendiente</span></td>
+                                <td class="actions">
+                                    <button class="btn-primary" style="padding: 5px 10px; font-size: 12px;">Confirmar Pago</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>22/Jun/2026</td>
+                                <td><strong>Logística del Norte</strong></td>
+                                <td>$3,200.00</td>
+                                <td><button class="btn-icon">📄 Ver Archivo</button></td>
+                                <td><span class="badge ok">Aprobado</span></td>
+                                <td class="actions">
+                                    <span style="color:var(--text-muted); font-size: 12px;">Validado</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </main>
+        </div>
+    </div>
+</body>
+</html>

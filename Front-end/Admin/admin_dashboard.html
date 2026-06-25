@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiFlota Admin - Dashboard</title>
+
+    <link rel="stylesheet" href="../../Estilos/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Menú Lateral SUPER ADMIN -->
+        <aside class="sidebar" style="background-color: #111827;">
+            <div class="sidebar-logo">
+                <h2>OptiFlota <span style="color: var(--primary-color); font-size: 14px;">ADMIN</span></h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="admin_dashboard.html" class="nav-item active">📊 Vista Global</a>
+                <a href="../Admin/empresas/empresas.html" class="nav-item">🏢 Empresas</a>
+                <a href="../Admin/pagos/pagos.html" class="nav-item">💳 Control de Pagos</a>
+                <a href="../Admin/soporte/tickets_admin.html" class="nav-item active">🎫 Soporte Técnico</a>
+            </nav>
+        </aside> 
+
+        <div class="main-content">
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Vista Global del Sistema</h1>
+                </div>
+                <div class="user-profile">
+                    <span>SuperAdministrador</span>
+                    <div class="avatar" style="background-color: #4b5563;">SA</div>
+                </div>
+            </header>
+
+            <main class="content-area">
+
+                <!-- 📊 KPIs DEL NEGOCIO -->
+                <section class="kpi-grid">
+                    <div class="kpi-card">
+                        <h3>Total Clientes Activos</h3>
+                        <p class="kpi-value">12</p>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Vehículos Gestionados</h3>
+                        <p class="kpi-value">345</p>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Tickets de Soporte Abiertos</h3>
+                        <p class="kpi-value" style="color: var(--danger);">8</p>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Próximos a Vencer (Esta semana)</h3>
+                        <p class="kpi-value" style="color: var(--warning);">3</p>
+                    </div>
+                </section>
+                
+                <!-- 🔔 ALERTAS Y ACTIVIDAD -->
+                <div class="split-layout">
+                    
+                    <!-- Clientes con pago próximo -->
+                    <div class="table-panel">
+                        <h2>Próximos Vencimientos</h2>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Empresa</th>
+                                    <th>Fecha de Corte</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Transportes García</td>
+                                    <td><span class="badge warning">25 Jun</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Logística del Norte</td>
+                                    <td><span class="badge warning">28 Jun</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Tickets de soporte técnico (SaaS) -->
+                    <div class="table-panel">
+                        <h2>Soporte Técnico</h2>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Empresa</th>
+                                    <th>Asunto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Transportes García</td>
+                                    <td>Error al cargar reporte Excel</td>
+                                </tr>
+                                <tr>
+                                    <td>Logística del Norte</td>
+                                    <td>Duda sobre API</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </main>
+        </div>
+    </div>
+</body>
+</html>

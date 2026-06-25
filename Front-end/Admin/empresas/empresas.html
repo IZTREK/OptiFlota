@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiFlota Admin - Empresas</title>
+    <link rel="stylesheet" href="../../../Estilos/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <aside class="sidebar" style="background-color: #111827;"> <div class="sidebar-logo">
+                <h2>OptiFlota <span style="color: var(--primary-color); font-size: 14px;">ADMIN</span></h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="../admin_dashboard.html" class="nav-item">📊 Vista Global</a>
+                <a href="../empresas/empresas.html" class="nav-item active">🏢 Empresas</a>
+                <a href="../pagos/pagos.html" class="nav-item">💳 Control de Pagos</a>
+                <a href="../soporte/tickets_admin.html" class="nav-item active">🎫 Soporte Técnico</a>
+            </nav>
+        </aside> 
+
+        <div class="main-content">
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Gestión de Clientes (SaaS)</h1>
+                </div>
+                <div class="user-profile">
+                    <span>SuperAdministrador</span>
+                    <div class="avatar" style="background-color: #4b5563;">SA</div>
+                </div>
+            </header>
+
+            <main class="content-area">
+
+                <section class="kpi-grid">
+                    <div class="kpi-card">
+                        <h3>Empresas Activas</h3>
+                        <p class="kpi-value">12</p>
+                        <span class="badge ok">+2 este mes</span>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Cuentas Suspendidas / Morosas</h3>
+                        <p class="kpi-value">1</p>
+                        <span class="badge danger">Requiere seguimiento</span>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Total Vehículos en Plataforma</h3>
+                        <p class="kpi-value">345</p>
+                    </div>
+                </section>
+                
+                <div class="section-header">
+                    <p class="subtitle">Administración de accesos y suscripciones de clientes</p>
+                    <button class="btn-primary btn-auto" id="btn-abrir-modal">+ Nueva Empresa</button>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label for="filtro-empresa">Nombre de la Empresa</label>
+                        <input type="text" id="filtro-empresa" placeholder="Ej. Transportes García">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filtro-estado-cuenta">Estado de Cuenta</label>
+                        <select id="filtro-estado-cuenta">
+                            <option value="">Todos</option>
+                            <option value="activa">Activa</option>
+                            <option value="prueba">En Prueba (Trial)</option>
+                            <option value="suspendida">Suspendida (Falta de pago)</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn-secondary">Limpiar</button>
+                        <button class="btn-primary">🔍 Buscar</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Empresa</th>
+                                <th>Contacto Principal</th>
+                                <th>Vehículos</th>
+                                <th>Vencimiento</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Transportes García S.A.</strong></td>
+                                <td>admin@tgarcia.com</td>
+                                <td>45 unidades</td>
+                                <td>31/Dic/2026</td>
+                                <td><span class="badge ok">Activa</span></td>
+                                <td class="actions">
+                                    <button class="btn-icon" title="Editar Suscripción">✏️</button>
+                                    <button class="btn-icon" title="Bloquear Acceso">🚫</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Logística del Centro</strong></td>
+                                <td>gerencia@logcentro.mx</td>
+                                <td>12 unidades</td>
+                                <td>15/Jun/2026</td>
+                                <td><span class="badge danger">Suspendida</span></td>
+                                <td class="actions">
+                                    <button class="btn-icon" title="Editar Suscripción">✏️</button>
+                                    <button class="btn-icon ok" title="Reactivar">✅</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </main>
+        </div>
+        
+    </div>
+
+    <!-- 🪟 MODAL: NUEVA EMPRESA (Diseño Corregido) -->
+<div class="modal-overlay" id="modal-empresa">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Dar de alta un nuevo cliente</h2>
+            <button class="btn-close" id="btn-cerrar-modal">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+            <form class="data-form">
+                <div class="form-group">
+                    <label>Nombre de la Empresa</label>
+                    <input type="text" placeholder="Ej. Transportes García S.A. de C.V." style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Correo del Administrador</label>
+                        <input type="email" placeholder="admin@empresa.com" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña Temporal</label>
+                        <input type="text" value="OptiFlota2026!" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Plan Inicial</label>
+                        <select style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                            <option value="trial">Prueba (Trial - 5 vehículos)</option>
+                            <option value="basico">Básico (15 vehículos)</option>
+                            <option value="pro">Pro (50 vehículos)</option>
+                            <option value="ilimitado">Ilimitado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de Vencimiento</label>
+                        <input type="date" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn-secondary" id="btn-cancelar-modal">Cancelar</button>
+            <button class="btn-primary">Crear Empresa y Accesos</button>
+        </div>
+    </div>
+</div>
+
+    <script>
+        const btnAbrir = document.getElementById('btn-abrir-modal');
+        const btnCerrar = document.getElementById('btn-cerrar-modal');
+        const btnCancelar = document.getElementById('btn-cancelar-modal');
+        const modal = document.getElementById('modal-empresa');
+
+        btnAbrir.addEventListener('click', () => {
+            modal.classList.add('active');
+        });
+
+        const cerrarModal = () => modal.classList.remove('active');
+        btnCerrar.addEventListener('click', cerrarModal);
+        btnCancelar.addEventListener('click', cerrarModal);
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                cerrarModal();
+            }
+        });
+    </script>
+
+</body>
+</html>

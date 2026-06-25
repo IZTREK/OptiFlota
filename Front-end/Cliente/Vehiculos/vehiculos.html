@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiFlota - Vehículos</title>
+   
+    <link rel="stylesheet" href="../../../Estilos/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Menú Lateral -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <h2>OptiFlota</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="../index.html" class="nav-item">📊 Dashboard</a>
+                <a href="../vehiculos/vehiculos.html" class="nav-item active">🚗 Vehículos</a>
+                <a href="../diagnosticos/diagnosticos.html" class="nav-item">📋 Diagnósticos</a>
+                <a href="../combustible/combustible.html" class="nav-item">⛽ Combustible</a>
+                <a href="../mantenimiento/mantenimiento.html" class="nav-item">🔧 Mantenimiento</a>
+                <a href="../siniestros/tickets.html" class="nav-item">🎫 Tickets</a>
+            </nav>
+        </aside> 
+
+        <!-- Contenido Principal -->
+        <div class="main-content">
+            <!-- Barra Superior -->
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Gestión de Vehículos</h1>
+                </div>
+                <div class="user-profile">
+                    <span>Transportes García</span>
+                    <div class="avatar">TG</div>
+                </div>
+            </header>
+
+            <!-- Área de Trabajo -->
+            <main class="content-area">
+                
+                <div class="section-header">
+                    <p class="subtitle">Administra el inventario de tu flotilla</p>
+                    <!-- Agregamos el ID para abrir el modal -->
+                    <button class="btn-primary btn-auto" id="btn-abrir-modal">+ Añadir Vehículo</button>
+                </div>
+
+                <!-- 🔍 BARRA DE BÚSQUEDA - VEHÍCULOS -->
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label for="filtro-placas">Placas / Modelo</label>
+                        <input type="text" id="filtro-placas" placeholder="Ej. ABC-1234">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filtro-anio">Año</label>
+                        <input type="number" id="filtro-anio" placeholder="Ej. 2022">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filtro-estado">Estado Actual</label>
+                        <select id="filtro-estado">
+                            <option value="">Todos</option>
+                            <option value="activo">Activo</option>
+                            <option value="taller">En Taller</option>
+                            <option value="inactivo">Baja / Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn-secondary">Limpiar</button>
+                        <button class="btn-primary">🔍 Buscar</button>
+                    </div>
+                </div>
+
+                <!-- Tabla de Datos -->
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Placas</th>
+                                <th>Marca y Modelo</th>
+                                <th>Año</th>
+                                <th>Kilometraje</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>ABC-1234</strong></td>
+                                <td>Nissan NP300</td>
+                                <td>2022</td>
+                                <td>45,000 km</td>
+                                <td><span class="badge ok">Activo</span></td>
+                                <td class="actions">
+                                    <button class="btn-icon">✏️</button>
+                                    <button class="btn-icon delete">🗑️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>XYZ-9876</strong></td>
+                                <td>Ford Transit</td>
+                                <td>2020</td>
+                                <td>112,400 km</td>
+                                <td><span class="badge warning">Taller</span></td>
+                                <td class="actions">
+                                    <button class="btn-icon">✏️</button>
+                                    <button class="btn-icon delete">🗑️</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </main>
+        </div>
+        
+    </div> 
+
+    <!-- ========================================== -->
+    <!-- 🪟 MODAL: AÑADIR VEHÍCULO -->
+    <!-- ========================================== -->
+    <div class="modal-overlay" id="modal-vehiculo">
+        <div class="modal-content">
+            
+            <div class="modal-header">
+                <h2>Añadir Nuevo Vehículo</h2>
+                <button class="btn-close" id="btn-cerrar-modal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form class="data-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="placas">Placas</label>
+                            <input type="text" id="placas" placeholder="Ej. ABC-1234" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="anio">Año</label>
+                            <input type="number" id="anio" placeholder="Ej. 2024" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="marca">Marca y Modelo</label>
+                        <input type="text" id="marca" placeholder="Ej. Nissan NP300" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="kilometraje">Kilometraje Inicial</label>
+                            <input type="number" id="kilometraje" placeholder="Ej. 15000" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="estado">Estado Inicial</label>
+                            <select id="estado">
+                                <option value="activo">Activo</option>
+                                <option value="taller">En Taller</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn-secondary" id="btn-cancelar-modal">Cancelar</button>
+                <button class="btn-primary">Guardar Vehículo</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- ⚙️ SCRIPT PARA EL MODAL -->
+    <script>
+        const btnAbrir = document.getElementById('btn-abrir-modal');
+        const btnCerrar = document.getElementById('btn-cerrar-modal');
+        const btnCancelar = document.getElementById('btn-cancelar-modal');
+        const modal = document.getElementById('modal-vehiculo');
+
+        // Función para abrir
+        btnAbrir.addEventListener('click', () => {
+            modal.classList.add('active');
+        });
+
+        // Función para cerrar (con la X o el botón cancelar)
+        const cerrarModal = () => modal.classList.remove('active');
+        btnCerrar.addEventListener('click', cerrarModal);
+        btnCancelar.addEventListener('click', cerrarModal);
+
+        // Cerrar si el usuario da clic afuera de la caja blanca
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                cerrarModal();
+            }
+        });
+    </script>
+
+</body>
+</html>

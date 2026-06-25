@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiFlota - Mantenimiento</title>
+    <link rel="stylesheet" href="../../../Estilos/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <h2>OptiFlota</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="../index.html" class="nav-item">📊 Dashboard</a>
+                <a href="../vehiculos/vehiculos.html" class="nav-item">🚗 Vehículos</a>
+                <a href="../diagnosticos/diagnosticos.html" class="nav-item">📋 Diagnósticos</a>
+                <a href="../combustible/combustible.html" class="nav-item">⛽ Combustible</a>
+                <a href="../mantenimiento/mantenimiento.html" class="nav-item active">🔧 Mantenimiento</a>
+                <a href="../siniestros/tickets.html" class="nav-item">🎫 Tickets</a>
+            </nav>
+        </aside> 
+
+        <div class="main-content">
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Control de Mantenimiento</h1>
+                </div>
+                <div class="user-profile">
+                    <span>Transportes García</span>
+                    <div class="avatar">TG</div>
+                </div>
+            </header>
+
+            <main class="content-area">
+
+                <section class="kpi-grid">
+                    <div class="kpi-card">
+                        <h3>Inversión en Mantenimiento (Mes)</h3>
+                        <p class="kpi-value">$12,400</p>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Servicios Programados</h3>
+                        <p class="kpi-value">3</p>
+                        <span class="badge warning">Próximos a vencer</span>
+                    </div>
+                </section>
+                
+                <div class="section-header">
+                    <p class="subtitle">Historial de servicios preventivos y correctivos</p>
+                    <button class="btn-primary btn-auto" id="btn-abrir-modal">+ Registrar Servicio</button>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label for="filtro-mes">Mes de Servicio</label>
+                        <input type="month" id="filtro-mes">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filtro-placas">Vehículo</label>
+                        <input type="text" id="filtro-placas" placeholder="Ej. ABC-1234">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filtro-tipo">Tipo de Servicio</label>
+                        <select id="filtro-tipo">
+                            <option value="">Todos</option>
+                            <option value="preventivo">Preventivo</option>
+                            <option value="correctivo">Correctivo</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn-secondary">Limpiar</button>
+                        <button class="btn-primary">🔍 Buscar</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Vehículo</th>
+                                <th>Tipo</th>
+                                <th>Detalle</th>
+                                <th>Costo</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>22/Jun/2026</td>
+                                <td><strong>ABC-1234</strong></td>
+                                <td><span class="badge ok">Preventivo</span></td>
+                                <td>Afinación mayor y cambio de aceite</td>
+                                <td>$2,500.00</td>
+                                <td>Terminado</td>
+                                <td class="actions">
+                                    <button class="btn-icon">👁️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>24/Jun/2026</td>
+                                <td><strong>XYZ-9876</strong></td>
+                                <td><span class="badge danger">Correctivo</span></td>
+                                <td>Cambio de balatas y rectificado</td>
+                                <td>$4,200.00</td>
+                                <td>En Taller</td>
+                                <td class="actions">
+                                    <button class="btn-icon">👁️</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </main>
+        </div>
+        
+    </div>
+
+    <div class="modal-overlay" id="modal-mantenimiento">
+        <div class="modal-content">
+            
+            <div class="modal-header">
+                <h2>Registrar Servicio de Mantenimiento</h2>
+                <button class="btn-close" id="btn-cerrar-modal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form class="data-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="vehiculo-mant">Vehículo</label>
+                            <select id="vehiculo-mant" required>
+                                <option value="" disabled selected>Seleccione la unidad...</option>
+                                <option value="1">ABC-1234 (Nissan NP300)</option>
+                                <option value="2">XYZ-9876 (Ford Transit)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha-mant">Fecha del Servicio</label>
+                            <input type="date" id="fecha-mant" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tipo-mant">Tipo de Servicio</label>
+                            <select id="tipo-mant" required>
+                                <option value="" disabled selected>Seleccione...</option>
+                                <option value="preventivo">Preventivo (Programado)</option>
+                                <option value="correctivo">Correctivo (Falla)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="costo-mant">Costo Total ($)</label>
+                            <input type="number" id="costo-mant" step="0.01" placeholder="Ej. 2500.00" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="detalle-mant">Detalle de los Trabajos</label>
+                        <textarea id="detalle-mant" rows="3" placeholder="Ej. Cambio de aceite, balatas, revisión de frenos..." style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="estado-mant">Estado del Servicio</label>
+                            <select id="estado-mant" required>
+                                <option value="taller">En Taller (En Proceso)</option>
+                                <option value="terminado">Terminado (Entregado)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Factura / Cotización</label>
+                            <input type="file" style="width: 100%; padding: 8px; border: 1px dashed #d1d5db; border-radius: 6px; background-color: #f9fafb;">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn-secondary" id="btn-cancelar-modal">Cancelar</button>
+                <button class="btn-primary">Guardar Servicio</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        const btnAbrir = document.getElementById('btn-abrir-modal');
+        const btnCerrar = document.getElementById('btn-cerrar-modal');
+        const btnCancelar = document.getElementById('btn-cancelar-modal');
+        const modal = document.getElementById('modal-mantenimiento');
+
+        btnAbrir.addEventListener('click', () => {
+            modal.classList.add('active');
+        });
+
+        const cerrarModal = () => modal.classList.remove('active');
+        btnCerrar.addEventListener('click', cerrarModal);
+        btnCancelar.addEventListener('click', cerrarModal);
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                cerrarModal();
+            }
+        });
+    </script>
+
+</body>
+</html>

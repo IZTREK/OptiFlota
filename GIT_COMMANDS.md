@@ -111,28 +111,33 @@ docs/Requerimientos flotilla.docx
 
 ### Ver diferencias entre ramas
 ```bash
-git diff main experimento
+git diff main Optiflota
 ```
 
-### Cambiar a la rama experimento
+### Cambiar a la rama Optiflota
 ```bash
-git checkout experimento
+git switch Optiflota
 ```
 
 ### Volver a main
 ```bash
-git checkout main
+git switch main
 ```
 
 ### Ver archivos en una rama sin cambiar a ella
 ```bash
-git ls-tree -r --name-only experimento
+git ls-tree -r --name-only Optiflota
 ```
 
-### Mergear experimento a main (cuando estés listo)
+### Mergear Optiflota a main (cuando estés listo)
 ```bash
-git checkout main
-git merge experimento
+git switch main
+git merge Optiflota
+```
+
+### Subir main al remoto
+```bash
+git push origin main
 ```
 
 ### Ver log gráfico de todas las ramas
@@ -140,9 +145,9 @@ git merge experimento
 git log --oneline --graph --all --decorate
 ```
 
-### Eliminar la rama experimento (después de mergear)
+### Eliminar la rama Optiflota (después de mergear)
 ```bash
-git branch -d experimento
+git branch -d Optiflota
 ```
 
 ---

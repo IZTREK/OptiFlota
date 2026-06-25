@@ -1,0 +1,621 @@
+/* Variables de color para mantener todo consistente */
+:root {
+    --primary-color: #1e3a8a; /* Azul corporativo */
+    --primary-hover: #172554;
+    --sidebar-bg: #0f172a; /* Gris muy oscuro */
+    --bg-color: #f3f4f6; /* Gris claro de fondo */
+    --card-bg: #ffffff;
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    
+    /* Estados */
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+}
+
+/* Layout Principal usando Flexbox */
+.app-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* --- SIDEBAR --- */
+.sidebar {
+    width: 250px;
+    background-color: var(--sidebar-bg);
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-logo {
+    padding: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 0;
+}
+
+.nav-item {
+    padding: 12px 24px;
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.nav-item:hover, .nav-item.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-left: 4px solid var(--primary-color);
+}
+
+/* --- CONTENIDO PRINCIPAL --- */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+/* --- TOPBAR --- */
+.topbar {
+    height: 70px;
+    background-color: var(--card-bg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 32px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- ÁREA DE TRABAJO --- */
+.content-area {
+    padding: 32px;
+}
+
+/* --- TARJETAS (KPIs) --- */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.kpi-card {
+    background-color: var(--card-bg);
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.kpi-card h3 {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.kpi-value {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.kpi-status {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.kpi-status.ok { background-color: #d1fae5; color: #065f46; }
+.kpi-status.warning { background-color: #fef3c7; color: #92400e; }
+.kpi-status.danger { background-color: #fee2e2; color: #991b1b; }
+
+/* Caja de relleno provisional */
+.placeholder-box {
+    background-color: var(--card-bg);
+    padding: 40px;
+    text-align: center;
+    color: var(--text-muted);
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+/* =========================================
+   🔐 PANTALLA DE LOGIN 
+========================================= */
+
+/* Fondo específico para aislar la pantalla de login */
+.login-bg {
+    background-color: var(--sidebar-bg); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px; /* Evita que el formulario se estire en pantallas grandes */
+    padding: 20px;
+}
+
+.login-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 40px 32px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5); /* Sombra pronunciada para dar profundidad */
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.login-header h2 {
+    color: var(--primary-color);
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.login-header p {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* Estilos globales para los inputs del sistema */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-main);
+    font-size: 14px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 15px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1); /* Efecto de resplandor al hacer clic */
+}
+
+/* Botón principal */
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.login-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}
+
+/* =========================================
+   📊 TABLAS DE DATOS 
+========================================= */
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 15px;
+}
+
+/* Modificador para el botón primario que no ocupe el 100% */
+.btn-auto {
+    width: auto;
+    padding: 10px 20px;
+    font-size: 14px;
+}
+
+/* Contenedor responsivo para evitar que la tabla rompa la pantalla */
+.table-container {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    overflow-x: auto; 
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    min-width: 600px; /* Fuerza el scroll horizontal en móviles */
+}
+
+.data-table th, 
+.data-table td {
+    padding: 16px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.data-table th {
+    background-color: #f9fafb;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.data-table td {
+    font-size: 14px;
+    color: var(--text-main);
+    vertical-align: middle;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f3f4f6;
+    transition: background-color 0.2s;
+}
+
+/* =========================================
+   🏷️ ETIQUETAS (Badges) Y ACCIONES 
+========================================= */
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge.ok { background-color: #d1fae5; color: #065f46; }
+.badge.warning { background-color: #fef3c7; color: #92400e; }
+.badge.danger { background-color: #fee2e2; color: #991b1b; }
+
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 6px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.btn-icon:hover {
+    background-color: #e5e7eb;
+}
+
+.btn-icon.delete:hover {
+    background-color: #fee2e2;
+}
+
+/* =========================================
+   🔍 BARRA DE BÚSQUEDA Y FILTROS
+========================================= */
+.filter-bar {
+    background-color: var(--card-bg);
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-bottom: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-end; /* Alinea los botones con los inputs */
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* Hace que todos los campos midan lo mismo */
+    min-width: 150px; /* Evita que se aplasten mucho en celulares */
+}
+
+.filter-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: white;
+    transition: border-color 0.2s;
+    width: 100%;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.filter-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* Botón secundario para "Limpiar Filtros" */
+.btn-secondary {
+    padding: 10px 16px;
+    background-color: white;
+    color: var(--text-main);
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #f3f4f6;
+}
+
+.filter-actions .btn-primary {
+    padding: 10px 16px;
+    width: auto;
+    font-size: 14px;
+}
+
+/* =========================================
+   🪟 VENTANAS MODALES
+========================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Asegura que esté por encima de todo */
+    
+    /* Oculto por defecto con transición suave */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Clase que se agregará con JavaScript para mostrarlo */
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    width: 100%;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    
+    /* Efecto de que el modal "baja" al aparecer */
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-size: 18px;
+    color: var(--text-main);
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-close:hover {
+    color: var(--danger);
+}
+
+.modal-body {
+    padding: 24px;
+    /* Evita que el modal se salga de la pantalla si hay muchos campos */
+    max-height: 70vh; 
+    overflow-y: auto;
+}
+
+.modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* Corrector de modales: esto arregla que los inputs se vean mal */
+.modal-body .form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+.modal-body .form-group {
+    flex: 1;
+}
+/* =========================================
+   📦 TARJETAS DE PLANES (Suscripción)
+========================================= */
+.plans-container {
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.plan-card {
+    flex: 1;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    background: white;
+}
+
+.plan-card h4 { margin: 0 0 10px 0; color: var(--text-main); }
+.plan-card p { font-size: 18px; font-weight: bold; color: var(--primary-color); margin-bottom: 10px; }
+.plan-card small { display: block; color: var(--text-muted); margin-bottom: 15px; }
+
+/* =========================================
+   📱 RESPONSIVIDAD (Móviles y Tablets) 
+========================================= */
+@media (max-width: 768px) {
+    /* 1. Apilar el contenedor en vertical en lugar de horizontal */
+    .app-container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    /* 2. El menú lateral pasa a la parte superior */
+    .sidebar {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .sidebar-logo {
+        width: 100%;
+        text-align: center;
+        border-bottom: none;
+        padding: 16px;
+    }
+
+    /* 3. Menú navegable con scroll horizontal (tipo pestañas) */
+    .sidebar-nav {
+        flex-direction: row;
+        width: 100%;
+        overflow-x: auto; /* Permite deslizar con el dedo */
+        padding: 0;
+        background-color: rgba(0,0,0,0.2);
+    }
+
+    .nav-item {
+        white-space: nowrap; /* Evita que el texto se corte en dos líneas */
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    /* La barra indicadora cambia de la izquierda a la parte inferior */
+    .nav-item:hover, .nav-item.active {
+        border-left: none;
+        border-bottom: 4px solid var(--primary-color);
+    }
+
+    /* 4. Ajustar la barra superior */
+    .topbar {
+        flex-direction: column;
+        height: auto;
+        gap: 16px;
+        padding: 16px;
+        text-align: center;
+    }
+
+    .content-area {
+        padding: 16px; /* Menos margen en celular */
+    }
+
+    /* 5. Las tarjetas (KPIs) ocupan todo el ancho (1 columna) */
+    .kpi-grid {
+        grid-template-columns: 1fr; 
+    }
+}
+
