@@ -9,14 +9,15 @@
 <body>
     <div class="app-container">
         
-        <aside class="sidebar" style="background-color: #111827;"> <div class="sidebar-logo">
+        <aside class="sidebar" style="background-color: #111827;"> 
+            <div class="sidebar-logo">
                 <h2>OptiFlota <span style="color: var(--primary-color); font-size: 14px;">ADMIN</span></h2>
             </div>
             <nav class="sidebar-nav">
                 <a href="../admin_dashboard.html" class="nav-item">📊 Vista Global</a>
                 <a href="../empresas/empresas.html" class="nav-item active">🏢 Empresas</a>
                 <a href="../pagos/pagos.html" class="nav-item">💳 Control de Pagos</a>
-                <a href="../soporte/tickets_admin.html" class="nav-item active">🎫 Soporte Técnico</a>
+                <a href="../soporte/tickets_admin.html" class="nav-item">🎫 Soporte Técnico</a>
             </nav>
         </aside> 
 
@@ -32,7 +33,6 @@
             </header>
 
             <main class="content-area">
-
                 <section class="kpi-grid">
                     <div class="kpi-card">
                         <h3>Empresas Activas</h3>
@@ -113,83 +113,101 @@
                         </tbody>
                     </table>
                 </div>
-
             </main>
         </div>
-        
     </div>
 
-    <!-- 🪟 MODAL: NUEVA EMPRESA (Diseño Corregido) -->
-<div class="modal-overlay" id="modal-empresa">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Dar de alta un nuevo cliente</h2>
-            <button class="btn-close" id="btn-cerrar-modal">&times;</button>
-        </div>
-        
-        <div class="modal-body">
-            <form class="data-form">
-                <div class="form-group">
-                    <label>Nombre de la Empresa</label>
-                    <input type="text" placeholder="Ej. Transportes García S.A. de C.V." style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
-                </div>
-                
-                <div class="form-row">
+    <!-- 🪟 MODAL: NUEVA EMPRESA -->
+    <div class="modal-overlay" id="modal-empresa">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Dar de alta un nuevo cliente</h2>
+                <button class="btn-close" id="btn-cerrar-modal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form class="data-form" id="form-empresa">
                     <div class="form-group">
-                        <label>Correo del Administrador</label>
-                        <input type="email" placeholder="admin@empresa.com" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        <label>Nombre de la Empresa</label>
+                        <input type="text" placeholder="Ej. Transportes García S.A. de C.V." style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
                     </div>
-                    <div class="form-group">
-                        <label>Contraseña Temporal</label>
-                        <input type="text" value="OptiFlota2026!" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Correo del Administrador</label>
+                            <input type="email" placeholder="admin@empresa.com" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        </div>
+                        <div class="form-group">
+                            <label>Contraseña Temporal</label>
+                            <input type="text" value="OptiFlota2026!" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        </div>
                     </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Plan Inicial</label>
-                        <select style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
-                            <option value="trial">Prueba (Trial - 5 vehículos)</option>
-                            <option value="basico">Básico (15 vehículos)</option>
-                            <option value="pro">Pro (50 vehículos)</option>
-                            <option value="ilimitado">Ilimitado</option>
-                        </select>
+                    
+                    <!-- LOS CAMPOS RESTAURADOS DE PLAN Y VENCIMIENTO -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Plan Inicial</label>
+                            <select style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                                <option value="trial">Prueba (Trial - 5 vehículos)</option>
+                                <option value="basico">Básico (15 vehículos)</option>
+                                <option value="pro">Pro (50 vehículos)</option>
+                                <option value="ilimitado">Ilimitado</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de Vencimiento</label>
+                            <input type="date" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Fecha de Vencimiento</label>
-                        <input type="date" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
-                    </div>
-                </div>
-            </form>
-        </div>
-        
-        <div class="modal-footer">
-            <button class="btn-secondary" id="btn-cancelar-modal">Cancelar</button>
-            <button class="btn-primary">Crear Empresa y Accesos</button>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn-secondary" id="btn-cancelar-modal">Cancelar</button>
+                <button class="btn-primary" id="btn-guardar-empresa">Crear Empresa y Accesos</button>
+            </div>
         </div>
     </div>
-</div>
 
+    <!-- ⚙️ SCRIPT -->
     <script>
-        const btnAbrir = document.getElementById('btn-abrir-modal');
-        const btnCerrar = document.getElementById('btn-cerrar-modal');
-        const btnCancelar = document.getElementById('btn-cancelar-modal');
-        const modal = document.getElementById('modal-empresa');
-
-        btnAbrir.addEventListener('click', () => {
-            modal.classList.add('active');
+        const modalEmpresa = document.getElementById('modal-empresa');
+        const cerrarModal = () => modalEmpresa.classList.remove('active');
+        
+        document.getElementById('btn-abrir-modal').addEventListener('click', () => {
+            document.querySelector('.modal-header h2').innerText = 'Dar de alta un nuevo cliente';
+            document.getElementById('form-empresa').reset();
+            modalEmpresa.classList.add('active');
         });
+        
+        document.getElementById('btn-cerrar-modal').addEventListener('click', cerrarModal);
+        document.getElementById('btn-cancelar-modal').addEventListener('click', cerrarModal);
+        document.getElementById('btn-guardar-empresa').addEventListener('click', cerrarModal);
 
-        const cerrarModal = () => modal.classList.remove('active');
-        btnCerrar.addEventListener('click', cerrarModal);
-        btnCancelar.addEventListener('click', cerrarModal);
-
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                cerrarModal();
-            }
+        document.querySelectorAll('.data-table .btn-icon').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const fila = e.target.closest('tr');
+                if (e.target.innerText.includes('🚫')) {
+                    if (confirm(`¿Suspender acceso a la empresa ${fila.cells[0].innerText}?`)) {
+                        fila.cells[4].innerHTML = '<span class="badge danger">Suspendida</span>';
+                        e.target.innerText = '✅'; 
+                        e.target.title = 'Reactivar'; 
+                        e.target.classList.add('ok');
+                    }
+                } 
+                else if (e.target.innerText.includes('✅')) {
+                    if (confirm(`¿Reactivar cuenta de ${fila.cells[0].innerText}?`)) {
+                        fila.cells[4].innerHTML = '<span class="badge ok">Activa</span>';
+                        e.target.innerText = '🚫'; 
+                        e.target.title = 'Bloquear Acceso'; 
+                        e.target.classList.remove('ok');
+                    }
+                }
+                else if (e.target.innerText.includes('✏️')) {
+                    document.querySelector('.modal-header h2').innerText = `Editar Cliente: ${fila.cells[0].innerText}`;
+                    modalEmpresa.classList.add('active');
+                }
+            });
         });
     </script>
-
 </body>
 </html>

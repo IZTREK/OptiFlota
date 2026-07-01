@@ -36,7 +36,6 @@
             </header>
 
             <main class="content-area">
-                
                 <div class="section-header">
                     <p class="subtitle">Historial de evaluaciones de salud de la flotilla</p>
                     <button class="btn-primary btn-auto" id="btn-abrir-modal">+ Nueva Evaluación</button>
@@ -73,7 +72,7 @@
                                 <th>Fecha</th>
                                 <th>Vehículo</th>
                                 <th>Evaluador</th>
-                                <th>Salud General (Semáforo)</th>
+                                <th>Salud General</th>
                                 <th>Observaciones</th>
                                 <th>Acciones</th>
                             </tr>
@@ -115,18 +114,16 @@
                         </tbody>
                     </table>
                 </div>
-
             </main>
         </div>
-        
-    </div> <div class="modal-overlay" id="modal-diagnostico">
+    </div> 
+
+    <div class="modal-overlay" id="modal-diagnostico">
         <div class="modal-content">
-            
             <div class="modal-header">
                 <h2>Registrar Evaluación</h2>
                 <button class="btn-close" id="btn-cerrar-modal">&times;</button>
             </div>
-            
             <div class="modal-body">
                 <form class="data-form">
                     <div class="form-row">
@@ -144,7 +141,6 @@
                             <input type="date" id="fecha-diag" required>
                         </div>
                     </div>
-                    
                     <div class="form-row">
                         <div class="form-group">
                             <label for="evaluador">Evaluador / Taller</label>
@@ -160,45 +156,71 @@
                             </select>
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label for="observaciones">Observaciones Detalladas</label>
-                        <textarea id="observaciones" rows="4" placeholder="Describa las fallas encontradas, piezas desgastadas o estado general..." style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
+                        <textarea id="observaciones" rows="4" placeholder="Describa fallas o piezas desgastadas..." style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px;"></textarea>
                     </div>
                 </form>
             </div>
-            
             <div class="modal-footer">
                 <button class="btn-secondary" id="btn-cancelar-modal">Cancelar</button>
-                <button class="btn-primary">Guardar Evaluación</button>
+                <button class="btn-primary" id="btn-guardar-diagnostico">Guardar Evaluación</button>
             </div>
-            
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-visor">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="visor-titulo">Detalles</h2>
+                <button class="btn-close" id="btn-cerrar-visor">&times;</button>
+            </div>
+            <div class="modal-body" id="visor-contenido"></div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="btn-entendido-visor">Cerrar</button>
+            </div>
         </div>
     </div>
 
     <script>
-        const btnAbrir = document.getElementById('btn-abrir-modal');
-        const btnCerrar = document.getElementById('btn-cerrar-modal');
-        const btnCancelar = document.getElementById('btn-cancelar-modal');
-        const modal = document.getElementById('modal-diagnostico');
+        // Formulario
+        const modalDiag = document.getElementById('modal-diagnostico');
+        const cerrarDiag = () => modalDiag.classList.remove('active');
+        document.getElementById('btn-abrir-modal').addEventListener('click', () => modalDiag.classList.add('active'));
+        document.getElementById('btn-cerrar-modal').addEventListener('click', cerrarDiag);
+        document.getElementById('btn-cancelar-modal').addEventListener('click', cerrarDiag);
+        document.getElementById('btn-guardar-diagnostico').addEventListener('click', cerrarDiag);
 
-        // Función para abrir
-        btnAbrir.addEventListener('click', () => {
-            modal.classList.add('active');
-        });
+        // Visor
+        const modalVisor = document.getElementById('modal-visor');
+        const cerrarVisor = () => modalVisor.classList.remove('active');
+        document.getElementById('btn-cerrar-visor').addEventListener('click', cerrarVisor);
+        document.getElementById('btn-entendido-visor').addEventListener('click', cerrarVisor);
 
-        // Función para cerrar
-        const cerrarModal = () => modal.classList.remove('active');
-        btnCerrar.addEventListener('click', cerrarModal);
-        btnCancelar.addEventListener('click', cerrarModal);
-
-        // Cerrar si el usuario da clic afuera
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                cerrarModal();
-            }
+        document.querySelectorAll('.data-table .btn-icon').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const fila = e.target.closest('tr');
+                const vehiculo = fila.cells[1].innerText;
+                
+                if (e.target.innerText.includes('👁️')) {
+                    document.getElementById('visor-titulo').innerText = "Detalle del Diagnóstico";
+                    document.getElementById('visor-contenido').innerHTML = `
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div><small style="color: var(--text-muted);">Vehículo</small><p><strong>${vehiculo}</strong></p></div>
+                            <div><small style="color: var(--text-muted);">Fecha</small><p>${fila.cells[0].innerText}</p></div>
+                            <div><small style="color: var(--text-muted);">Evaluador</small><p>${fila.cells[2].innerText}</p></div>
+                            <div><small style="color: var(--text-muted);">Estado General</small><p>${fila.cells[3].innerHTML}</p></div>
+                        </div>
+                        <div style="background: #f9fafb; padding: 15px; margin-top: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                            <small style="color: var(--text-muted);">Observaciones del taller</small>
+                            <p style="margin-top: 5px;">${fila.cells[4].innerText}</p>
+                        </div>`;
+                    modalVisor.classList.add('active');
+                } else if (e.target.innerText.includes('📄')) {
+                    alert(`📥 Descargando reporte en PDF de: ${vehiculo}`);
+                }
+            });
         });
     </script>
-
 </body>
 </html>

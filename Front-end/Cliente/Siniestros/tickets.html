@@ -10,9 +10,7 @@
     <div class="app-container">
         
         <aside class="sidebar">
-            <div class="sidebar-logo">
-                <h2>OptiFlota</h2>
-            </div>
+            <div class="sidebar-logo"><h2>OptiFlota</h2></div>
             <nav class="sidebar-nav">
                 <a href="../index.html" class="nav-item">📊 Dashboard</a>
                 <a href="../vehiculos/vehiculos.html" class="nav-item">🚗 Vehículos</a>
@@ -26,28 +24,14 @@
 
         <div class="main-content">
             <header class="topbar">
-                <div class="page-title">
-                    <h1>Soporte y Siniestros</h1>
-                </div>
-                <div class="user-profile">
-                    <span>Transportes García</span>
-                    <div class="avatar">TG</div>
-                </div>
+                <div class="page-title"><h1>Soporte y Siniestros</h1></div>
+                <div class="user-profile"><span>Transportes García</span><div class="avatar">TG</div></div>
             </header>
 
             <main class="content-area">
-
                 <section class="kpi-grid">
-                    <div class="kpi-card">
-                        <h3>Tickets Abiertos</h3>
-                        <p class="kpi-value">2</p>
-                        <span class="badge danger">Atención requerida</span>
-                    </div>
-                    <div class="kpi-card">
-                        <h3>Tickets Resueltos (Mes)</h3>
-                        <p class="kpi-value">5</p>
-                        <span class="badge ok">Al día</span>
-                    </div>
+                    <div class="kpi-card"><h3>Tickets Abiertos</h3><p class="kpi-value">2</p><span class="badge danger">Atención requerida</span></div>
+                    <div class="kpi-card"><h3>Tickets Resueltos (Mes)</h3><p class="kpi-value">5</p><span class="badge ok">Al día</span></div>
                 </section>
                 
                 <div class="section-header">
@@ -56,178 +40,99 @@
                 </div>
 
                 <div class="filter-bar">
-                    <div class="filter-group">
-                        <label for="filtro-fecha">Fecha</label>
-                        <input type="date" id="filtro-fecha">
-                    </div>
-                    <div class="filter-group">
-                        <label for="filtro-id">ID de Ticket</label>
-                        <input type="text" id="filtro-id" placeholder="Ej. TK-0045">
-                    </div>
-                    <div class="filter-group">
-                        <label for="filtro-placas">Vehículo</label>
-                        <input type="text" id="filtro-placas" placeholder="Ej. ABC-1234">
-                    </div>
-                    <div class="filter-group">
-                        <label for="filtro-estado-ticket">Estado</label>
-                        <select id="filtro-estado-ticket">
-                            <option value="">Todos</option>
-                            <option value="pendiente">Pendiente</option>
-                            <option value="proceso">En Proceso</option>
-                            <option value="resuelto">Resuelto</option>
-                        </select>
-                    </div>
-                    <div class="filter-actions">
-                        <button class="btn-secondary">Limpiar</button>
-                        <button class="btn-primary">🔍 Buscar</button>
-                    </div>
+                    <div class="filter-group"><label>ID de Ticket</label><input type="text" placeholder="Ej. TK-0045"></div>
+                    <div class="filter-group"><label>Vehículo</label><input type="text" placeholder="Ej. ABC-1234"></div>
+                    <div class="filter-group"><label>Estado</label><select><option value="">Todos</option><option value="pendiente">Pendiente</option></select></div>
+                    <div class="filter-actions"><button class="btn-primary">🔍 Buscar</button></div>
                 </div>
 
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Ticket ID</th>
-                                <th>Asunto</th>
-                                <th>Vehículo Involucrado</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
+                            <tr><th>Fecha</th><th>Ticket ID</th><th>Asunto</th><th>Vehículo Involucrado</th><th>Estado</th><th>Acciones</th></tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>24/Jun/2026</td>
-                                <td>#TK-0045</td>
-                                <td>Choque por alcance (Defensa trasera)</td>
-                                <td><strong>ABC-1234</strong></td>
+                                <td>24/Jun/2026</td><td>#TK-0045</td><td>Choque por alcance (Defensa trasera)</td><td><strong>ABC-1234</strong></td>
                                 <td><span class="badge warning">En Proceso</span></td>
-                                <td class="actions">
-                                    <button class="btn-icon">👁️</button>
-                                </td>
+                                <td class="actions"><button class="btn-icon">👁️</button></td>
                             </tr>
                             <tr>
-                                <td>20/Jun/2026</td>
-                                <td>#TK-0044</td>
-                                <td>Falla en acceso a plataforma</td>
-                                <td>N/A (Soporte Sistema)</td>
+                                <td>20/Jun/2026</td><td>#TK-0044</td><td>Falla en acceso a plataforma</td><td>N/A (Soporte Sistema)</td>
                                 <td><span class="badge danger">Pendiente</span></td>
-                                <td class="actions">
-                                    <button class="btn-icon">👁️</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>15/Jun/2026</td>
-                                <td>#TK-0040</td>
-                                <td>Cristal roto por robo</td>
-                                <td><strong>XYZ-9876</strong></td>
-                                <td><span class="badge ok">Resuelto</span></td>
-                                <td class="actions">
-                                    <button class="btn-icon">👁️</button>
-                                </td>
+                                <td class="actions"><button class="btn-icon">👁️</button></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-
             </main>
         </div>
-        
     </div>
 
     <div class="modal-overlay" id="modal-ticket">
         <div class="modal-content">
-            
             <div class="modal-header">
                 <h2>Levantar Nuevo Ticket</h2>
                 <button class="btn-close" id="btn-cerrar-modal">&times;</button>
             </div>
-            
             <div class="modal-body">
                 <form class="data-form">
-                    
                     <div class="form-row">
-                        <div class="form-group">
-                            <label for="tipo-ticket">Tipo de Reporte</label>
-                            <select id="tipo-ticket" required>
-                                <option value="" disabled selected>Seleccione...</option>
-                                <option value="siniestro">Siniestro / Accidente</option>
-                                <option value="falla_mecanica">Falla Mecánica Imprevista</option>
-                                <option value="soporte">Soporte del Sistema</option>
-                                <option value="otro">Otro</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="fecha-incidente">Fecha del Incidente</label>
-                            <input type="date" id="fecha-incidente" required>
-                        </div>
+                        <div class="form-group"><label>Tipo de Reporte</label><select><option value="siniestro">Siniestro / Accidente</option></select></div>
+                        <div class="form-group"><label>Fecha</label><input type="date" required></div>
                     </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="vehiculo-ticket">Vehículo (Si aplica)</label>
-                            <select id="vehiculo-ticket">
-                                <option value="na">N/A - Soporte del Sistema</option>
-                                <option value="1">ABC-1234 (Nissan NP300)</option>
-                                <option value="2">XYZ-9876 (Ford Transit)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="urgencia">Nivel de Urgencia</label>
-                            <select id="urgencia" required>
-                                <option value="baja">Baja</option>
-                                <option value="media">Media</option>
-                                <option value="alta">Alta (Detiene operación)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="asunto">Asunto Breve</label>
-                        <input type="text" id="asunto" placeholder="Ej. Choque lateral derecho" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="descripcion">Descripción Detallada</label>
-                        <textarea id="descripcion" rows="4" placeholder="Describa cómo ocurrió el incidente o el error en el sistema..." style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Evidencia (Fotos / Capturas de pantalla)</label>
-                        <input type="file" multiple style="width: 100%; padding: 8px; border: 1px dashed #d1d5db; border-radius: 6px; background-color: #f9fafb;">
-                        <small style="color: var(--text-muted); font-size: 11px;">Formatos soportados: JPG, PNG, PDF (Máx 5MB)</small>
-                    </div>
+                    <div class="form-group"><label>Asunto Breve</label><input type="text" required></div>
+                    <div class="form-group"><label>Descripción</label><textarea rows="3" style="width:100%; border:1px solid #d1d5db; border-radius:6px; padding:10px;"></textarea></div>
                 </form>
             </div>
-            
             <div class="modal-footer">
                 <button class="btn-secondary" id="btn-cancelar-modal">Cancelar</button>
-                <button class="btn-primary">Crear Ticket</button>
+                <button class="btn-primary" id="btn-guardar-ticket">Crear Ticket</button>
             </div>
-            
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-visor">
+        <div class="modal-content">
+            <div class="modal-header"><h2 id="visor-titulo">Detalles</h2><button class="btn-close" id="btn-cerrar-visor">&times;</button></div>
+            <div class="modal-body" id="visor-contenido"></div>
+            <div class="modal-footer"><button class="btn-secondary" id="btn-entendido-visor">Cerrar</button></div>
         </div>
     </div>
 
     <script>
-        const btnAbrir = document.getElementById('btn-abrir-modal');
-        const btnCerrar = document.getElementById('btn-cerrar-modal');
-        const btnCancelar = document.getElementById('btn-cancelar-modal');
-        const modal = document.getElementById('modal-ticket');
+        const modalTicket = document.getElementById('modal-ticket');
+        const cerrarTicket = () => modalTicket.classList.remove('active');
+        document.getElementById('btn-abrir-modal').addEventListener('click', () => modalTicket.classList.add('active'));
+        document.getElementById('btn-cerrar-modal').addEventListener('click', cerrarTicket);
+        document.getElementById('btn-cancelar-modal').addEventListener('click', cerrarTicket);
+        document.getElementById('btn-guardar-ticket').addEventListener('click', cerrarTicket);
 
-        btnAbrir.addEventListener('click', () => {
-            modal.classList.add('active');
-        });
+        const modalVisor = document.getElementById('modal-visor');
+        const cerrarVisor = () => modalVisor.classList.remove('active');
+        document.getElementById('btn-cerrar-visor').addEventListener('click', cerrarVisor);
+        document.getElementById('btn-entendido-visor').addEventListener('click', cerrarVisor);
 
-        const cerrarModal = () => modal.classList.remove('active');
-        btnCerrar.addEventListener('click', cerrarModal);
-        btnCancelar.addEventListener('click', cerrarModal);
-
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                cerrarModal();
-            }
+        document.querySelectorAll('.data-table .btn-icon').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (e.target.innerText.includes('👁️')) {
+                    const fila = e.target.closest('tr');
+                    document.getElementById('visor-titulo').innerText = `Seguimiento: ${fila.cells[1].innerText}`;
+                    document.getElementById('visor-contenido').innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div><small style="color: var(--text-muted);">Fecha:</small> <br>${fila.cells[0].innerText}</div>
+                            <div>${fila.cells[4].innerHTML}</div>
+                        </div>
+                        <h3 style="font-size: 16px; margin-bottom: 5px;">${fila.cells[2].innerText}</h3>
+                        <p style="color: var(--text-muted); font-size: 14px;">Vehículo: <strong>${fila.cells[3].innerText}</strong></p>
+                        <div style="border-left: 3px solid var(--primary-color); padding-left: 15px; margin-top: 20px;">
+                            <small style="color: var(--text-muted);">Última actualización (Sistema)</small>
+                            <p style="font-size: 14px; margin-top: 5px;">"Se está procesando su solicitud. El equipo técnico lo está revisando."</p>
+                        </div>`;
+                    modalVisor.classList.add('active');
+                }
+            });
         });
     </script>
-
 </body>
 </html>

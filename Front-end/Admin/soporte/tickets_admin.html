@@ -33,7 +33,6 @@
             </header>
 
             <main class="content-area">
-
                 <section class="kpi-grid">
                     <div class="kpi-card">
                         <h3>Tickets Pendientes</h3>
@@ -85,7 +84,7 @@
                                 <td>Error al exportar reporte PDF</td>
                                 <td><span class="badge danger">Pendiente</span></td>
                                 <td class="actions">
-                                    <button class="btn-primary" style="padding: 5px 10px;" onclick="abrirAtencion()">Atender</button>
+                                    <button class="btn-primary" style="padding: 5px 10px;">Atender</button>
                                 </td>
                             </tr>
                             <tr>
@@ -95,7 +94,7 @@
                                 <td>Duda sobre carga de combustible</td>
                                 <td><span class="badge warning">En Proceso</span></td>
                                 <td class="actions">
-                                    <button class="btn-primary" style="padding: 5px 10px;">Ver</button>
+                                    <button class="btn-primary" style="padding: 5px 10px;">Atender</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -105,32 +104,99 @@
         </div>
     </div>
 
+    <!-- 🪟 MODAL: GESTIÓN DE TICKET  -->
     <div class="modal-overlay" id="modal-atencion">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Gestión de Ticket</h2>
-                <button class="btn-close" onclick="cerrarAtencion()">&times;</button>
+                <h2 id="ticket-modal-title">Gestión de Ticket</h2>
+                <button class="btn-close" id="btn-cerrar-modal">&times;</button>
             </div>
+            
             <div class="modal-body">
-                <p><strong>Usuario:</strong> admin@transportesgarcia.com</p>
+                <p><strong>Usuario / Empresa:</strong> <span id="ticket-modal-empresa">admin@transportesgarcia.com</span></p>
+                
                 <div style="background: #f9fafb; padding: 15px; border-radius: 6px; margin: 10px 0; border: 1px solid #e5e7eb;">
-                    <p><strong>Mensaje:</strong> "Hola, intenté exportar el reporte de PDF y la pantalla se queda en blanco, ¿podrían ayudarme?"</p>
+                    <p><strong>Mensaje:</strong></p>
+                    <p id="ticket-modal-asunto" style="margin-top: 5px;">"Hola, intenté exportar el reporte de PDF y la pantalla se queda en blanco, ¿podrían ayudarme?"</p>
+                </div>
+
+                <!-- NUEVA SECCIÓN: Cambio de estado -->
+                <div style="margin-top: 20px; display: flex; align-items: center; justify-content: space-between; border-top: 1px dashed #d1d5db; padding-top: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label style="font-weight: 600; color: var(--text-main);">Estado Actual:</label>
+                        <select id="select-estado-ticket" style="padding: 8px; border-radius: 4px; border: 1px solid #d1d5db;">
+                            <option value="pendiente">Pendiente</option>
+                            <option value="proceso">En Proceso</option>
+                            <option value="resuelto">Resuelto</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary" id="btn-actualizar-estado" style="width: auto; padding: 8px 15px; font-size: 13px;">Actualizar Estado</button>
                 </div>
             </div>
+
             <div class="modal-footer">
-                <a href="mailto:admin@transportesgarcia.com" class="btn-secondary">Enviar Correo</a>
-                <a href="https://wa.me/521XXXXXXXXXX" target="_blank" class="btn-primary">Responder WhatsApp</a>
+                <a href="#" class="btn-secondary">Enviar Correo</a>
+                <a href="#" class="btn-primary">Responder WhatsApp</a>
             </div>
         </div>
     </div>
 
+    <!-- ⚙️ SCRIPT -->
     <script>
         const modal = document.getElementById('modal-atencion');
-        function abrirAtencion() { modal.classList.add('active'); }
-        function cerrarAtencion() { modal.classList.remove('active'); }
-        
-        // Cierra al hacer clic fuera
-        window.onclick = (e) => { if (e.target == modal) cerrarAtencion(); }
+        let filaActual = null; // Variable para saber qué fila estamos editando
+
+        const cerrarAtencion = () => modal.classList.remove('active');
+
+        // Eventos para cerrar
+        document.getElementById('btn-cerrar-modal').addEventListener('click', cerrarAtencion);
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) cerrarAtencion();
+        });
+
+        // Abrir Modal y cargar datos
+        document.querySelectorAll('.data-table .actions button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                filaActual = e.target.closest('tr');
+                const empresa = filaActual.cells[1].innerText;
+                const idTicket = filaActual.cells[2].innerText;
+                const asunto = filaActual.cells[3].innerText;
+                const estadoTabla = filaActual.cells[4].innerText.toLowerCase();
+
+                // Llenar textos
+                document.getElementById('ticket-modal-title').innerText = `Gestión de Ticket: ${idTicket}`;
+                document.getElementById('ticket-modal-empresa').innerText = empresa;
+                document.getElementById('ticket-modal-asunto').innerText = `"${asunto}"`;
+
+                // Seleccionar el estado correcto en el dropdown según la tabla
+                const selectEstado = document.getElementById('select-estado-ticket');
+                if (estadoTabla.includes('pendiente')) selectEstado.value = 'pendiente';
+                else if (estadoTabla.includes('proceso')) selectEstado.value = 'proceso';
+                else selectEstado.value = 'resuelto';
+
+                modal.classList.add('active');
+            });
+        });
+
+        // Lógica para el botón "Actualizar Estado"
+        document.getElementById('btn-actualizar-estado').addEventListener('click', () => {
+            if (!filaActual) return;
+
+            const nuevoEstado = document.getElementById('select-estado-ticket').value;
+            const celdaEstado = filaActual.cells[4];
+
+            // Reemplazar el HTML de la celda de estado con el badge correcto
+            if (nuevoEstado === 'pendiente') {
+                celdaEstado.innerHTML = '<span class="badge danger">Pendiente</span>';
+            } else if (nuevoEstado === 'proceso') {
+                celdaEstado.innerHTML = '<span class="badge warning">En Proceso</span>';
+            } else if (nuevoEstado === 'resuelto') {
+                celdaEstado.innerHTML = '<span class="badge ok">Resuelto</span>';
+            }
+
+            // Opcional: Cerrar el modal automáticamente o dejarlo abierto
+            cerrarAtencion();
+        });
     </script>
 </body>
 </html>

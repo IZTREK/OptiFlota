@@ -9,7 +9,6 @@
 <body>
     <div class="app-container">
         
-        <!-- Menú Lateral -->
         <aside class="sidebar">
             <div class="sidebar-logo">
                 <h2>OptiFlota</h2>
@@ -25,7 +24,6 @@
             </nav>
         </aside> 
 
-        <!-- Contenido Principal -->
         <div class="main-content">
             <header class="topbar">
                 <div class="page-title">
@@ -57,7 +55,6 @@
                     <button class="btn-primary btn-auto" id="btn-abrir-modal">+ Registrar Carga</button>
                 </div>
 
-                <!-- 🔍 BARRA DE BÚSQUEDA CORREGIDA -->
                 <div class="filter-bar">
                     <div class="filter-group">
                         <label for="filtro-fecha-inicio">Desde</label>
@@ -73,17 +70,9 @@
                     </div>
                     <div class="filter-group">
                         <label for="filtro-estacion">Estación Gasolinera</label>
-                        <!-- Usamos input con datalist para permitir texto libre con sugerencias -->
                         <input type="text" id="filtro-estacion" list="marcas-gasolineras" placeholder="Nombre o marca...">
                         <datalist id="marcas-gasolineras">
-                            <option value="Pemex">
-                            <option value="Oxxo Gas">
-                            <option value="Mobil">
-                            <option value="BP">
-                            <option value="G500">
-                            <option value="Shell">
-                            <option value="Chevron">
-                            <option value="Repsol">
+                            <option value="Pemex"><option value="Oxxo Gas"><option value="Mobil"><option value="BP"><option value="G500"><option value="Shell">
                         </datalist>
                     </div>
                     <div class="filter-actions">
@@ -92,7 +81,6 @@
                     </div>
                 </div>
 
-                <!-- Tabla de Datos -->
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
@@ -135,20 +123,14 @@
 
             </main>
         </div>
-        
     </div>
 
-    <!-- ========================================== -->
-    <!-- 🪟 MODAL: REGISTRAR COMBUSTIBLE -->
-    <!-- ========================================== -->
     <div class="modal-overlay" id="modal-combustible">
         <div class="modal-content">
-            
             <div class="modal-header">
                 <h2>Registrar Carga de Combustible</h2>
                 <button class="btn-close" id="btn-cerrar-modal">&times;</button>
             </div>
-            
             <div class="modal-body">
                 <form class="data-form">
                     <div class="form-row">
@@ -165,65 +147,76 @@
                             <input type="date" id="fecha-carga" required>
                         </div>
                     </div>
-                    
                     <div class="form-row">
-                        <div class="form-group">
-                            <label for="litros">Litros Cargados</label>
-                            <input type="number" id="litros" step="0.01" placeholder="Ej. 40.5" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="costo">Costo Total ($)</label>
-                            <input type="number" id="costo" step="0.01" placeholder="Ej. 950.00" required>
-                        </div>
+                        <div class="form-group"><label for="litros">Litros Cargados</label><input type="number" id="litros" step="0.01" required></div>
+                        <div class="form-group"><label for="costo">Costo Total ($)</label><input type="number" id="costo" step="0.01" required></div>
                     </div>
-
                     <div class="form-row">
-                        <div class="form-group">
-                            <label for="odometro">Odómetro (Kilometraje)</label>
-                            <input type="number" id="odometro" placeholder="Kms al momento de cargar" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="estacion">Estación / Gasolinera</label>
-                            <input type="text" id="estacion" list="marcas-gasolineras" placeholder="Ej. Pemex Carr. 57" required>
-                        </div>
+                        <div class="form-group"><label for="odometro">Odómetro (Kilometraje)</label><input type="number" id="odometro" required></div>
+                        <div class="form-group"><label for="estacion">Estación</label><input type="text" id="estacion" required></div>
                     </div>
-                    
                     <div class="form-group">
                         <label>Comprobante (Ticket/Factura)</label>
                         <input type="file" style="width: 100%; padding: 8px; border: 1px dashed #d1d5db; border-radius: 6px; background-color: #f9fafb;">
                     </div>
                 </form>
             </div>
-            
             <div class="modal-footer">
                 <button class="btn-secondary" id="btn-cancelar-modal">Cancelar</button>
-                <button class="btn-primary">Guardar Registro</button>
+                <button class="btn-primary" id="btn-guardar-combustible">Guardar Registro</button>
             </div>
-            
         </div>
     </div>
 
-    <!-- ⚙️ SCRIPT PARA EL MODAL -->
+    <div class="modal-overlay" id="modal-visor">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="visor-titulo">Detalles</h2>
+                <button class="btn-close" id="btn-cerrar-visor">&times;</button>
+            </div>
+            <div class="modal-body" id="visor-contenido"></div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="btn-entendido-visor">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const btnAbrir = document.getElementById('btn-abrir-modal');
-        const btnCerrar = document.getElementById('btn-cerrar-modal');
-        const btnCancelar = document.getElementById('btn-cancelar-modal');
         const modal = document.getElementById('modal-combustible');
-
-        btnAbrir.addEventListener('click', () => {
-            modal.classList.add('active');
-        });
-
         const cerrarModal = () => modal.classList.remove('active');
-        btnCerrar.addEventListener('click', cerrarModal);
-        btnCancelar.addEventListener('click', cerrarModal);
+        document.getElementById('btn-abrir-modal').addEventListener('click', () => modal.classList.add('active'));
+        document.getElementById('btn-cerrar-modal').addEventListener('click', cerrarModal);
+        document.getElementById('btn-cancelar-modal').addEventListener('click', cerrarModal);
+        document.getElementById('btn-guardar-combustible').addEventListener('click', cerrarModal);
 
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                cerrarModal();
-            }
+        const modalVisor = document.getElementById('modal-visor');
+        const cerrarVisor = () => modalVisor.classList.remove('active');
+        document.getElementById('btn-cerrar-visor').addEventListener('click', cerrarVisor);
+        document.getElementById('btn-entendido-visor').addEventListener('click', cerrarVisor);
+
+        document.querySelectorAll('.data-table .btn-icon').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (e.target.innerText.includes('👁️')) {
+                    const fila = e.target.closest('tr');
+                    document.getElementById('visor-titulo').innerText = "Ticket de Combustible";
+                    document.getElementById('visor-contenido').innerHTML = `
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <h3 style="color: var(--primary-color); font-size: 24px;">${fila.cells[3].innerText}</h3>
+                            <p style="color: var(--text-muted);">Cargado: ${fila.cells[2].innerText}</p>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding-top: 15px; border-top: 1px dashed #d1d5db;">
+                            <div><small style="color: var(--text-muted);">Vehículo</small><p><strong>${fila.cells[1].innerText}</strong></p></div>
+                            <div><small style="color: var(--text-muted);">Fecha</small><p>${fila.cells[0].innerText}</p></div>
+                            <div><small style="color: var(--text-muted);">Odómetro</small><p>${fila.cells[4].innerText}</p></div>
+                            <div><small style="color: var(--text-muted);">Estación</small><p>${fila.cells[5].innerText}</p></div>
+                        </div>
+                        <div style="margin-top: 20px; text-align: center;">
+                            <button class="btn-secondary" style="width: 100%;">📄 Ver Comprobante Escaneado</button>
+                        </div>`;
+                    modalVisor.classList.add('active');
+                }
+            });
         });
     </script>
-
 </body>
 </html>

@@ -10,9 +10,7 @@
     <div class="app-container">
         
         <aside class="sidebar">
-            <div class="sidebar-logo">
-                <h2>OptiFlota</h2>
-            </div>
+            <div class="sidebar-logo"><h2>OptiFlota</h2></div>
             <nav class="sidebar-nav">
                 <a href="../index.html" class="nav-item">📊 Dashboard</a>
                 <a href="../vehiculos/vehiculos.html" class="nav-item">🚗 Vehículos</a>
@@ -26,27 +24,14 @@
 
         <div class="main-content">
             <header class="topbar">
-                <div class="page-title">
-                    <h1>Control de Mantenimiento</h1>
-                </div>
-                <div class="user-profile">
-                    <span>Transportes García</span>
-                    <div class="avatar">TG</div>
-                </div>
+                <div class="page-title"><h1>Control de Mantenimiento</h1></div>
+                <div class="user-profile"><span>Transportes García</span><div class="avatar">TG</div></div>
             </header>
 
             <main class="content-area">
-
                 <section class="kpi-grid">
-                    <div class="kpi-card">
-                        <h3>Inversión en Mantenimiento (Mes)</h3>
-                        <p class="kpi-value">$12,400</p>
-                    </div>
-                    <div class="kpi-card">
-                        <h3>Servicios Programados</h3>
-                        <p class="kpi-value">3</p>
-                        <span class="badge warning">Próximos a vencer</span>
-                    </div>
+                    <div class="kpi-card"><h3>Inversión en Mantenimiento (Mes)</h3><p class="kpi-value">$12,400</p></div>
+                    <div class="kpi-card"><h3>Servicios Programados</h3><p class="kpi-value">3</p><span class="badge warning">Próximos a vencer</span></div>
                 </section>
                 
                 <div class="section-header">
@@ -55,162 +40,112 @@
                 </div>
 
                 <div class="filter-bar">
-                    <div class="filter-group">
-                        <label for="filtro-mes">Mes de Servicio</label>
-                        <input type="month" id="filtro-mes">
-                    </div>
-                    <div class="filter-group">
-                        <label for="filtro-placas">Vehículo</label>
-                        <input type="text" id="filtro-placas" placeholder="Ej. ABC-1234">
-                    </div>
-                    <div class="filter-group">
-                        <label for="filtro-tipo">Tipo de Servicio</label>
-                        <select id="filtro-tipo">
-                            <option value="">Todos</option>
-                            <option value="preventivo">Preventivo</option>
-                            <option value="correctivo">Correctivo</option>
-                        </select>
-                    </div>
-                    <div class="filter-actions">
-                        <button class="btn-secondary">Limpiar</button>
-                        <button class="btn-primary">🔍 Buscar</button>
-                    </div>
+                    <div class="filter-group"><label>Mes de Servicio</label><input type="month"></div>
+                    <div class="filter-group"><label>Vehículo</label><input type="text" placeholder="Ej. ABC-1234"></div>
+                    <div class="filter-group"><label>Tipo de Servicio</label><select><option value="">Todos</option><option value="preventivo">Preventivo</option><option value="correctivo">Correctivo</option></select></div>
+                    <div class="filter-actions"><button class="btn-secondary">Limpiar</button><button class="btn-primary">🔍 Buscar</button></div>
                 </div>
 
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Vehículo</th>
-                                <th>Tipo</th>
-                                <th>Detalle</th>
-                                <th>Costo</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
+                            <tr><th>Fecha</th><th>Vehículo</th><th>Tipo</th><th>Detalle</th><th>Costo</th><th>Estado</th><th>Acciones</th></tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>22/Jun/2026</td>
-                                <td><strong>ABC-1234</strong></td>
-                                <td><span class="badge ok">Preventivo</span></td>
-                                <td>Afinación mayor y cambio de aceite</td>
-                                <td>$2,500.00</td>
-                                <td>Terminado</td>
-                                <td class="actions">
-                                    <button class="btn-icon">👁️</button>
-                                </td>
+                                <td>22/Jun/2026</td><td><strong>ABC-1234</strong></td><td><span class="badge ok">Preventivo</span></td>
+                                <td>Afinación mayor y cambio de aceite</td><td>$2,500.00</td><td>Terminado</td>
+                                <td class="actions"><button class="btn-icon">👁️</button></td>
                             </tr>
                             <tr>
-                                <td>24/Jun/2026</td>
-                                <td><strong>XYZ-9876</strong></td>
-                                <td><span class="badge danger">Correctivo</span></td>
-                                <td>Cambio de balatas y rectificado</td>
-                                <td>$4,200.00</td>
-                                <td>En Taller</td>
-                                <td class="actions">
-                                    <button class="btn-icon">👁️</button>
-                                </td>
+                                <td>24/Jun/2026</td><td><strong>XYZ-9876</strong></td><td><span class="badge danger">Correctivo</span></td>
+                                <td>Cambio de balatas y rectificado</td><td>$4,200.00</td><td>En Taller</td>
+                                <td class="actions"><button class="btn-icon">👁️</button></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-
             </main>
         </div>
-        
     </div>
 
     <div class="modal-overlay" id="modal-mantenimiento">
         <div class="modal-content">
-            
             <div class="modal-header">
                 <h2>Registrar Servicio de Mantenimiento</h2>
                 <button class="btn-close" id="btn-cerrar-modal">&times;</button>
             </div>
-            
             <div class="modal-body">
                 <form class="data-form">
                     <div class="form-row">
-                        <div class="form-group">
-                            <label for="vehiculo-mant">Vehículo</label>
-                            <select id="vehiculo-mant" required>
-                                <option value="" disabled selected>Seleccione la unidad...</option>
-                                <option value="1">ABC-1234 (Nissan NP300)</option>
-                                <option value="2">XYZ-9876 (Ford Transit)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="fecha-mant">Fecha del Servicio</label>
-                            <input type="date" id="fecha-mant" required>
-                        </div>
+                        <div class="form-group"><label>Vehículo</label><select required><option value="1">ABC-1234</option></select></div>
+                        <div class="form-group"><label>Fecha</label><input type="date" required></div>
                     </div>
-                    
                     <div class="form-row">
-                        <div class="form-group">
-                            <label for="tipo-mant">Tipo de Servicio</label>
-                            <select id="tipo-mant" required>
-                                <option value="" disabled selected>Seleccione...</option>
-                                <option value="preventivo">Preventivo (Programado)</option>
-                                <option value="correctivo">Correctivo (Falla)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="costo-mant">Costo Total ($)</label>
-                            <input type="number" id="costo-mant" step="0.01" placeholder="Ej. 2500.00" required>
-                        </div>
+                        <div class="form-group"><label>Tipo de Servicio</label><select><option value="preventivo">Preventivo</option><option value="correctivo">Correctivo</option></select></div>
+                        <div class="form-group"><label>Costo Total ($)</label><input type="number" required></div>
                     </div>
-
                     <div class="form-group">
-                        <label for="detalle-mant">Detalle de los Trabajos</label>
-                        <textarea id="detalle-mant" rows="3" placeholder="Ej. Cambio de aceite, balatas, revisión de frenos..." style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
+                        <label>Detalle de los Trabajos</label>
+                        <textarea rows="3" style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px;"></textarea>
                     </div>
-
                     <div class="form-row">
-                        <div class="form-group">
-                            <label for="estado-mant">Estado del Servicio</label>
-                            <select id="estado-mant" required>
-                                <option value="taller">En Taller (En Proceso)</option>
-                                <option value="terminado">Terminado (Entregado)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Factura / Cotización</label>
-                            <input type="file" style="width: 100%; padding: 8px; border: 1px dashed #d1d5db; border-radius: 6px; background-color: #f9fafb;">
-                        </div>
+                        <div class="form-group"><label>Estado</label><select><option value="taller">En Taller</option><option value="terminado">Terminado</option></select></div>
+                        <div class="form-group"><label>Factura</label><input type="file" style="width:100%;"></div>
                     </div>
                 </form>
             </div>
-            
             <div class="modal-footer">
                 <button class="btn-secondary" id="btn-cancelar-modal">Cancelar</button>
-                <button class="btn-primary">Guardar Servicio</button>
+                <button class="btn-primary" id="btn-guardar-mant">Guardar Servicio</button>
             </div>
-            
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-visor">
+        <div class="modal-content">
+            <div class="modal-header"><h2 id="visor-titulo">Detalles</h2><button class="btn-close" id="btn-cerrar-visor">&times;</button></div>
+            <div class="modal-body" id="visor-contenido"></div>
+            <div class="modal-footer"><button class="btn-secondary" id="btn-entendido-visor">Cerrar</button></div>
         </div>
     </div>
 
     <script>
-        const btnAbrir = document.getElementById('btn-abrir-modal');
-        const btnCerrar = document.getElementById('btn-cerrar-modal');
-        const btnCancelar = document.getElementById('btn-cancelar-modal');
-        const modal = document.getElementById('modal-mantenimiento');
+        const modalMant = document.getElementById('modal-mantenimiento');
+        const cerrarMant = () => modalMant.classList.remove('active');
+        document.getElementById('btn-abrir-modal').addEventListener('click', () => modalMant.classList.add('active'));
+        document.getElementById('btn-cerrar-modal').addEventListener('click', cerrarMant);
+        document.getElementById('btn-cancelar-modal').addEventListener('click', cerrarMant);
+        document.getElementById('btn-guardar-mant').addEventListener('click', cerrarMant);
 
-        btnAbrir.addEventListener('click', () => {
-            modal.classList.add('active');
-        });
+        const modalVisor = document.getElementById('modal-visor');
+        const cerrarVisor = () => modalVisor.classList.remove('active');
+        document.getElementById('btn-cerrar-visor').addEventListener('click', cerrarVisor);
+        document.getElementById('btn-entendido-visor').addEventListener('click', cerrarVisor);
 
-        const cerrarModal = () => modal.classList.remove('active');
-        btnCerrar.addEventListener('click', cerrarModal);
-        btnCancelar.addEventListener('click', cerrarModal);
-
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                cerrarModal();
-            }
+        document.querySelectorAll('.data-table .btn-icon').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (e.target.innerText.includes('👁️')) {
+                    const fila = e.target.closest('tr');
+                    document.getElementById('visor-titulo').innerText = "Orden de Servicio";
+                    document.getElementById('visor-contenido').innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <span style="font-size: 14px;"><strong>Vehículo:</strong> ${fila.cells[1].innerText}</span>
+                            ${fila.cells[2].innerHTML}
+                        </div>
+                        <div style="background: #f9fafb; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb; margin-bottom: 15px;">
+                            <small style="color: var(--text-muted);">Trabajos Realizados</small>
+                            <p style="margin-top: 5px; font-weight: 500;">${fila.cells[3].innerText}</p>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                            <div><small style="color: var(--text-muted);">Fecha</small><p>${fila.cells[0].innerText}</p></div>
+                            <div><small style="color: var(--text-muted);">Costo</small><p style="color: var(--primary-color); font-weight:bold;">${fila.cells[4].innerText}</p></div>
+                            <div><small style="color: var(--text-muted);">Estado</small><p>${fila.cells[5].innerText}</p></div>
+                        </div>`;
+                    modalVisor.classList.add('active');
+                }
+            });
         });
     </script>
-
 </body>
 </html>
