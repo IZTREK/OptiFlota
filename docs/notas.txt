@@ -1,0 +1,271 @@
+Es un consolidado de facturación de combustible para una flotilla de vehículos, al que posteriormente se le realizan cálculos de rendimiento y se genera un tablero de análisis.
+
+Contiene más de 1 millón de registros (1,045,365 filas) en la hoja principal, por lo que funciona como una base de datos histórica de todas las cargas de combustible.
+
+
+
+Hojas del archivo
+
+DATA (la más importante)
+
+
+
+Contiene todas las transacciones de combustible.
+
+
+
+Tiene 46 columnas y más de un millón de registros.
+
+Algunos datos que almacena son:
+
+
+
+Región
+
+
+
+Centro de costos
+
+
+
+Vehículo
+
+
+
+Placas
+
+
+
+Fecha de la carga
+
+
+
+Hora
+
+
+
+Tipo de combustible
+
+
+
+Litros
+
+
+
+Precio por litro
+
+
+
+Importe
+
+
+
+Kilometraje anterior
+
+
+
+Kilometraje actual
+
+
+
+Kilómetros recorridos
+
+
+
+Rendimiento ideal
+
+
+
+Rendimiento real
+
+
+
+Conductor
+
+
+
+Gasolinera
+
+
+
+Semana
+
+
+
+Indicadores de confiabilidad
+
+Dinamica
+
+Esta es una hoja de resultados.
+
+Muestra un resumen por vehículo con columnas como:
+
+EcoLitrosCostoKm/L IdealKm/L RealComparaciónComentario
+
+Por ejemplo aparecen comentarios como:
+
+
+
+
+
+Error en km ideal
+
+
+
+Error en registro de km
+
+También calcula automáticamente si el rendimiento es confiable.
+
+Tiene fórmulas como:
+
+
+
+
+
+IF(ABS(E-D)/ABS(D)>0.21,">20%","OK")
+
+
+
+
+
+Es decir:
+
+Si la diferencia entre el rendimiento esperado y el real supera el 21%, marca el registro como sospechoso.
+
+WEST PV
+
+Es una tabla auxiliar.
+
+Desde la hoja DATA se hacen búsquedas mediante:
+
+
+
+
+
+XLOOKUP(...)
+
+
+
+
+
+para traer información adicional de cada vehículo.
+
+FREIGHTLINER1828R
+
+Contiene únicamente la información de un vehículo específico.
+
+Probablemente sirve para analizarlo individualmente.
+
+Rendimiento FREIGHTLINER1828R
+
+Es un pequeño reporte del rendimiento histórico de ese mismo vehículo.
+
+Flujo del archivo
+
+El proceso parece ser:
+
+
+
+Facturación de combustible
+
+│
+
+▼
+
+Hoja DATA
+
+(todas las cargas)
+
+│
+
+▼
+
+Se calculan:
+
+
+
+• kilómetros recorridos
+
+• litros
+
+• rendimiento real
+
+• rendimiento ideal
+
+• diferencia
+
+• confiabilidad
+
+│
+
+▼
+
+Hoja Dinámica
+
+(resumen para análisis)
+
+
+
+¿Qué indicadores calcula?
+
+Entre los principales están:
+
+
+
+
+
+Rendimiento ideal (Km/L)
+
+
+
+Rendimiento real (Km/L)
+
+
+
+Diferencia entre ambos
+
+
+
+Litros consumidos
+
+
+
+Importe gastado
+
+
+
+Kilómetros recorridos
+
+
+
+Confiabilidad de la información
+
+
+
+Comentarios cuando existen anomalías
+
+¿Para qué sirve?
+
+Parece ser un archivo utilizado por el área de logística o administración de flotillas para:
+
+
+
+
+
+Controlar el consumo de combustible.
+
+
+
+Detectar errores en los kilometrajes capturados.
+
+
+
+Detectar posibles cargas anormales o inconsistencias.
+
+
+
+Comparar el rendimiento real contra el esperado.
+
+
+
+Analizar el gasto por vehículo, conductor, región o centro de costos.

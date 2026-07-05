@@ -14,10 +14,10 @@
                 <h2>OptiFlota <span style="color: var(--primary-color); font-size: 14px;">ADMIN</span></h2>
             </div>
             <nav class="sidebar-nav">
-                <a href="../admin_dashboard.html" class="nav-item">📊 Vista Global</a>
-                <a href="../empresas/empresas.html" class="nav-item">🏢 Empresas</a>
-                <a href="../pagos/pagos.html" class="nav-item">💳 Control de Pagos</a>
-                <a href="../soporte/tickets_admin.html" class="nav-item active">🎫 Soporte Técnico</a>
+                <a href="../admin_dashboard.html" class="nav-item">Vista Global</a>
+                <a href="../empresas/empresas.html" class="nav-item">Empresas</a>
+                <a href="../pagos/pagos.html" class="nav-item">Control de Pagos</a>
+                <a href="../soporte/tickets_admin.html" class="nav-item active">Soporte Técnico</a>
             </nav>
         </aside> 
 
@@ -60,7 +60,10 @@
                     </div>
                     <div class="filter-actions">
                         <button class="btn-secondary">Limpiar</button>
-                        <button class="btn-primary">🔍 Filtrar</button>
+                        <button class="btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+                            <span>Filtrar</span>
+                        </button>
                     </div>
                 </div>
 
@@ -104,7 +107,6 @@
         </div>
     </div>
 
-    <!-- 🪟 MODAL: GESTIÓN DE TICKET  -->
     <div class="modal-overlay" id="modal-atencion">
         <div class="modal-content">
             <div class="modal-header">
@@ -120,7 +122,6 @@
                     <p id="ticket-modal-asunto" style="margin-top: 5px;">"Hola, intenté exportar el reporte de PDF y la pantalla se queda en blanco, ¿podrían ayudarme?"</p>
                 </div>
 
-                <!-- NUEVA SECCIÓN: Cambio de estado -->
                 <div style="margin-top: 20px; display: flex; align-items: center; justify-content: space-between; border-top: 1px dashed #d1d5db; padding-top: 15px;">
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <label style="font-weight: 600; color: var(--text-main);">Estado Actual:</label>
@@ -141,20 +142,17 @@
         </div>
     </div>
 
-    <!-- ⚙️ SCRIPT -->
     <script>
         const modal = document.getElementById('modal-atencion');
-        let filaActual = null; // Variable para saber qué fila estamos editando
+        let filaActual = null;
 
         const cerrarAtencion = () => modal.classList.remove('active');
 
-        // Eventos para cerrar
         document.getElementById('btn-cerrar-modal').addEventListener('click', cerrarAtencion);
         window.addEventListener('click', (e) => {
             if (e.target === modal) cerrarAtencion();
         });
 
-        // Abrir Modal y cargar datos
         document.querySelectorAll('.data-table .actions button').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 filaActual = e.target.closest('tr');
@@ -163,12 +161,10 @@
                 const asunto = filaActual.cells[3].innerText;
                 const estadoTabla = filaActual.cells[4].innerText.toLowerCase();
 
-                // Llenar textos
                 document.getElementById('ticket-modal-title').innerText = `Gestión de Ticket: ${idTicket}`;
                 document.getElementById('ticket-modal-empresa').innerText = empresa;
                 document.getElementById('ticket-modal-asunto').innerText = `"${asunto}"`;
 
-                // Seleccionar el estado correcto en el dropdown según la tabla
                 const selectEstado = document.getElementById('select-estado-ticket');
                 if (estadoTabla.includes('pendiente')) selectEstado.value = 'pendiente';
                 else if (estadoTabla.includes('proceso')) selectEstado.value = 'proceso';
@@ -178,14 +174,12 @@
             });
         });
 
-        // Lógica para el botón "Actualizar Estado"
         document.getElementById('btn-actualizar-estado').addEventListener('click', () => {
             if (!filaActual) return;
 
             const nuevoEstado = document.getElementById('select-estado-ticket').value;
             const celdaEstado = filaActual.cells[4];
 
-            // Reemplazar el HTML de la celda de estado con el badge correcto
             if (nuevoEstado === 'pendiente') {
                 celdaEstado.innerHTML = '<span class="badge danger">Pendiente</span>';
             } else if (nuevoEstado === 'proceso') {
@@ -194,7 +188,6 @@
                 celdaEstado.innerHTML = '<span class="badge ok">Resuelto</span>';
             }
 
-            // Opcional: Cerrar el modal automáticamente o dejarlo abierto
             cerrarAtencion();
         });
     </script>

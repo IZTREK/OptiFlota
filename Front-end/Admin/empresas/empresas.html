@@ -14,10 +14,10 @@
                 <h2>OptiFlota <span style="color: var(--primary-color); font-size: 14px;">ADMIN</span></h2>
             </div>
             <nav class="sidebar-nav">
-                <a href="../admin_dashboard.html" class="nav-item">📊 Vista Global</a>
-                <a href="../empresas/empresas.html" class="nav-item active">🏢 Empresas</a>
-                <a href="../pagos/pagos.html" class="nav-item">💳 Control de Pagos</a>
-                <a href="../soporte/tickets_admin.html" class="nav-item">🎫 Soporte Técnico</a>
+                <a href="../admin_dashboard.html" class="nav-item">Vista Global</a>
+                <a href="../empresas/empresas.html" class="nav-item active">Empresas</a>
+                <a href="../pagos/pagos.html" class="nav-item">Control de Pagos</a>
+                <a href="../soporte/tickets_admin.html" class="nav-item">Soporte Técnico</a>
             </nav>
         </aside> 
 
@@ -49,7 +49,6 @@
                         <p class="kpi-value">345</p>
                     </div>
                 </section>
-                
                 <div class="section-header">
                     <p class="subtitle">Administración de accesos y suscripciones de clientes</p>
                     <button class="btn-primary btn-auto" id="btn-abrir-modal">+ Nueva Empresa</button>
@@ -71,7 +70,10 @@
                     </div>
                     <div class="filter-actions">
                         <button class="btn-secondary">Limpiar</button>
-                        <button class="btn-primary">🔍 Buscar</button>
+                        <button class="btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+                            <span>Buscar</span>
+                        </button>
                     </div>
                 </div>
 
@@ -95,8 +97,12 @@
                                 <td>31/Dic/2026</td>
                                 <td><span class="badge ok">Activa</span></td>
                                 <td class="actions">
-                                    <button class="btn-icon" title="Editar Suscripción">✏️</button>
-                                    <button class="btn-icon" title="Bloquear Acceso">🚫</button>
+                                    <button class="btn-icon" title="Editar Suscripción" aria-label="Editar Suscripción" data-action="edit" style="display: inline-flex; align-items: center; justify-content: center;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 20 4-1 11-11-3-3L5 16l-1 4Z"></path><path d="M13 6 17 10"></path></svg>
+                                    </button>
+                                    <button class="btn-icon" title="Bloquear Acceso" aria-label="Bloquear Acceso" data-action="block" style="display: inline-flex; align-items: center; justify-content: center;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 8 8 8"></path></svg>
+                                    </button>
                                 </td>
                             </tr>
                             <tr>
@@ -106,8 +112,12 @@
                                 <td>15/Jun/2026</td>
                                 <td><span class="badge danger">Suspendida</span></td>
                                 <td class="actions">
-                                    <button class="btn-icon" title="Editar Suscripción">✏️</button>
-                                    <button class="btn-icon ok" title="Reactivar">✅</button>
+                                    <button class="btn-icon" title="Editar Suscripción" aria-label="Editar Suscripción" data-action="edit" style="display: inline-flex; align-items: center; justify-content: center;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 20 4-1 11-11-3-3L5 16l-1 4Z"></path><path d="M13 6 17 10"></path></svg>
+                                    </button>
+                                    <button class="btn-icon ok" title="Reactivar" aria-label="Reactivar" data-action="reactivate" style="display: inline-flex; align-items: center; justify-content: center;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+                                    </button>
                                 </td>
                             </tr>
                         </tbody>
@@ -117,7 +127,6 @@
         </div>
     </div>
 
-    <!-- 🪟 MODAL: NUEVA EMPRESA -->
     <div class="modal-overlay" id="modal-empresa">
         <div class="modal-content">
             <div class="modal-header">
@@ -142,7 +151,7 @@
                         </div>
                     </div>
                     
-                    <!-- LOS CAMPOS RESTAURADOS DE PLAN Y VENCIMIENTO -->
+                    
                     <div class="form-row">
                         <div class="form-group">
                             <label>Plan Inicial</label>
@@ -168,7 +177,6 @@
         </div>
     </div>
 
-    <!-- ⚙️ SCRIPT -->
     <script>
         const modalEmpresa = document.getElementById('modal-empresa');
         const cerrarModal = () => modalEmpresa.classList.remove('active');
@@ -185,24 +193,29 @@
 
         document.querySelectorAll('.data-table .btn-icon').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const fila = e.target.closest('tr');
-                if (e.target.innerText.includes('🚫')) {
+                const button = e.currentTarget;
+                const fila = button.closest('tr');
+                if (button.dataset.action === 'block') {
                     if (confirm(`¿Suspender acceso a la empresa ${fila.cells[0].innerText}?`)) {
                         fila.cells[4].innerHTML = '<span class="badge danger">Suspendida</span>';
-                        e.target.innerText = '✅'; 
-                        e.target.title = 'Reactivar'; 
-                        e.target.classList.add('ok');
+                        button.dataset.action = 'reactivate';
+                        button.title = 'Reactivar'; 
+                        button.setAttribute('aria-label', 'Reactivar');
+                        button.classList.add('ok');
+                        button.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>';
                     }
                 } 
-                else if (e.target.innerText.includes('✅')) {
+                else if (button.dataset.action === 'reactivate') {
                     if (confirm(`¿Reactivar cuenta de ${fila.cells[0].innerText}?`)) {
                         fila.cells[4].innerHTML = '<span class="badge ok">Activa</span>';
-                        e.target.innerText = '🚫'; 
-                        e.target.title = 'Bloquear Acceso'; 
-                        e.target.classList.remove('ok');
+                        button.dataset.action = 'block';
+                        button.title = 'Bloquear Acceso'; 
+                        button.setAttribute('aria-label', 'Bloquear Acceso');
+                        button.classList.remove('ok');
+                        button.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 8 8 8"></path></svg>';
                     }
                 }
-                else if (e.target.innerText.includes('✏️')) {
+                else if (button.dataset.action === 'edit') {
                     document.querySelector('.modal-header h2').innerText = `Editar Cliente: ${fila.cells[0].innerText}`;
                     modalEmpresa.classList.add('active');
                 }

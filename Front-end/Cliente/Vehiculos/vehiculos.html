@@ -14,13 +14,13 @@
                 <h2>OptiFlota</h2>
             </div>
             <nav class="sidebar-nav">
-                <a href="../index.html" class="nav-item">📊 Dashboard</a>
-                <a href="../vehiculos/vehiculos.html" class="nav-item active">🚗 Vehículos</a>
-                <a href="../diagnosticos/diagnosticos.html" class="nav-item">📋 Diagnósticos</a>
-                <a href="../combustible/combustible.html" class="nav-item">⛽ Combustible</a>
-                <a href="../mantenimiento/mantenimiento.html" class="nav-item">🔧 Mantenimiento</a>
-                <a href="../siniestros/tickets.html" class="nav-item">🎫 Tickets</a>
-                <a href="../suscripcion/suscripcion.html" class="nav-item">👤 Suscripción</a>
+                <a href="../index.html" class="nav-item">Dashboard</a>
+                <a href="../vehiculos/vehiculos.html" class="nav-item active">Vehículos</a>
+                <a href="../diagnosticos/diagnosticos.html" class="nav-item">Diagnósticos</a>
+                <a href="../combustible/combustible.html" class="nav-item">Combustible</a>
+                <a href="../mantenimiento/mantenimiento.html" class="nav-item">Mantenimiento</a>
+                <a href="../siniestros/tickets.html" class="nav-item">Tickets</a>
+                <a href="../suscripcion/suscripcion.html" class="nav-item">Suscripción</a>
             </nav>
         </aside> 
 
@@ -62,7 +62,10 @@
                     </div>
                     <div class="filter-actions">
                         <button class="btn-secondary">Limpiar</button>
-                        <button class="btn-primary">🔍 Buscar</button>
+                        <button class="btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+                            <span>Buscar</span>
+                        </button>
                     </div>
                 </div>
 
@@ -86,8 +89,12 @@
                                 <td>45,000 km</td>
                                 <td><span class="badge ok">Activo</span></td>
                                 <td class="actions">
-                                    <button class="btn-icon">✏️</button>
-                                    <button class="btn-icon delete">🗑️</button>
+                                    <button class="btn-icon" title="Editar vehículo" aria-label="Editar vehículo" data-action="edit" style="display: inline-flex; align-items: center; justify-content: center;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 20 4-1 11-11-3-3L5 16l-1 4Z"></path><path d="M13 6 17 10"></path></svg>
+                                    </button>
+                                    <button class="btn-icon delete" title="Dar de baja" aria-label="Dar de baja" data-action="delete" style="display: inline-flex; align-items: center; justify-content: center;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M6 6l1 14h10l1-14"></path><path d="M10 11v5M14 11v5"></path></svg>
+                                    </button>
                                 </td>
                             </tr>
                             <tr>
@@ -97,8 +104,12 @@
                                 <td>112,400 km</td>
                                 <td><span class="badge warning">Taller</span></td>
                                 <td class="actions">
-                                    <button class="btn-icon">✏️</button>
-                                    <button class="btn-icon delete">🗑️</button>
+                                    <button class="btn-icon" title="Editar vehículo" aria-label="Editar vehículo" data-action="edit" style="display: inline-flex; align-items: center; justify-content: center;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 20 4-1 11-11-3-3L5 16l-1 4Z"></path><path d="M13 6 17 10"></path></svg>
+                                    </button>
+                                    <button class="btn-icon delete" title="Dar de baja" aria-label="Dar de baja" data-action="delete" style="display: inline-flex; align-items: center; justify-content: center;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M6 6l1 14h10l1-14"></path><path d="M10 11v5M14 11v5"></path></svg>
+                                    </button>
                                 </td>
                             </tr>
                         </tbody>
@@ -168,15 +179,16 @@
 
         document.querySelectorAll('.data-table .btn-icon').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const fila = e.target.closest('tr');
-                if (e.target.innerText.includes('✏️')) {
+                const button = e.currentTarget;
+                const fila = button.closest('tr');
+                if (button.dataset.action === 'edit') {
                     document.querySelector('.modal-header h2').innerText = 'Editar Vehículo';
                     document.getElementById('placas').value = fila.cells[0].innerText;
                     document.getElementById('marca').value = fila.cells[1].innerText;
                     document.getElementById('anio').value = fila.cells[2].innerText;
                     document.getElementById('kilometraje').value = fila.cells[3].innerText.replace(/[^0-9]/g, '');
                     modalVehiculo.classList.add('active');
-                } else if (e.target.innerText.includes('🗑️')) {
+                } else if (button.dataset.action === 'delete') {
                     if (confirm(`¿Dar de baja la unidad ${fila.cells[0].innerText}?`)) {
                         fila.cells[4].innerHTML = '<span class="badge danger">Inactivo</span>';
                     }

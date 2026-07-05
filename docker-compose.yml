@@ -1,0 +1,56 @@
+version: '3.8'
+
+# Definición de redes para simular la VPC (Virtual Private Cloud)
+networks:
+  red_publica:
+    driver: bridge
+  red_privada:
+    driver: bridge # Subred aislada para la Base de Datos
+
+services:
+  # 1. Servidor Web / Aplicación (Front-end)
+  frontend:
+    image: nginx:alpine
+    ports:
+      - "9090:80"  
+      - "8443:443"  
+    volumes:
+      - ./:/usr/share/nginx/html
+    networks:
+      - red_publica
+    restart: always
+
+  # 2. Base de Datos MySQL (Aislada, sin acceso a internet)
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: optiflota_db
+      MYSQL_USER: optiflota_user
+      MYSQL_PASSWORD: password123
+    # NOTA DE SEGURIDAD: No exponemos el puerto 3306 al host para cumplir con el aislamiento
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - red_privada # Solo existe en la red privada
+    restart: always
+
+  # 3. Gestor Visual (phpMyAdmin)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8081:80" # Solo accesible localmente para desarrollo
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: rootpassword
+    depends_on:
+      - db
+    networks:
+      - red_publica
+      - red_privada # Actúa como puente para que se pueda administrar la BD
+    restart: always
+
+volumes:
+  # Almacenamiento persistente
+  db_data:

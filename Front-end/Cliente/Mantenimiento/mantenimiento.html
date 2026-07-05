@@ -12,13 +12,13 @@
         <aside class="sidebar">
             <div class="sidebar-logo"><h2>OptiFlota</h2></div>
             <nav class="sidebar-nav">
-                <a href="../index.html" class="nav-item">📊 Dashboard</a>
-                <a href="../vehiculos/vehiculos.html" class="nav-item">🚗 Vehículos</a>
-                <a href="../diagnosticos/diagnosticos.html" class="nav-item">📋 Diagnósticos</a>
-                <a href="../combustible/combustible.html" class="nav-item">⛽ Combustible</a>
-                <a href="../mantenimiento/mantenimiento.html" class="nav-item active">🔧 Mantenimiento</a>
-                <a href="../siniestros/tickets.html" class="nav-item">🎫 Tickets</a>
-                <a href="../suscripcion/suscripcion.html" class="nav-item">👤 Suscripción</a>
+                <a href="../index.html" class="nav-item">Dashboard</a>
+                <a href="../vehiculos/vehiculos.html" class="nav-item active">Vehículos</a>
+                <a href="../diagnosticos/diagnosticos.html" class="nav-item">Diagnósticos</a>
+                <a href="../combustible/combustible.html" class="nav-item">Combustible</a>
+                <a href="../mantenimiento/mantenimiento.html" class="nav-item">Mantenimiento</a>
+                <a href="../siniestros/tickets.html" class="nav-item">Tickets</a>
+                <a href="../suscripcion/suscripcion.html" class="nav-item">Suscripción</a>
             </nav>
         </aside> 
 
@@ -43,7 +43,7 @@
                     <div class="filter-group"><label>Mes de Servicio</label><input type="month"></div>
                     <div class="filter-group"><label>Vehículo</label><input type="text" placeholder="Ej. ABC-1234"></div>
                     <div class="filter-group"><label>Tipo de Servicio</label><select><option value="">Todos</option><option value="preventivo">Preventivo</option><option value="correctivo">Correctivo</option></select></div>
-                    <div class="filter-actions"><button class="btn-secondary">Limpiar</button><button class="btn-primary">🔍 Buscar</button></div>
+                    <div class="filter-actions"><button class="btn-secondary">Limpiar</button><button class="btn-primary" style="display: inline-flex; align-items: center; gap: 6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><span>Buscar</span></button></div>
                 </div>
 
                 <div class="table-container">
@@ -55,12 +55,12 @@
                             <tr>
                                 <td>22/Jun/2026</td><td><strong>ABC-1234</strong></td><td><span class="badge ok">Preventivo</span></td>
                                 <td>Afinación mayor y cambio de aceite</td><td>$2,500.00</td><td>Terminado</td>
-                                <td class="actions"><button class="btn-icon">👁️</button></td>
+                                <td class="actions"><button class="btn-icon" title="Ver detalle" aria-label="Ver detalle" data-action="view" style="display: inline-flex; align-items: center; justify-content: center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></td>
                             </tr>
                             <tr>
                                 <td>24/Jun/2026</td><td><strong>XYZ-9876</strong></td><td><span class="badge danger">Correctivo</span></td>
                                 <td>Cambio de balatas y rectificado</td><td>$4,200.00</td><td>En Taller</td>
-                                <td class="actions"><button class="btn-icon">👁️</button></td>
+                                <td class="actions"><button class="btn-icon" title="Ver detalle" aria-label="Ver detalle" data-action="view" style="display: inline-flex; align-items: center; justify-content: center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></td>
                             </tr>
                         </tbody>
                     </table>
@@ -125,8 +125,9 @@
 
         document.querySelectorAll('.data-table .btn-icon').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                if (e.target.innerText.includes('👁️')) {
-                    const fila = e.target.closest('tr');
+                const button = e.currentTarget;
+                if (button.dataset.action === 'view') {
+                    const fila = button.closest('tr');
                     document.getElementById('visor-titulo').innerText = "Orden de Servicio";
                     document.getElementById('visor-contenido').innerHTML = `
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
