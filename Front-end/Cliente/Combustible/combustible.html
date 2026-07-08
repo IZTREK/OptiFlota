@@ -5,19 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OptiFlota - Combustible</title>
     <link rel="stylesheet" href="../../../Estilos/styles.css">
+    <style>
+        /* Estilos heredados para mantener el diseño vertical limpio en los modales */
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 15px;
+            font-family: inherit;
+            background-color: white;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
         
         <aside class="sidebar">
-            <div class="sidebar-logo">
-                <h2>OptiFlota</h2>
-            </div>
+            <div class="sidebar-logo"><h2>OptiFlota</h2></div>
             <nav class="sidebar-nav">
                 <a href="../index.html" class="nav-item">Dashboard</a>
-                <a href="../vehiculos/vehiculos.html" class="nav-item active">Vehículos</a>
+                <a href="../vehiculos/vehiculos.html" class="nav-item">Vehículos</a>
                 <a href="../diagnosticos/diagnosticos.html" class="nav-item">Diagnósticos</a>
-                <a href="../combustible/combustible.html" class="nav-item">Combustible</a>
+                <a href="../combustible/combustible.html" class="nav-item active">Combustible</a>
                 <a href="../mantenimiento/mantenimiento.html" class="nav-item">Mantenimiento</a>
                 <a href="../siniestros/tickets.html" class="nav-item">Tickets</a>
                 <a href="../suscripcion/suscripcion.html" class="nav-item">Suscripción</a>
@@ -26,17 +42,11 @@
 
         <div class="main-content">
             <header class="topbar">
-                <div class="page-title">
-                    <h1>Control de Combustible</h1>
-                </div>
-                <div class="user-profile">
-                    <span>Transportes García</span>
-                    <div class="avatar">TG</div>
-                </div>
+                <div class="page-title"><h1>Control de Combustible</h1></div>
+                <div class="user-profile"><span>Transportes García</span><div class="avatar">TG</div></div>
             </header>
 
             <main class="content-area">
-
                 <section class="kpi-grid">
                     <div class="kpi-card">
                         <h3>Gasto Total (Este Mes)</h3>
@@ -52,7 +62,13 @@
                 
                 <div class="section-header">
                     <p class="subtitle">Historial de recargas de la flotilla</p>
-                    <button class="btn-primary btn-auto" id="btn-abrir-modal">+ Registrar Carga</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-secondary btn-auto" id="btn-abrir-importar">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 5px; vertical-align: middle;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            Importar Excel/CSV
+                        </button>
+                        <button class="btn-primary btn-auto" id="btn-abrir-combustible">+ Registrar Carga</button>
+                    </div>
                 </div>
 
                 <div class="filter-bar">
@@ -87,15 +103,7 @@
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Vehículo</th>
-                                <th>Litros</th>
-                                <th>Costo Total</th>
-                                <th>Odómetro</th>
-                                <th>Estación</th>
-                                <th>Acciones</th>
-                            </tr>
+                            <tr><th>Fecha</th><th>Vehículo</th><th>Litros</th><th>Costo Total</th><th>Odómetro</th><th>Estación</th><th>Acciones</th></tr>
                         </thead>
                         <tbody>
                             <tr>
@@ -133,71 +141,189 @@
     </div>
 
     <div class="modal-overlay" id="modal-combustible">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 450px;">
             <div class="modal-header">
                 <h2>Registrar Carga de Combustible</h2>
-                <button class="btn-close" id="btn-cerrar-modal">&times;</button>
+                <button class="btn-close" id="btn-cerrar-combustible">&times;</button>
             </div>
             <div class="modal-body">
                 <form class="data-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="vehiculo-carga">Vehículo</label>
-                            <select id="vehiculo-carga" required>
-                                <option value="" disabled selected>Seleccione la unidad...</option>
-                                <option value="1">ABC-1234 (Nissan NP300)</option>
-                                <option value="2">XYZ-9876 (Ford Transit)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="fecha-carga">Fecha de Carga</label>
-                            <input type="date" id="fecha-carga" required>
-                        </div>
+                    <div class="form-group">
+                        <label>Vehículo</label>
+                        <select required>
+                            <option value="" disabled selected>Seleccione la unidad...</option>
+                            <option value="1">ABC-1234 (Nissan NP300)</option>
+                            <option value="2">XYZ-9876 (Ford Transit)</option>
+                        </select>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group"><label for="litros">Litros Cargados</label><input type="number" id="litros" step="0.01" required></div>
-                        <div class="form-group"><label for="costo">Costo Total ($)</label><input type="number" id="costo" step="0.01" required></div>
+                    <div class="form-group">
+                        <label>Fecha de Carga</label>
+                        <input type="date" required>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group"><label for="odometro">Odómetro (Kilometraje)</label><input type="number" id="odometro" required></div>
-                        <div class="form-group"><label for="estacion">Estación</label><input type="text" id="estacion" required></div>
+                    <div class="form-group">
+                        <label>Litros Cargados</label>
+                        <input type="number" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Costo Total ($)</label>
+                        <input type="number" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Odómetro (Kilometraje actual)</label>
+                        <input type="number" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Estación Gasolinera</label>
+                        <input type="text" required>
                     </div>
                     <div class="form-group">
                         <label>Comprobante (Ticket/Factura)</label>
-                        <input type="file" style="width: 100%; padding: 8px; border: 1px dashed #d1d5db; border-radius: 6px; background-color: #f9fafb;">
+                        <input type="file" style="padding: 10px; border: 1px dashed #d1d5db; background-color: #f9fafb; cursor: pointer;">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" id="btn-cancelar-modal">Cancelar</button>
+                <button class="btn-secondary" id="btn-cancelar-combustible">Cancelar</button>
                 <button class="btn-primary" id="btn-guardar-combustible">Guardar Registro</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-importar">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Importación Inteligente</h2>
+                <button class="btn-close" id="btn-cerrar-importar">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="paso-1-importacion">
+                    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Sube tu reporte original de combustible (Excel o CSV). No necesitas modificarlo, OptiFlota se adaptará a tu archivo.</p>
+                    <form class="data-form">
+                        <div class="form-group">
+                            <label>Proveedor / Formato</label>
+                            <select>
+                                <option value="nuevo">✨ Crear nueva configuración (Mapear archivo)</option>
+                                <option value="edenred">Formato Edenred (Guardado)</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-top: 15px;">
+                            <label>Archivo de Combustible (.csv, .xlsx)</label>
+                            <input type="file" required style="padding: 10px; border: 1px dashed #d1d5db; background-color: #f9fafb; cursor: pointer;">
+                        </div>
+                        <button type="button" class="btn-primary" id="btn-siguiente-mapeo" style="width: 100%; margin-top: 15px;">Analizar Archivo</button>
+                    </form>
+                </div>
+
+                <div id="paso-2-mapeo" style="display: none;">
+                    <p style="color: var(--primary-color); font-weight: 600; font-size: 14px; margin-bottom: 15px;">Empareja los datos de OptiFlota con las columnas de tu archivo.</p>
+                    <div style="background-color: #f9fafb; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; margin-bottom: 10px;">
+                            <span style="font-size: 14px; font-weight: 500;">Placas / Vehículo:</span>
+                            <select style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                                <option>-- Ignorar --</option>
+                                <option selected>Columna: "Placas"</option>
+                            </select>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; margin-bottom: 10px;">
+                            <span style="font-size: 14px; font-weight: 500;">Fecha de Carga:</span>
+                            <select style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                                <option>-- Ignorar --</option>
+                                <option selected>Columna: "Fecha de la carga"</option>
+                            </select>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; margin-bottom: 10px;">
+                            <span style="font-size: 14px; font-weight: 500;">Litros:</span>
+                            <select style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                                <option>-- Ignorar --</option>
+                                <option selected>Columna: "Litros"</option>
+                            </select>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; margin-bottom: 10px;">
+                            <span style="font-size: 14px; font-weight: 500;">Costo / Importe:</span>
+                            <select style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                                <option>-- Ignorar --</option>
+                                <option selected>Columna: "Importe"</option>
+                            </select>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center;">
+                            <span style="font-size: 14px; font-weight: 500;">Odómetro:</span>
+                            <select style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                                <option>-- Ignorar --</option>
+                                <option selected>Columna: "Kilometraje actual"</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="guardar-formato" checked style="width: auto;">
+                        <label for="guardar-formato" style="margin: 0; cursor: pointer; color: var(--text-main);">Guardar esta configuración para el próximo mes</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="footer-mapeo" style="display: none;">
+                <button class="btn-secondary" id="btn-volver-importar">Volver</button>
+                <button class="btn-primary" id="btn-procesar-archivo">Procesar y Guardar</button>
             </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="modal-visor">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="visor-titulo">Detalles</h2>
-                <button class="btn-close" id="btn-cerrar-visor">&times;</button>
-            </div>
+            <div class="modal-header"><h2 id="visor-titulo">Detalles</h2><button class="btn-close" id="btn-cerrar-visor">&times;</button></div>
             <div class="modal-body" id="visor-contenido"></div>
-            <div class="modal-footer">
-                <button class="btn-secondary" id="btn-entendido-visor">Cerrar</button>
-            </div>
+            <div class="modal-footer"><button class="btn-secondary" id="btn-entendido-visor">Cerrar</button></div>
         </div>
     </div>
 
     <script>
-        const modal = document.getElementById('modal-combustible');
-        const cerrarModal = () => modal.classList.remove('active');
-        document.getElementById('btn-abrir-modal').addEventListener('click', () => modal.classList.add('active'));
-        document.getElementById('btn-cerrar-modal').addEventListener('click', cerrarModal);
-        document.getElementById('btn-cancelar-modal').addEventListener('click', cerrarModal);
-        document.getElementById('btn-guardar-combustible').addEventListener('click', cerrarModal);
+        // LÓGICA MODAL 1: CARGA MANUAL
+        const modalCombustible = document.getElementById('modal-combustible');
+        const cerrarCombustible = () => modalCombustible.classList.remove('active');
+        
+        document.getElementById('btn-abrir-combustible').addEventListener('click', () => modalCombustible.classList.add('active'));
+        document.getElementById('btn-cerrar-combustible').addEventListener('click', cerrarCombustible);
+        document.getElementById('btn-cancelar-combustible').addEventListener('click', cerrarCombustible);
+        document.getElementById('btn-guardar-combustible').addEventListener('click', (e) => {
+            e.preventDefault();
+            cerrarCombustible();
+            alert('Carga de combustible guardada.');
+        });
 
+        // LÓGICA MODAL 2: IMPORTACIÓN INTELIGENTE
+        const modalImportar = document.getElementById('modal-importar');
+        const cerrarImportar = () => {
+            modalImportar.classList.remove('active');
+            // Regresar al paso 1 después de cerrar
+            setTimeout(() => {
+                document.getElementById('paso-1-importacion').style.display = 'block';
+                document.getElementById('paso-2-mapeo').style.display = 'none';
+                document.getElementById('footer-mapeo').style.display = 'none';
+            }, 300);
+        };
+        
+        document.getElementById('btn-abrir-importar').addEventListener('click', () => modalImportar.classList.add('active'));
+        document.getElementById('btn-cerrar-importar').addEventListener('click', cerrarImportar);
+
+        // Flujo del Mapeo
+        document.getElementById('btn-siguiente-mapeo').addEventListener('click', () => {
+            document.getElementById('paso-1-importacion').style.display = 'none';
+            document.getElementById('paso-2-mapeo').style.display = 'block';
+            document.getElementById('footer-mapeo').style.display = 'flex';
+        });
+        document.getElementById('btn-volver-importar').addEventListener('click', () => {
+            document.getElementById('paso-1-importacion').style.display = 'block';
+            document.getElementById('paso-2-mapeo').style.display = 'none';
+            document.getElementById('footer-mapeo').style.display = 'none';
+        });
+        document.getElementById('btn-procesar-archivo').addEventListener('click', () => {
+            cerrarImportar();
+            alert('¡Archivo procesado con éxito! Se registraron los datos de combustible.');
+        });
+
+        // LÓGICA MODAL 3: VISOR DE DETALLES
         const modalVisor = document.getElementById('modal-visor');
         const cerrarVisor = () => modalVisor.classList.remove('active');
+        
         document.getElementById('btn-cerrar-visor').addEventListener('click', cerrarVisor);
         document.getElementById('btn-entendido-visor').addEventListener('click', cerrarVisor);
 
@@ -217,12 +343,6 @@
                             <div><small style="color: var(--text-muted);">Fecha</small><p>${fila.cells[0].innerText}</p></div>
                             <div><small style="color: var(--text-muted);">Odómetro</small><p>${fila.cells[4].innerText}</p></div>
                             <div><small style="color: var(--text-muted);">Estación</small><p>${fila.cells[5].innerText}</p></div>
-                        </div>
-                        <div style="margin-top: 20px; text-align: center;">
-                            <button class="btn-secondary" style="width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"></path><path d="M14 3v5h5"></path></svg>
-                                <span>Ver Comprobante Escaneado</span>
-                            </button>
                         </div>`;
                     modalVisor.classList.add('active');
                 }

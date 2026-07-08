@@ -16,6 +16,7 @@ services:
       - "8443:443"  
     volumes:
       - ./:/usr/share/nginx/html
+      - ./uploads:/usr/share/nginx/html/uploads
     networks:
       - red_publica
     restart: always

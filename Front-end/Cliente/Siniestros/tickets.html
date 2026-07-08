@@ -5,23 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OptiFlota - Tickets</title>
     <link rel="stylesheet" href="../../../Estilos/styles.css">
+    <style>
+        .form-group select, .form-group textarea, .form-group input[type="text"], .form-group input[type="date"] {
+            width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; font-family: inherit; background-color: white; transition: 0.3s;
+        }
+        .form-group select:focus, .form-group textarea:focus, .form-group input:focus {
+            outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+        
+        /* Estilos para el chat del ticket */
+        .chat-bubble-cliente {
+            background-color: #f3f4f6; padding: 12px 15px; border-radius: 8px 8px 8px 0; margin-bottom: 15px; width: 90%;
+        }
+        .chat-bubble-admin {
+            background-color: #ecfdf5; border: 1px solid #10b981; padding: 12px 15px; border-radius: 8px 8px 0 8px; margin-bottom: 15px; width: 90%; margin-left: auto;
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
         
+        <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-logo"><h2>OptiFlota</h2></div>
             <nav class="sidebar-nav">
                 <a href="../index.html" class="nav-item">Dashboard</a>
-                <a href="../vehiculos/vehiculos.html" class="nav-item active">Vehículos</a>
+                <a href="../vehiculos/vehiculos.html" class="nav-item">Vehículos</a>
                 <a href="../diagnosticos/diagnosticos.html" class="nav-item">Diagnósticos</a>
                 <a href="../combustible/combustible.html" class="nav-item">Combustible</a>
                 <a href="../mantenimiento/mantenimiento.html" class="nav-item">Mantenimiento</a>
-                <a href="../siniestros/tickets.html" class="nav-item">Tickets</a>
+                <a href="../siniestros/tickets.html" class="nav-item active">Tickets</a>
                 <a href="../suscripcion/suscripcion.html" class="nav-item">Suscripción</a>
             </nav>
         </aside> 
 
+        <!-- CONTENIDO PRINCIPAL -->
         <div class="main-content">
             <header class="topbar">
                 <div class="page-title"><h1>Soporte y Siniestros</h1></div>
@@ -29,6 +47,7 @@
             </header>
 
             <main class="content-area">
+                <!-- KPIs -->
                 <section class="kpi-grid">
                     <div class="kpi-card"><h3>Tickets Abiertos</h3><p class="kpi-value">2</p><span class="badge danger">Atención requerida</span></div>
                     <div class="kpi-card"><h3>Tickets Resueltos (Mes)</h3><p class="kpi-value">5</p><span class="badge ok">Al día</span></div>
@@ -39,28 +58,63 @@
                     <button class="btn-primary btn-auto" id="btn-abrir-modal">+ Nuevo Ticket</button>
                 </div>
 
+                <!-- BARRA DE FILTROS -->
                 <div class="filter-bar">
-                    <div class="filter-group"><label>ID de Ticket</label><input type="text" placeholder="Ej. TK-0045"></div>
-                    <div class="filter-group"><label>Vehículo</label><input type="text" placeholder="Ej. ABC-1234"></div>
-                    <div class="filter-group"><label>Estado</label><select><option value="">Todos</option><option value="pendiente">Pendiente</option></select></div>
-                        <div class="filter-actions"><button class="btn-primary" style="display: inline-flex; align-items: center; gap: 6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><span>Buscar</span></button></div>
+                    <div class="filter-group">
+                        <label>Fecha</label>
+                        <input type="date">
+                    </div>
+                    <div class="filter-group">
+                        <label>ID de Ticket</label>
+                        <input type="text" placeholder="Ej. TK-0045">
+                    </div>
+                    <div class="filter-group">
+                        <label>Vehículo</label>
+                        <input type="text" placeholder="Ej. ABC-1234">
+                    </div>
+                    <div class="filter-group">
+                        <label>Estado</label>
+                        <select>
+                            <option value="">Todos</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="proceso">En Proceso</option>
+                            <option value="resuelto">Resuelto</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn-secondary">Limpiar</button>
+                        <button class="btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+                            <span>Buscar</span>
+                        </button>
+                    </div>
                 </div>
 
+                <!-- TABLA DE DATOS -->
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
                             <tr><th>Fecha</th><th>Ticket ID</th><th>Asunto</th><th>Vehículo Involucrado</th><th>Estado</th><th>Acciones</th></tr>
                         </thead>
                         <tbody>
+                            <!-- Este está resuelto para ver el hilo completo -->
+                            <tr>
+                                <td>20/Jun/2026</td><td>#TK-0044</td><td>Falla en acceso a plataforma</td><td>N/A (Soporte Sistema)</td>
+                                <td><span class="badge ok">Resuelto</span></td>
+                                <td class="actions">
+                                    <button class="btn-icon" title="Ver detalle" aria-label="Ver detalle" data-action="view" style="display: inline-flex; align-items: center; justify-content: center;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                    </button>
+                                </td>
+                            </tr>
                             <tr>
                                 <td>24/Jun/2026</td><td>#TK-0045</td><td>Choque por alcance (Defensa trasera)</td><td><strong>ABC-1234</strong></td>
                                 <td><span class="badge warning">En Proceso</span></td>
-                                <td class="actions"><button class="btn-icon" title="Ver detalle" aria-label="Ver detalle" data-action="view" style="display: inline-flex; align-items: center; justify-content: center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></td>
-                            </tr>
-                            <tr>
-                                <td>20/Jun/2026</td><td>#TK-0044</td><td>Falla en acceso a plataforma</td><td>N/A (Soporte Sistema)</td>
-                                <td><span class="badge danger">Pendiente</span></td>
-                                <td class="actions"><button class="btn-icon" title="Ver detalle" aria-label="Ver detalle" data-action="view" style="display: inline-flex; align-items: center; justify-content: center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></td>
+                                <td class="actions">
+                                    <button class="btn-icon" title="Ver detalle" aria-label="Ver detalle" data-action="view" style="display: inline-flex; align-items: center; justify-content: center;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                    </button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -69,6 +123,7 @@
         </div>
     </div>
 
+    <!-- MODAL 1: CREAR NUEVO TICKET -->
     <div class="modal-overlay" id="modal-ticket">
         <div class="modal-content">
             <div class="modal-header">
@@ -77,12 +132,44 @@
             </div>
             <div class="modal-body">
                 <form class="data-form">
-                    <div class="form-row">
-                        <div class="form-group"><label>Tipo de Reporte</label><select><option value="siniestro">Siniestro / Accidente</option></select></div>
-                        <div class="form-group"><label>Fecha</label><input type="date" required></div>
+                    <div class="form-group">
+                        <label>Tipo de Reporte</label>
+                        <select required>
+                            <option value="" disabled selected>Seleccione una opción...</option>
+                            <option value="siniestro">Siniestro / Accidente</option>
+                            <option value="falla">Falla Mecánica Imprevista</option>
+                            <option value="soporte">Soporte del Sistema</option>
+                            <option value="otro">Otro</option>
+                        </select>
                     </div>
-                    <div class="form-group"><label>Asunto Breve</label><input type="text" required></div>
-                    <div class="form-group"><label>Descripción</label><textarea rows="3" style="width:100%; border:1px solid #d1d5db; border-radius:6px; padding:10px;"></textarea></div>
+                    <div class="form-group">
+                        <label>Fecha del Incidente</label>
+                        <input type="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Vehículo (Si aplica)</label>
+                        <select>
+                            <option value="NA">N/A - Soporte del Sistema</option>
+                            <option value="ABC-1234">ABC-1234 (Nissan NP300)</option>
+                            <option value="XYZ-9876">XYZ-9876 (Ford Transit)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nivel de Urgencia</label>
+                        <select required>
+                            <option value="baja" selected>Baja</option>
+                            <option value="media">Media</option>
+                            <option value="alta">Alta</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Asunto Breve</label>
+                        <input type="text" placeholder="Ej. Choque lateral derecho" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción Detallada</label>
+                        <textarea rows="4" placeholder="Describa cómo ocurrió el incidente o el error en el sistema..." required style="resize: vertical;"></textarea>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -92,44 +179,104 @@
         </div>
     </div>
 
+    <!-- MODAL 2: VISOR DE TICKET (CHAT BIDIRECCIONAL) -->
     <div class="modal-overlay" id="modal-visor">
-        <div class="modal-content">
-            <div class="modal-header"><h2 id="visor-titulo">Detalles</h2><button class="btn-close" id="btn-cerrar-visor">&times;</button></div>
-            <div class="modal-body" id="visor-contenido"></div>
-            <div class="modal-footer"><button class="btn-secondary" id="btn-entendido-visor">Cerrar</button></div>
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 id="visor-titulo">Detalles del Ticket</h2>
+                <button class="btn-close" id="btn-cerrar-visor">&times;</button>
+            </div>
+            
+            <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
+                
+                <!-- Hilo de mensajes dinámico -->
+                <div id="visor-contenido"></div>
+                
+                <!-- Área de respuesta del cliente -->
+                <div style="margin-top: 25px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
+                    <h3 style="font-size: 15px; margin-bottom: 10px; color: var(--text-main);">¿El problema persiste o tienes dudas?</h3>
+                    <form class="data-form">
+                        <div class="form-group">
+                            <textarea rows="3" id="cliente-respuesta" placeholder="Escribe tu respuesta para actualizar o reabrir el ticket..." required style="resize: vertical;"></textarea>
+                        </div>
+                        <button type="button" class="btn-primary" id="btn-responder-ticket" style="width: 100%;">Enviar Respuesta (Reabrir Ticket)</button>
+                    </form>
+                </div>
+
+            </div>
         </div>
     </div>
 
     <script>
+        // MODAL NUEVO TICKET
         const modalTicket = document.getElementById('modal-ticket');
         const cerrarTicket = () => modalTicket.classList.remove('active');
+        
         document.getElementById('btn-abrir-modal').addEventListener('click', () => modalTicket.classList.add('active'));
         document.getElementById('btn-cerrar-modal').addEventListener('click', cerrarTicket);
         document.getElementById('btn-cancelar-modal').addEventListener('click', cerrarTicket);
-        document.getElementById('btn-guardar-ticket').addEventListener('click', cerrarTicket);
+        document.getElementById('btn-guardar-ticket').addEventListener('click', (e) => {
+            e.preventDefault();
+            cerrarTicket();
+            alert("Ticket creado exitosamente.");
+        });
 
+        // MODAL VISOR DE TICKET (CHAT)
         const modalVisor = document.getElementById('modal-visor');
-        const cerrarVisor = () => modalVisor.classList.remove('active');
+        const cerrarVisor = () => {
+            modalVisor.classList.remove('active');
+            document.getElementById('cliente-respuesta').value = '';
+        };
+        
         document.getElementById('btn-cerrar-visor').addEventListener('click', cerrarVisor);
-        document.getElementById('btn-entendido-visor').addEventListener('click', cerrarVisor);
+        
+        document.getElementById('btn-responder-ticket').addEventListener('click', () => {
+            const respuesta = document.getElementById('cliente-respuesta').value.trim();
+            if(respuesta === "") {
+                alert("Por favor, escribe una respuesta.");
+                return;
+            }
+            cerrarVisor();
+            alert("Tu respuesta ha sido enviada. El estado de tu ticket ha cambiado a 'Pendiente de revisión por Soporte'.");
+        });
 
         document.querySelectorAll('.data-table .btn-icon').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const button = e.currentTarget;
                 if (button.dataset.action === 'view') {
                     const fila = button.closest('tr');
-                    document.getElementById('visor-titulo').innerText = `Seguimiento: ${fila.cells[1].innerText}`;
-                    document.getElementById('visor-contenido').innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <div><small style="color: var(--text-muted);">Fecha:</small> <br>${fila.cells[0].innerText}</div>
+                    const estado = fila.cells[4].innerText.trim();
+                    const fecha = fila.cells[0].innerText;
+                    const idTicket = fila.cells[1].innerText;
+                    const asunto = fila.cells[2].innerText;
+                    
+                    document.getElementById('visor-titulo').innerText = `Seguimiento de Ticket: ${idTicket}`;
+                    
+                    let htmlChat = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <div><small style="color: var(--text-muted);">Apertura:</small> <br>${fecha}</div>
                             <div>${fila.cells[4].innerHTML}</div>
                         </div>
-                        <h3 style="font-size: 16px; margin-bottom: 5px;">${fila.cells[2].innerText}</h3>
-                        <p style="color: var(--text-muted); font-size: 14px;">Vehículo: <strong>${fila.cells[3].innerText}</strong></p>
-                        <div style="border-left: 3px solid var(--primary-color); padding-left: 15px; margin-top: 20px;">
-                            <small style="color: var(--text-muted);">Última actualización (Sistema)</small>
-                            <p style="font-size: 14px; margin-top: 5px;">"Se está procesando su solicitud. El equipo técnico lo está revisando."</p>
-                        </div>`;
+                        
+                        <!-- Burbuja Cliente (Mensaje original) -->
+                        <div class="chat-bubble-cliente">
+                            <small style="color: var(--primary-color); font-weight: 600;">Tú (Transportes García)</small>
+                            <p style="margin-top: 5px; font-size: 14px; color: var(--text-main);">${asunto}</p>
+                        </div>
+                    `;
+
+                    // Si el estado no es pendiente, significa que soporte ya respondió
+                    if (estado !== 'Pendiente') {
+                        htmlChat += `
+                        <!-- Burbuja Admin (Respuesta Soporte) -->
+                        <div class="chat-bubble-admin">
+                            <small style="color: #065f46; font-weight: 600;">Soporte Técnico OptiFlota</small>
+                            <p style="margin-top: 5px; font-size: 14px; color: var(--text-main);">Hemos revisado tu caso en el sistema. El inconveniente ha sido identificado y solucionado en nuestra base de datos. Por favor, intenta realizar la acción nuevamente. Si el error persiste, avísanos respondiendo a este mensaje.</p>
+                        </div>
+                        `;
+                    }
+
+                    document.getElementById('visor-contenido').innerHTML = htmlChat;
                     modalVisor.classList.add('active');
                 }
             });

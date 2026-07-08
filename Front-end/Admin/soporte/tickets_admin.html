@@ -5,14 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OptiFlota Admin - Soporte Técnico Global</title>
     <link rel="stylesheet" href="../../../Estilos/styles.css">
+    <style>
+        .form-group textarea, .form-group select {
+            width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; font-size: 15px;
+        }
+        .form-group textarea:focus, .form-group select:focus {
+            outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
         
         <aside class="sidebar" style="background-color: #111827;">
-            <div class="sidebar-logo">
-                <h2>OptiFlota <span style="color: var(--primary-color); font-size: 14px;">ADMIN</span></h2>
-            </div>
+            <div class="sidebar-logo"><h2>OptiFlota <span style="color: var(--primary-color); font-size: 14px;">ADMIN</span></h2></div>
             <nav class="sidebar-nav">
                 <a href="../admin_dashboard.html" class="nav-item">Vista Global</a>
                 <a href="../empresas/empresas.html" class="nav-item">Empresas</a>
@@ -23,82 +29,37 @@
 
         <div class="main-content">
             <header class="topbar">
-                <div class="page-title">
-                    <h1>Soporte Técnico Global</h1>
-                </div>
-                <div class="user-profile">
-                    <span>SuperAdministrador</span>
-                    <div class="avatar" style="background-color: #4b5563;">SA</div>
-                </div>
+                <div class="page-title"><h1>Soporte Técnico Global</h1></div>
+                <div class="user-profile"><span>SuperAdministrador</span><div class="avatar" style="background-color: #4b5563;">SA</div></div>
             </header>
 
             <main class="content-area">
                 <section class="kpi-grid">
-                    <div class="kpi-card">
-                        <h3>Tickets Pendientes</h3>
-                        <p class="kpi-value" style="color: var(--danger);">14</p>
-                    </div>
-                    <div class="kpi-card">
-                        <h3>Tickets en Proceso</h3>
-                        <p class="kpi-value">5</p>
-                    </div>
+                    <div class="kpi-card"><h3>Tickets Pendientes</h3><p class="kpi-value" style="color: var(--danger);">14</p></div>
+                    <div class="kpi-card"><h3>Tickets en Proceso</h3><p class="kpi-value">5</p></div>
                 </section>
                 
                 <div class="filter-bar">
-                    <div class="filter-group">
-                        <label>Cliente / Empresa</label>
-                        <input type="text" placeholder="Ej. Transportes García">
-                    </div>
-                    <div class="filter-group">
-                        <label>Estado</label>
-                        <select>
-                            <option>Todos</option>
-                            <option>Pendiente</option>
-                            <option>En Proceso</option>
-                            <option>Resuelto</option>
-                        </select>
-                    </div>
-                    <div class="filter-actions">
-                        <button class="btn-secondary">Limpiar</button>
-                        <button class="btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
-                            <span>Filtrar</span>
-                        </button>
-                    </div>
+                    <div class="filter-group"><label>Cliente / Empresa</label><input type="text" placeholder="Ej. Transportes García" style="padding: 10px; border-radius: 6px; border: 1px solid #d1d5db;"></div>
+                    <div class="filter-group"><label>Estado</label><select style="padding: 10px; border-radius: 6px; border: 1px solid #d1d5db;"><option>Todos</option><option>Pendiente</option><option>En Proceso</option><option>Resuelto</option></select></div>
+                    <div class="filter-actions"><button class="btn-secondary">Limpiar</button><button class="btn-primary" style="display: inline-flex; align-items: center; gap: 6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><span>Filtrar</span></button></div>
                 </div>
 
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Empresa</th>
-                                <th>Ticket ID</th>
-                                <th>Asunto</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
+                            <tr><th>Fecha</th><th>Empresa</th><th>Ticket ID</th><th>Asunto</th><th>Estado</th><th>Acciones</th></tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>24/Jun/2026</td>
-                                <td><strong>Transportes García</strong></td>
-                                <td>#TK-0045</td>
-                                <td>Error al exportar reporte PDF</td>
-                                <td><span class="badge danger">Pendiente</span></td>
-                                <td class="actions">
-                                    <button class="btn-primary" style="padding: 5px 10px;">Atender</button>
-                                </td>
+                                <td>24/Jun/2026</td><td><strong>Transportes García</strong></td><td>#TK-0045</td>
+                                <td>Error al exportar reporte PDF</td><td><span class="badge danger">Pendiente</span></td>
+                                <td class="actions"><button class="btn-primary" style="padding: 5px 10px;">Atender</button></td>
                             </tr>
                             <tr>
-                                <td>23/Jun/2026</td>
-                                <td><strong>Logística del Centro</strong></td>
-                                <td>#TK-0044</td>
-                                <td>Duda sobre carga de combustible</td>
-                                <td><span class="badge warning">En Proceso</span></td>
-                                <td class="actions">
-                                    <button class="btn-primary" style="padding: 5px 10px;">Atender</button>
-                                </td>
+                                <td>23/Jun/2026</td><td><strong>Logística del Centro</strong></td><td>#TK-0044</td>
+                                <td>Duda sobre carga de combustible</td><td><span class="badge warning">En Proceso</span></td>
+                                <td class="actions"><button class="btn-primary" style="padding: 5px 10px;">Atender</button></td>
                             </tr>
                         </tbody>
                     </table>
@@ -108,36 +69,45 @@
     </div>
 
     <div class="modal-overlay" id="modal-atencion">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
-                <h2 id="ticket-modal-title">Gestión de Ticket</h2>
+                <h2 id="ticket-modal-title">Atender Ticket</h2>
                 <button class="btn-close" id="btn-cerrar-modal">&times;</button>
             </div>
             
             <div class="modal-body">
-                <p><strong>Usuario / Empresa:</strong> <span id="ticket-modal-empresa">admin@transportesgarcia.com</span></p>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px;">
+                    <p><strong>Cliente:</strong> <span id="ticket-modal-empresa">Transportes García</span></p>
+                    <p><strong>Fecha:</strong> <span id="ticket-modal-fecha">24/Jun/2026</span></p>
+                </div>
                 
-                <div style="background: #f9fafb; padding: 15px; border-radius: 6px; margin: 10px 0; border: 1px solid #e5e7eb;">
-                    <p><strong>Mensaje:</strong></p>
-                    <p id="ticket-modal-asunto" style="margin-top: 5px;">"Hola, intenté exportar el reporte de PDF y la pantalla se queda en blanco, ¿podrían ayudarme?"</p>
+                <div style="background: #f9fafb; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb; margin-bottom: 20px;">
+                    <small style="color: var(--primary-color); font-weight: 600;">Mensaje del Cliente:</small>
+                    <p id="ticket-modal-asunto" style="margin-top: 5px; color: var(--text-main);">"Hola, intenté exportar el reporte de PDF y la pantalla se queda en blanco, ¿podrían ayudarme?"</p>
                 </div>
 
-                <div style="margin-top: 20px; display: flex; align-items: center; justify-content: space-between; border-top: 1px dashed #d1d5db; padding-top: 15px;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <label style="font-weight: 600; color: var(--text-main);">Estado Actual:</label>
-                        <select id="select-estado-ticket" style="padding: 8px; border-radius: 4px; border: 1px solid #d1d5db;">
-                            <option value="pendiente">Pendiente</option>
-                            <option value="proceso">En Proceso</option>
-                            <option value="resuelto">Resuelto</option>
-                        </select>
+                <form class="data-form">
+                    <div class="form-group">
+                        <label>Escribir Respuesta:</label>
+                        <textarea rows="4" id="admin-respuesta" placeholder="Escribe aquí la solución. El cliente recibirá una notificación..." required style="resize: vertical;"></textarea>
                     </div>
-                    <button class="btn-primary" id="btn-actualizar-estado" style="width: auto; padding: 8px 15px; font-size: 13px;">Actualizar Estado</button>
-                </div>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px dashed #d1d5db; padding-top: 15px; margin-top: 15px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label style="font-weight: 600; color: var(--text-main); margin: 0;">Nuevo Estado:</label>
+                            <select id="select-estado-ticket" style="width: auto;">
+                                <option value="pendiente">Pendiente</option>
+                                <option value="proceso">En Proceso</option>
+                                <option value="resuelto">Resuelto</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
             </div>
 
             <div class="modal-footer">
-                <a href="#" class="btn-secondary">Enviar Correo</a>
-                <a href="#" class="btn-primary">Responder WhatsApp</a>
+                <button class="btn-secondary" id="btn-cancelar-atencion">Cancelar</button>
+                <button class="btn-primary" id="btn-actualizar-estado">Enviar Respuesta y Actualizar</button>
             </div>
         </div>
     </div>
@@ -146,23 +116,26 @@
         const modal = document.getElementById('modal-atencion');
         let filaActual = null;
 
-        const cerrarAtencion = () => modal.classList.remove('active');
+        const cerrarAtencion = () => {
+            modal.classList.remove('active');
+            document.getElementById('admin-respuesta').value = ''; // Limpiar respuesta al cerrar
+        }
 
         document.getElementById('btn-cerrar-modal').addEventListener('click', cerrarAtencion);
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) cerrarAtencion();
-        });
+        document.getElementById('btn-cancelar-atencion').addEventListener('click', cerrarAtencion);
 
         document.querySelectorAll('.data-table .actions button').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 filaActual = e.target.closest('tr');
+                const fecha = filaActual.cells[0].innerText;
                 const empresa = filaActual.cells[1].innerText;
                 const idTicket = filaActual.cells[2].innerText;
                 const asunto = filaActual.cells[3].innerText;
                 const estadoTabla = filaActual.cells[4].innerText.toLowerCase();
 
-                document.getElementById('ticket-modal-title').innerText = `Gestión de Ticket: ${idTicket}`;
+                document.getElementById('ticket-modal-title').innerText = `Atendiendo: ${idTicket}`;
                 document.getElementById('ticket-modal-empresa').innerText = empresa;
+                document.getElementById('ticket-modal-fecha').innerText = fecha;
                 document.getElementById('ticket-modal-asunto').innerText = `"${asunto}"`;
 
                 const selectEstado = document.getElementById('select-estado-ticket');
@@ -176,6 +149,12 @@
 
         document.getElementById('btn-actualizar-estado').addEventListener('click', () => {
             if (!filaActual) return;
+            const respuesta = document.getElementById('admin-respuesta').value.trim();
+            
+            if (respuesta === "") {
+                alert("Por favor, escribe una respuesta para el cliente antes de actualizar.");
+                return;
+            }
 
             const nuevoEstado = document.getElementById('select-estado-ticket').value;
             const celdaEstado = filaActual.cells[4];
@@ -189,6 +168,7 @@
             }
 
             cerrarAtencion();
+            alert("Respuesta enviada al cliente. El estado del ticket ha sido actualizado.");
         });
     </script>
 </body>
