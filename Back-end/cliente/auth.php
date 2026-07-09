@@ -1,8 +1,6 @@
 <?php
 session_start();
 header('Content-Type: application/json');
-
-
 require_once '../config/database.php';
 
 $database = new Database();
@@ -15,7 +13,6 @@ if (!isset($data->email) || !isset($data->password)) {
 }
 
 try {
-    // 1. Agregamos e.fecha_vencimiento y quitamos el bloqueo de e.estado
     $query = "SELECT u.id as id_usuario, u.password_hash, u.nombre, 
                      e.id as id_empresa, e.nombre as empresa, e.fecha_vencimiento,
                      p.nombre as plan, p.mod_vehiculos, p.mod_diagnosticos, 
@@ -35,9 +32,9 @@ try {
         if (password_verify($data->password, $row['password_hash'])) {
             $_SESSION['id_usuario'] = $row['id_usuario'];
             $_SESSION['id_empresa'] = $row['id_empresa'];
+            $_SESSION['nombre'] = $row['nombre']; 
             $_SESSION['empresa_nombre'] = $row['empresa'];
             $_SESSION['plan'] = $row['plan'];
-            // 2. Guardamos la fecha de vencimiento en la sesión
             $_SESSION['fecha_vencimiento'] = $row['fecha_vencimiento']; 
             
             $_SESSION['permisos'] = [

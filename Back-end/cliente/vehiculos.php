@@ -3,9 +3,14 @@ session_start();
 require_once '../config/database.php';
 
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') { http_response_code(200); exit(); }
 
 if (!isset($_SESSION['id_empresa'])) {
-    http_response_code(403);
+    http_response_code(403); 
     echo json_encode(['success' => false, 'message' => 'Acceso denegado.']);
     exit;
 }
@@ -18,99 +23,119 @@ $request_method = $_SERVER["REQUEST_METHOD"];
 
 switch ($request_method) {
     case 'GET':
-        // --- LEER VEHÍCULOS ---
         try {
-            
+       
             $query = "SELECT id as id_vehiculo, placas, marca_modelo, anio, kilometraje_actual, estado 
-                      FROM vehiculos 
-                      WHERE id_empresa = :id_empresa AND estado != 'Inactivo' 
-                      ORDER BY id DESC";
+                      FROM vehiculos WHERE id_empresa = :id_empresa ORDER BY id DESC";
             $stmt = $db->prepare($query);
             $stmt->bindParam(':id_empresa', $id_empresa, PDO::PARAM_INT);
             $stmt->execute();
             echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
         } catch (PDOException $e) {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+            http_response_code(500); echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
         }
         break;
 
     case 'POST':
-        // --- CREAR VEHÍCULO ---
-        $data = json_decode(file_get_contents("php://input"));
-        if (!isset($data->placas) || !isset($data->marca_modelo) || !isset($data->anio) || !isset($data->kilometraje_inicial)) {
-            echo json_encode(['success' => false, 'message' => 'Datos incompletos.']);
+        if (isset($_GET['action']) && $_GET['action'] == 'importar') {
+            $registros = json_decode(file_get_contents("php://input"));
+            if (!is_array($registros)) { echo json_encode(['success' => false, 'message' => 'Formato inválido.']); exit; }
+
+            $qLimite = "SELECT p.limite_vehiculos, (SELECT COUNT(*) FROM vehiculos WHERE id_empresa = :id1 AND estado != 'Inactivo') as total 
+                        FROM empresas e JOIN planes_suscripcion p ON e.id_plan = p.id WHERE e.id = :id2";
+            $stmtLimite = $db->prepare($qLimite);
+            $stmtLimite->execute([':id1' => $id_empresa, ':id2' => $id_empresa]);
+            $limiteData = $stmtLimite->fetch(PDO::FETCH_ASSOC);
+
+            $espacio_disponible = $limiteData['limite_vehiculos'] - $limiteData['total'];
+            
+            if (count($registros) > $espacio_disponible) {
+                echo json_encode(['success' => false, 'message' => "¡Límite excedido! Tienes espacio para $espacio_disponible vehículo(s) más, pero tu Excel contiene " . count($registros) . "."]);
+                exit;
+            }
+
+            $qExistentes = "SELECT placas FROM vehiculos WHERE id_empresa = :id_empresa AND estado != 'Inactivo'";
+            $stmtE = $db->prepare($qExistentes);
+            $stmtE->execute([':id_empresa' => $id_empresa]);
+            $placas_bd = $stmtE->fetchAll(PDO::FETCH_COLUMN);
+            $mapaExistentes = array_map(function($p) { return preg_replace('/[^A-Z0-9]/', '', strtoupper($p)); }, $placas_bd);
+
+            $exitos = 0; $duplicados = 0; $errores = [];
+            
+            $qInsert = "INSERT INTO vehiculos (id_empresa, placas, marca_modelo, anio, kilometraje_inicial, kilometraje_actual, estado, creado_por) 
+                        VALUES (:id_empresa, :placas, :marca, :anio, :km, :km, :estado, :creado_por)";
+            $stmtInsert = $db->prepare($qInsert);
+
+            foreach ($registros as $row) {
+                $placaLimpia = preg_replace('/[^A-Z0-9]/', '', strtoupper($row->placas));
+                if (in_array($placaLimpia, $mapaExistentes)) { $duplicados++; continue; }
+
+                $estado = strtolower($row->estado);
+                if($estado != 'activo' && $estado != 'en taller' && $estado != 'inactivo') $estado = 'activo';
+
+                try {
+                    $stmtInsert->execute([
+                        ':id_empresa' => $id_empresa, ':placas' => htmlspecialchars(strip_tags($row->placas)),
+                        ':marca' => htmlspecialchars(strip_tags($row->marca_modelo)), ':anio' => intval($row->anio),
+                        ':km' => floatval($row->kilometraje), ':estado' => ucfirst($estado), ':creado_por' => $id_usuario
+                    ]);
+                    $mapaExistentes[] = $placaLimpia;
+                    $exitos++;
+                } catch (Exception $e) { $errores[] = $row->placas; }
+            }
+            echo json_encode(['success' => true, 'exitos' => $exitos, 'duplicados' => $duplicados, 'errores' => $errores]);
             exit;
         }
-        try {
-            $query = "INSERT INTO vehiculos (id_empresa, placas, marca_modelo, anio, kilometraje_inicial, kilometraje_actual, estado, creado_por) 
-                      VALUES (:id_empresa, :placas, :marca_modelo, :anio, :km_inicial, :km_actual, :estado, :creado_por)";
-            $stmt = $db->prepare($query);
-            
-            $stmt->bindParam(':id_empresa', $id_empresa);
-            $stmt->bindParam(':placas', $data->placas);
-            $stmt->bindParam(':marca_modelo', $data->marca_modelo);
-            $stmt->bindParam(':anio', $data->anio);
-            $stmt->bindParam(':km_inicial', $data->kilometraje_inicial);
-            $stmt->bindParam(':km_actual', $data->kilometraje_inicial);
-            $stmt->bindParam(':estado', $data->estado);
-            $stmt->bindParam(':creado_por', $id_usuario);
 
-            if ($stmt->execute()) {
-                echo json_encode(['success' => true, 'message' => 'Vehículo registrado.']);
+        $data = json_decode(file_get_contents("php://input"));
+        if (!isset($data->placas) || !isset($data->marca_modelo) || !isset($data->anio) || !isset($data->kilometraje_inicial)) {
+            http_response_code(400); echo json_encode(['success' => false, 'message' => 'Datos incompletos.']); exit;
+        }
+        try {
+            $qLimite = "SELECT p.limite_vehiculos, (SELECT COUNT(*) FROM vehiculos WHERE id_empresa = :id1 AND estado != 'Inactivo') as total FROM empresas e JOIN planes_suscripcion p ON e.id_plan = p.id WHERE e.id = :id2";
+            $stmtLimite = $db->prepare($qLimite);
+            $stmtLimite->execute([':id1' => $id_empresa, ':id2' => $id_empresa]);
+            $limiteData = $stmtLimite->fetch(PDO::FETCH_ASSOC);
+
+            if ($limiteData['total'] >= $limiteData['limite_vehiculos']) {
+                echo json_encode(['success' => false, 'message' => 'Límite alcanzado. Tu plan permite un máximo de ' . $limiteData['limite_vehiculos'] . ' vehículos. ¡Actualiza tu suscripción!']);
+                exit;
             }
+
+            $query = "INSERT INTO vehiculos (id_empresa, placas, marca_modelo, anio, kilometraje_inicial, kilometraje_actual, estado, creado_por) VALUES (:id_empresa, :placas, :marca, :anio, :km, :km, :estado, :creado_por)";
+            $stmt = $db->prepare($query);
+            $stmt->execute([
+                ':id_empresa' => $id_empresa, ':placas' => htmlspecialchars(strip_tags($data->placas)),
+                ':marca' => htmlspecialchars(strip_tags($data->marca_modelo)), ':anio' => intval($data->anio),
+                ':km' => floatval($data->kilometraje_inicial), ':estado' => htmlspecialchars(strip_tags($data->estado)), ':creado_por' => $id_usuario
+            ]);
+            http_response_code(201); echo json_encode(['success' => true, 'message' => 'Vehículo registrado con éxito.']);
         } catch (PDOException $e) {
-            echo json_encode(['success' => false, 'message' => 'Error al guardar. Verifica que las placas no estén duplicadas.']);
+            http_response_code(500); 
+            if ($e->getCode() == 23000) echo json_encode(['success' => false, 'message' => 'Las placas ingresadas ya existen.']);
+            else echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
         }
         break;
 
     case 'PUT':
-        // --- EDITAR VEHÍCULO ---
         $data = json_decode(file_get_contents("php://input"));
-        if (!isset($data->id_vehiculo) || !isset($data->placas) || !isset($data->marca_modelo) || !isset($data->anio) || !isset($data->estado)) {
-            echo json_encode(['success' => false, 'message' => 'Datos incompletos.']);
-            exit;
-        }
         try {
-            $query = "UPDATE vehiculos SET placas = :placas, marca_modelo = :marca_modelo, anio = :anio, estado = :estado 
-                      WHERE id = :id_vehiculo AND id_empresa = :id_empresa";
+            $query = "UPDATE vehiculos SET placas = :placas, marca_modelo = :marca, anio = :anio, estado = :estado WHERE id = :id_vehiculo AND id_empresa = :id_empresa";
             $stmt = $db->prepare($query);
-            
-            $stmt->bindParam(':placas', $data->placas);
-            $stmt->bindParam(':marca_modelo', $data->marca_modelo);
-            $stmt->bindParam(':anio', $data->anio);
-            $stmt->bindParam(':estado', $data->estado);
-            $stmt->bindParam(':id_vehiculo', $data->id_vehiculo);
-            $stmt->bindParam(':id_empresa', $id_empresa);
-
-            if ($stmt->execute()) {
-                echo json_encode(['success' => true, 'message' => 'Vehículo actualizado.']);
-            }
-        } catch (PDOException $e) {
-            echo json_encode(['success' => false, 'message' => 'Error al actualizar.']);
-        }
+            $stmt->execute([
+                ':placas' => $data->placas, ':marca' => $data->marca_modelo, ':anio' => $data->anio,
+                ':estado' => $data->estado, ':id_vehiculo' => $data->id_vehiculo, ':id_empresa' => $id_empresa
+            ]);
+            echo json_encode(['success' => true, 'message' => 'Vehículo actualizado.']);
+        } catch (PDOException $e) { echo json_encode(['success' => false, 'message' => 'Error al actualizar.']); }
         break;
 
     case 'DELETE':
-        // --- ELIMINAR VEHÍCULO (Baja lógica) ---
         $data = json_decode(file_get_contents("php://input"));
-        if (!isset($data->id_vehiculo)) {
-            echo json_encode(['success' => false, 'message' => 'ID no proporcionado.']);
-            exit;
-        }
         try {
-            // No lo borramos físicamente, lo marcamos como 'Inactivo'
-            $query = "UPDATE vehiculos SET estado = 'Inactivo' WHERE id = :id_vehiculo AND id_empresa = :id_empresa";
-            $stmt = $db->prepare($query);
-            $stmt->bindParam(':id_vehiculo', $data->id_vehiculo);
-            $stmt->bindParam(':id_empresa', $id_empresa);
-
-            if ($stmt->execute()) {
-                echo json_encode(['success' => true, 'message' => 'Vehículo dado de baja.']);
-            }
-        } catch (PDOException $e) {
-            echo json_encode(['success' => false, 'message' => 'Error al eliminar.']);
-        }
+            $stmt = $db->prepare("UPDATE vehiculos SET estado = 'Inactivo' WHERE id = :id_vehiculo AND id_empresa = :id_empresa");
+            $stmt->execute([':id_vehiculo' => $data->id_vehiculo, ':id_empresa' => $id_empresa]);
+            echo json_encode(['success' => true, 'message' => 'Vehículo dado de baja.']);
+        } catch (PDOException $e) { echo json_encode(['success' => false, 'message' => 'Error al eliminar.']); }
         break;
 }
-?>

@@ -18,10 +18,8 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 
 switch ($request_method) {
     case 'GET':
-        // --- 1. OBTENER INFORMACIÓN DEL PLAN ACTUAL ---
         if ($action == 'get_mi_plan') {
             try {
-                // Traemos los datos de la empresa, su plan y contamos cuántos vehículos activos tiene
                 $query = "SELECT e.estado, e.fecha_vencimiento, p.nombre as plan, p.limite_vehiculos,
                                  (SELECT COUNT(*) FROM vehiculos WHERE id_empresa = e.id AND estado != 'Inactivo') as total_vehiculos
                           FROM empresas e
@@ -37,10 +35,10 @@ switch ($request_method) {
             exit;
         }
 
-        // --- 2. OBTENER LA LISTA DE PLANES DISPONIBLES ---
         if ($action == 'get_planes') {
             try {
-                $query = "SELECT id, nombre, limite_vehiculos, costo_mensual FROM planes_suscripcion ORDER BY costo_mensual ASC";
+                // AQUÍ AGREGAMOS LAS COLUMNAS DE LOS MÓDULOS
+                $query = "SELECT id, nombre, limite_vehiculos, costo_mensual, mod_vehiculos, mod_combustible, mod_diagnosticos, mod_mantenimiento, mod_tickets FROM planes_suscripcion ORDER BY costo_mensual ASC";
                 $stmt = $db->prepare($query);
                 $stmt->execute();
                 echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
@@ -52,22 +50,17 @@ switch ($request_method) {
         break;
 
     case 'POST':
-        // --- 3. SUBIR COMPROBANTE DE PAGO ---
         if (!isset($_POST['id_plan']) || !isset($_POST['monto'])) {
             echo json_encode(['success' => false, 'message' => 'Datos de plan inválidos.']);
             exit;
         }
-
         try {
-            // Manejo del archivo del comprobante
             $comprobante_url = null;
             if (isset($_FILES['comprobante']) && $_FILES['comprobante']['error'] == 0) {
                 $upload_dir = '../../uploads/pagos/';
                 if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
-                
                 $file_name = time() . '_pago_' . preg_replace("/[^a-zA-Z0-9.]/", "", basename($_FILES['comprobante']['name']));
                 $target_file = $upload_dir . $file_name;
-                
                 if (move_uploaded_file($_FILES['comprobante']['tmp_name'], $target_file)) {
                     $comprobante_url = '/uploads/pagos/' . $file_name;
                 }
@@ -76,20 +69,16 @@ switch ($request_method) {
                 exit;
             }
 
-            // Insertar el pago como "Pendiente" para que el Admin lo apruebe
             $query = "INSERT INTO pagos_suscripcion (id_empresa, fecha_pago, monto, plan_solicitado, comprobante_url, estado) 
                       VALUES (:id_empresa, CURDATE(), :monto, :plan_solicitado, :comprobante_url, 'Pendiente')";
             $stmt = $db->prepare($query);
             $stmt->execute([
-                ':id_empresa' => $id_empresa,
-                ':monto' => $_POST['monto'],
-                ':plan_solicitado' => $_POST['id_plan'],
-                ':comprobante_url' => $comprobante_url
+                ':id_empresa' => $id_empresa, ':monto' => $_POST['monto'],
+                ':plan_solicitado' => $_POST['id_plan'], ':comprobante_url' => $comprobante_url
             ]);
-
-            echo json_encode(['success' => true, 'message' => '¡Comprobante enviado con éxito! El administrador validará tu pago a la brevedad.']);
+            echo json_encode(['success' => true, 'message' => '¡Comprobante enviado con éxito! El administrador lo validará a la brevedad.']);
         } catch (PDOException $e) {
-            echo json_encode(['success' => false, 'message' => 'Error al procesar el pago en el servidor.']);
+            echo json_encode(['success' => false, 'message' => 'Error al procesar el pago.']);
         }
         break;
 }

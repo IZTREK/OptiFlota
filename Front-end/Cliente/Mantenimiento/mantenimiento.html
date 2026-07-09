@@ -13,14 +13,20 @@
             <div class="sidebar-logo"><h2>OptiFlota</h2></div>
             <nav class="sidebar-nav">
                 <a id="nav-dashboard" href="../index.html" class="nav-item">Dashboard</a>
-                <a id="nav-vehiculos" href="../vehiculos/vehiculos.html" class="nav-item">Vehículos</a>
-                <a id="nav-diagnosticos" href="../diagnosticos/diagnosticos.html" class="nav-item">Diagnósticos</a>
-                <a id="nav-combustible" href="../combustible/combustible.html" class="nav-item">Combustible</a>
-                <a id="nav-mantenimiento" href="../mantenimiento/mantenimiento.html" class="nav-item active">Mantenimiento</a>
-                <a id="nav-tickets" href="../siniestros/tickets.html" class="nav-item">Tickets</a>
+                <a id="nav-vehiculos" href="../Vehiculos/vehiculos.html" class="nav-item">Vehículos</a>
+                <a id="nav-diagnosticos" href="../Diagnosticos/diagnosticos.html" class="nav-item">Diagnósticos</a>
+                <a id="nav-combustible" href="../Combustible/combustible.html" class="nav-item">Combustible</a>
+                <a id="nav-mantenimiento" href="../Mantenimiento/mantenimiento.html" class="nav-item active">Mantenimiento</a>
+                <a id="nav-tickets" href="../Siniestros/tickets.html" class="nav-item">Tickets</a>
                 <a id="nav-suscripcion" href="../suscripcion/suscripcion.html" class="nav-item">Suscripción</a>
+
+                <!-- BOTÓN DE CERRAR SESIÓN -->
+                <a href="#" id="btn-logout" class="nav-item" style="margin-top: 40px; color: #f87171; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: sub; margin-right: 8px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Cerrar Sesión
+                </a>
             </nav>
-        </aside> 
+        </aside>
 
         <div class="main-content">
             <header class="topbar">
@@ -30,7 +36,6 @@
                     <div class="avatar">C</div>
                 </div>
             </header>
-
             <main class="content-area">
                 <section class="kpi-grid">
                     <div class="kpi-card">
@@ -89,80 +94,9 @@
         </div>
     </div>
 
- <div class="modal-overlay" id="modal-mantenimiento">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Registrar Servicio de Mantenimiento</h2>
-            <button class="btn-close" id="btn-cerrar-modal">&times;</button>
-        </div>
-        <div class="modal-body">
-            <form class="data-form" id="form-mantenimiento-datos" enctype="multipart/form-data">
-                
-                <div class="form-group">
-                    <label>Vehículo</label>
-                    <select id="vehiculo-mant" name="id_vehiculo" required style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; background-color: white;">
-                        <option value="" disabled selected>Cargando vehículos...</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Fecha del Ingreso/Servicio</label>
-                    <input type="date" name="fecha" required style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px;">
-                </div>
-                
-                <div class="form-row" style="display: flex; gap: 10px;">
-                    <div class="form-group" style="flex: 1;">
-                        <label>Tipo de Servicio</label>
-                        <select name="tipo" style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; background-color: white;">
-                            <option value="preventivo">Preventivo</option>
-                            <option value="correctivo">Correctivo</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label>Costo Total ($)</label>
-                        <input type="number" step="0.01" name="costo_total" required style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px;">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Detalle de los Trabajos</label>
-                    <textarea name="detalle" rows="3" required style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label>Estado</label>
-                    <select name="estado" style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; background-color: white;">
-                        <option value="taller">En Taller</option>
-                        <option value="terminado">Terminado</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                   <label>Factura / Cotización <span style="color: var(--text-muted); font-size: 12px;">(Opcional)</span></label>
-                    <input type="file" name="factura" accept="image/*,.pdf" style="width: 100%; padding: 10px; border: 1px dashed #d1d5db; border-radius: 6px; background-color: #f9fafb;">
-                </div>
-                
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="btn-secondary" id="btn-cancelar-modal">Cancelar</button>
-            <button class="btn-primary" id="btn-guardar-mant">Guardar Servicio</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal-overlay" id="modal-visor">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 id="visor-titulo">Orden de Servicio</h2>
-            <button class="btn-close" id="btn-cerrar-visor">&times;</button>
-        </div>
-        <div class="modal-body" id="visor-contenido"></div>
-        <div class="modal-footer">
-            <button class="btn-primary" id="btn-entendido-visor">Cerrar</button>
-        </div>
-    </div>
-</div>
+    <!-- Modales se mantienen igual -->
+    <div class="modal-overlay" id="modal-mantenimiento"><div class="modal-content"><div class="modal-header"><h2>Registrar Servicio de Mantenimiento</h2><button class="btn-close" id="btn-cerrar-modal">&times;</button></div><div class="modal-body"><form class="data-form" id="form-mantenimiento-datos" enctype="multipart/form-data"><div class="form-group"><label>Vehículo</label><select id="vehiculo-mant" name="id_vehiculo" required style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; background-color: white;"><option value="" disabled selected>Cargando vehículos...</option></select></div><div class="form-group"><label>Fecha del Ingreso/Servicio</label><input type="date" name="fecha" required style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px;"></div><div class="form-row" style="display: flex; gap: 10px;"><div class="form-group" style="flex: 1;"><label>Tipo de Servicio</label><select name="tipo" style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; background-color: white;"><option value="preventivo">Preventivo</option><option value="correctivo">Correctivo</option></select></div><div class="form-group" style="flex: 1;"><label>Costo Total ($)</label><input type="number" step="0.01" name="costo_total" required style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px;"></div></div><div class="form-group"><label>Detalle de los Trabajos</label><textarea name="detalle" rows="3" required style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; resize: vertical;"></textarea></div><div class="form-group"><label>Estado</label><select name="estado" style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; background-color: white;"><option value="taller">En Taller</option><option value="terminado">Terminado</option></select></div><div class="form-group"><label>Factura / Cotización <span style="color: var(--text-muted); font-size: 12px;">(Opcional)</span></label><input type="file" name="factura" accept="image/*,.pdf" style="width: 100%; padding: 10px; border: 1px dashed #d1d5db; border-radius: 6px; background-color: #f9fafb;"></div></form></div><div class="modal-footer"><button class="btn-secondary" id="btn-cancelar-modal">Cancelar</button><button class="btn-primary" id="btn-guardar-mant">Guardar Servicio</button></div></div></div>
+    <div class="modal-overlay" id="modal-visor"><div class="modal-content"><div class="modal-header"><h2 id="visor-titulo">Orden de Servicio</h2><button class="btn-close" id="btn-cerrar-visor">&times;</button></div><div class="modal-body" id="visor-contenido"></div><div class="modal-footer"><button class="btn-primary" id="btn-entendido-visor">Cerrar</button></div></div></div>
 
     <script src="../../js/cliente/global.js"></script>
     <script src="../../js/cliente/mantenimiento.js"></script>

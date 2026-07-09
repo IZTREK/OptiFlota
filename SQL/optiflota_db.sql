@@ -21,7 +21,7 @@ CREATE TABLE planes_suscripcion (
     mod_vehiculos, mod_combustible, mod_diagnosticos, mod_mantenimiento, mod_tickets)
     VALUES
     ('Trial',5,0,1,1,0,0,0),
-    ('Básico',15,500,1,1,0,0,0),
+    ('Básico',15,500,1,1,0,0,1),
     ('Pro',50,1500,1,1,1,1,1),
     ('Ilimitado',200,3000,1,1,1,1,1);
 
@@ -95,6 +95,8 @@ CREATE TABLE vehiculos (
     FOREIGN KEY (id_empresa) REFERENCES empresas(id),
     FOREIGN KEY (creado_por) REFERENCES usuarios(id)
 );
+
+ALTER TABLE vehiculos ADD COLUMN rendimiento_ideal DECIMAL(10,2) DEFAULT 0.00 AFTER kilometraje_actual;
 
 -- 6. OPERACIÓN: DIAGNÓSTICOS, COMBUSTIBLE Y MANTENIMIENTO
 CREATE TABLE diagnosticos (
