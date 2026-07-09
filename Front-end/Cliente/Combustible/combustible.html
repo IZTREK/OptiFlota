@@ -27,35 +27,40 @@
 <body>
     <div class="app-container">
         
+        <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-logo"><h2>OptiFlota</h2></div>
             <nav class="sidebar-nav">
-                <a href="../index.html" class="nav-item">Dashboard</a>
-                <a href="../vehiculos/vehiculos.html" class="nav-item">Vehículos</a>
-                <a href="../diagnosticos/diagnosticos.html" class="nav-item">Diagnósticos</a>
-                <a href="../combustible/combustible.html" class="nav-item active">Combustible</a>
-                <a href="../mantenimiento/mantenimiento.html" class="nav-item">Mantenimiento</a>
-                <a href="../siniestros/tickets.html" class="nav-item">Tickets</a>
-                <a href="../suscripcion/suscripcion.html" class="nav-item">Suscripción</a>
+                <a id="nav-dashboard" href="../index.html" class="nav-item">Dashboard</a>
+                <a id="nav-vehiculos" href="../vehiculos/vehiculos.html" class="nav-item">Vehículos</a>
+                <a id="nav-diagnosticos" href="../diagnosticos/diagnosticos.html" class="nav-item">Diagnósticos</a>
+                <a id="nav-combustible" href="../combustible/combustible.html" class="nav-item active">Combustible</a>
+                <a id="nav-mantenimiento" href="../mantenimiento/mantenimiento.html" class="nav-item">Mantenimiento</a>
+                <a id="nav-tickets" href="../siniestros/tickets.html" class="nav-item">Tickets</a>
+                <a id="nav-suscripcion" href="../suscripcion/suscripcion.html" class="nav-item">Suscripción</a>
             </nav>
-        </aside> 
+        </aside>
 
+        <!-- CONTENIDO PRINCIPAL -->
         <div class="main-content">
             <header class="topbar">
                 <div class="page-title"><h1>Control de Combustible</h1></div>
-                <div class="user-profile"><span>Transportes García</span><div class="avatar">TG</div></div>
+                <div class="user-profile">
+                    <span>Cargando...</span>
+                    <div class="avatar">C</div>
+                </div>
             </header>
-
+            
             <main class="content-area">
                 <section class="kpi-grid">
                     <div class="kpi-card">
                         <h3>Gasto Total (Este Mes)</h3>
-                        <p class="kpi-value">$45,200</p>
+                        <p class="kpi-value" id="kpi-gasto-mes">Cargando...</p>
                         <span class="badge warning">Revisar presupuesto</span>
                     </div>
                     <div class="kpi-card">
                         <h3>Rendimiento Promedio</h3>
-                        <p class="kpi-value">8.5 km/l</p>
+                        <p class="kpi-value" id="kpi-rendimiento">Cargando...</p>
                         <span class="badge ok">Dentro del rango</span>
                     </div>
                 </section>
@@ -100,46 +105,22 @@
                     </div>
                 </div>
 
+                <!-- TABLA DE DATOS -->
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
                             <tr><th>Fecha</th><th>Vehículo</th><th>Litros</th><th>Costo Total</th><th>Odómetro</th><th>Estación</th><th>Acciones</th></tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>24/Jun/2026</td>
-                                <td><strong>ABC-1234</strong></td>
-                                <td>45 L</td>
-                                <td>$1,050.00</td>
-                                <td>45,045 km</td>
-                                <td>Oxxo Gas Centro</td>
-                                <td class="actions">
-                                    <button class="btn-icon" title="Ver detalle" aria-label="Ver detalle" data-action="view" style="display: inline-flex; align-items: center; justify-content: center;">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>23/Jun/2026</td>
-                                <td><strong>XYZ-9876</strong></td>
-                                <td>60 L</td>
-                                <td>$1,420.00</td>
-                                <td>112,460 km</td>
-                                <td>Pemex Salida Sur</td>
-                                <td class="actions">
-                                    <button class="btn-icon" title="Ver detalle" aria-label="Ver detalle" data-action="view" style="display: inline-flex; align-items: center; justify-content: center;">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                    </button>
-                                </td>
-                            </tr>
+                            <tr><td colspan="7" style="text-align:center; padding: 20px;">Cargando historial de combustible...</td></tr>
                         </tbody>
                     </table>
                 </div>
-
             </main>
         </div>
     </div>
 
+    <!-- MODAL 1: REGISTRAR CARGA DE COMBUSTIBLE -->
     <div class="modal-overlay" id="modal-combustible">
         <div class="modal-content" style="max-width: 450px;">
             <div class="modal-header">
@@ -147,38 +128,38 @@
                 <button class="btn-close" id="btn-cerrar-combustible">&times;</button>
             </div>
             <div class="modal-body">
-                <form class="data-form">
+                <form class="data-form" id="form-combustible-datos" enctype="multipart/form-data">
                     <div class="form-group">
                         <label>Vehículo</label>
-                        <select required>
-                            <option value="" disabled selected>Seleccione la unidad...</option>
-                            <option value="1">ABC-1234 (Nissan NP300)</option>
-                            <option value="2">XYZ-9876 (Ford Transit)</option>
+                        <select id="vehiculo-carga" name="id_vehiculo" required>
+                            <option value="" disabled selected>Cargando vehículos...</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Fecha de Carga</label>
-                        <input type="date" required>
+                        <input type="date" name="fecha" required>
                     </div>
-                    <div class="form-group">
-                        <label>Litros Cargados</label>
-                        <input type="number" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Costo Total ($)</label>
-                        <input type="number" step="0.01" required>
+                    <div class="form-row" style="display: flex; gap: 10px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Litros Cargados</label>
+                            <input type="number" step="0.01" name="litros" required>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Costo Total ($)</label>
+                            <input type="number" step="0.01" name="costo_total" required>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Odómetro (Kilometraje actual)</label>
-                        <input type="number" required>
+                        <input type="number" name="odometro" required>
                     </div>
                     <div class="form-group">
                         <label>Estación Gasolinera</label>
-                        <input type="text" required>
+                        <input type="text" name="estacion" required>
                     </div>
                     <div class="form-group">
-                        <label>Comprobante (Ticket/Factura)</label>
-                        <input type="file" style="padding: 10px; border: 1px dashed #d1d5db; background-color: #f9fafb; cursor: pointer;">
+                        <label>Comprobante (Foto/PDF) <span style="color: var(--text-muted); font-size: 12px;">(Opcional)</span></label>
+                        <input type="file" name="comprobante" accept="image/*,.pdf" style="padding: 10px; border: 1px dashed #d1d5db; background-color: #f9fafb; cursor: pointer;">
                     </div>
                 </form>
             </div>
@@ -189,6 +170,7 @@
         </div>
     </div>
 
+    <!-- MODAL 2: IMPORTACIÓN INTELIGENTE -->
     <div class="modal-overlay" id="modal-importar">
         <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
@@ -214,9 +196,10 @@
                         <button type="button" class="btn-primary" id="btn-siguiente-mapeo" style="width: 100%; margin-top: 15px;">Analizar Archivo</button>
                     </form>
                 </div>
-
+                
                 <div id="paso-2-mapeo" style="display: none;">
                     <p style="color: var(--primary-color); font-weight: 600; font-size: 14px; margin-bottom: 15px;">Empareja los datos de OptiFlota con las columnas de tu archivo.</p>
+                    
                     <div style="background-color: #f9fafb; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; margin-bottom: 10px;">
                             <span style="font-size: 14px; font-weight: 500;">Placas / Vehículo:</span>
@@ -254,12 +237,14 @@
                             </select>
                         </div>
                     </div>
+                    
                     <div class="form-group" style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
                         <input type="checkbox" id="guardar-formato" checked style="width: auto;">
                         <label for="guardar-formato" style="margin: 0; cursor: pointer; color: var(--text-main);">Guardar esta configuración para el próximo mes</label>
                     </div>
                 </div>
             </div>
+            
             <div class="modal-footer" id="footer-mapeo" style="display: none;">
                 <button class="btn-secondary" id="btn-volver-importar">Volver</button>
                 <button class="btn-primary" id="btn-procesar-archivo">Procesar y Guardar</button>
@@ -267,6 +252,7 @@
         </div>
     </div>
 
+    <!-- MODAL 3: VISOR DE DETALLES -->
     <div class="modal-overlay" id="modal-visor">
         <div class="modal-content">
             <div class="modal-header"><h2 id="visor-titulo">Detalles</h2><button class="btn-close" id="btn-cerrar-visor">&times;</button></div>
@@ -275,79 +261,8 @@
         </div>
     </div>
 
-    <script>
-        // LÓGICA MODAL 1: CARGA MANUAL
-        const modalCombustible = document.getElementById('modal-combustible');
-        const cerrarCombustible = () => modalCombustible.classList.remove('active');
-        
-        document.getElementById('btn-abrir-combustible').addEventListener('click', () => modalCombustible.classList.add('active'));
-        document.getElementById('btn-cerrar-combustible').addEventListener('click', cerrarCombustible);
-        document.getElementById('btn-cancelar-combustible').addEventListener('click', cerrarCombustible);
-        document.getElementById('btn-guardar-combustible').addEventListener('click', (e) => {
-            e.preventDefault();
-            cerrarCombustible();
-            alert('Carga de combustible guardada.');
-        });
-
-        // LÓGICA MODAL 2: IMPORTACIÓN INTELIGENTE
-        const modalImportar = document.getElementById('modal-importar');
-        const cerrarImportar = () => {
-            modalImportar.classList.remove('active');
-            // Regresar al paso 1 después de cerrar
-            setTimeout(() => {
-                document.getElementById('paso-1-importacion').style.display = 'block';
-                document.getElementById('paso-2-mapeo').style.display = 'none';
-                document.getElementById('footer-mapeo').style.display = 'none';
-            }, 300);
-        };
-        
-        document.getElementById('btn-abrir-importar').addEventListener('click', () => modalImportar.classList.add('active'));
-        document.getElementById('btn-cerrar-importar').addEventListener('click', cerrarImportar);
-
-        // Flujo del Mapeo
-        document.getElementById('btn-siguiente-mapeo').addEventListener('click', () => {
-            document.getElementById('paso-1-importacion').style.display = 'none';
-            document.getElementById('paso-2-mapeo').style.display = 'block';
-            document.getElementById('footer-mapeo').style.display = 'flex';
-        });
-        document.getElementById('btn-volver-importar').addEventListener('click', () => {
-            document.getElementById('paso-1-importacion').style.display = 'block';
-            document.getElementById('paso-2-mapeo').style.display = 'none';
-            document.getElementById('footer-mapeo').style.display = 'none';
-        });
-        document.getElementById('btn-procesar-archivo').addEventListener('click', () => {
-            cerrarImportar();
-            alert('¡Archivo procesado con éxito! Se registraron los datos de combustible.');
-        });
-
-        // LÓGICA MODAL 3: VISOR DE DETALLES
-        const modalVisor = document.getElementById('modal-visor');
-        const cerrarVisor = () => modalVisor.classList.remove('active');
-        
-        document.getElementById('btn-cerrar-visor').addEventListener('click', cerrarVisor);
-        document.getElementById('btn-entendido-visor').addEventListener('click', cerrarVisor);
-
-        document.querySelectorAll('.data-table .btn-icon').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const button = e.currentTarget;
-                if (button.dataset.action === 'view') {
-                    const fila = button.closest('tr');
-                    document.getElementById('visor-titulo').innerText = "Ticket de Combustible";
-                    document.getElementById('visor-contenido').innerHTML = `
-                        <div style="text-align: center; margin-bottom: 20px;">
-                            <h3 style="color: var(--primary-color); font-size: 24px;">${fila.cells[3].innerText}</h3>
-                            <p style="color: var(--text-muted);">Cargado: ${fila.cells[2].innerText}</p>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding-top: 15px; border-top: 1px dashed #d1d5db;">
-                            <div><small style="color: var(--text-muted);">Vehículo</small><p><strong>${fila.cells[1].innerText}</strong></p></div>
-                            <div><small style="color: var(--text-muted);">Fecha</small><p>${fila.cells[0].innerText}</p></div>
-                            <div><small style="color: var(--text-muted);">Odómetro</small><p>${fila.cells[4].innerText}</p></div>
-                            <div><small style="color: var(--text-muted);">Estación</small><p>${fila.cells[5].innerText}</p></div>
-                        </div>`;
-                    modalVisor.classList.add('active');
-                }
-            });
-        });
-    </script>
+    <!-- SCRIPTS -->
+    <script src="../../js/cliente/global.js"></script>
+    <script src="../../js/cliente/combustible.js"></script>
 </body>
 </html>

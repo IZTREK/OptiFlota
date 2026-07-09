@@ -6,7 +6,7 @@
     <title>OptiFlota - Tickets</title>
     <link rel="stylesheet" href="../../../Estilos/styles.css">
     <style>
-        .form-group select, .form-group textarea, .form-group input[type="text"], .form-group input[type="date"] {
+        .form-group select, .form-group textarea, .form-group input[type="text"], .form-group input[type="date"], .form-group input[type="file"] {
             width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; font-family: inherit; background-color: white; transition: 0.3s;
         }
         .form-group select:focus, .form-group textarea:focus, .form-group input:focus {
@@ -25,32 +25,40 @@
 <body>
     <div class="app-container">
         
-        <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-logo"><h2>OptiFlota</h2></div>
             <nav class="sidebar-nav">
-                <a href="../index.html" class="nav-item">Dashboard</a>
-                <a href="../vehiculos/vehiculos.html" class="nav-item">Vehículos</a>
-                <a href="../diagnosticos/diagnosticos.html" class="nav-item">Diagnósticos</a>
-                <a href="../combustible/combustible.html" class="nav-item">Combustible</a>
-                <a href="../mantenimiento/mantenimiento.html" class="nav-item">Mantenimiento</a>
-                <a href="../siniestros/tickets.html" class="nav-item active">Tickets</a>
-                <a href="../suscripcion/suscripcion.html" class="nav-item">Suscripción</a>
+                <a id="nav-dashboard" href="../index.html" class="nav-item">Dashboard</a>
+                <a id="nav-vehiculos" href="../vehiculos/vehiculos.html" class="nav-item">Vehículos</a>
+                <a id="nav-diagnosticos" href="../diagnosticos/diagnosticos.html" class="nav-item">Diagnósticos</a>
+                <a id="nav-combustible" href="../combustible/combustible.html" class="nav-item">Combustible</a>
+                <a id="nav-mantenimiento" href="../mantenimiento/mantenimiento.html" class="nav-item">Mantenimiento</a>
+                <a id="nav-tickets" href="../siniestros/tickets.html" class="nav-item active">Tickets</a>
+                <a id="nav-suscripcion" href="../suscripcion/suscripcion.html" class="nav-item">Suscripción</a>
             </nav>
         </aside> 
 
-        <!-- CONTENIDO PRINCIPAL -->
         <div class="main-content">
             <header class="topbar">
                 <div class="page-title"><h1>Soporte y Siniestros</h1></div>
-                <div class="user-profile"><span>Transportes García</span><div class="avatar">TG</div></div>
+                <div class="user-profile">
+                    <span>Cargando...</span>
+                    <div class="avatar">C</div>
+                </div>
             </header>
 
             <main class="content-area">
-                <!-- KPIs -->
                 <section class="kpi-grid">
-                    <div class="kpi-card"><h3>Tickets Abiertos</h3><p class="kpi-value">2</p><span class="badge danger">Atención requerida</span></div>
-                    <div class="kpi-card"><h3>Tickets Resueltos (Mes)</h3><p class="kpi-value">5</p><span class="badge ok">Al día</span></div>
+                    <div class="kpi-card">
+                        <h3>Tickets Abiertos / Pendientes</h3>
+                        <p class="kpi-value" id="kpi-abiertos" style="color: var(--danger);">Cargando...</p>
+                        <span class="badge danger">Atención requerida</span>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Tickets Resueltos (Mes)</h3>
+                        <p class="kpi-value" id="kpi-resueltos" style="color: var(--success);">Cargando...</p>
+                        <span class="badge ok">Al día</span>
+                    </div>
                 </section>
                 
                 <div class="section-header">
@@ -58,23 +66,19 @@
                     <button class="btn-primary btn-auto" id="btn-abrir-modal">+ Nuevo Ticket</button>
                 </div>
 
-                <!-- BARRA DE FILTROS -->
+                <!-- BARRA DE FILTROS RESTAURADA -->
                 <div class="filter-bar">
                     <div class="filter-group">
                         <label>Fecha</label>
-                        <input type="date">
+                        <input type="date" id="filtro-fecha">
                     </div>
                     <div class="filter-group">
                         <label>ID de Ticket</label>
-                        <input type="text" placeholder="Ej. TK-0045">
-                    </div>
-                    <div class="filter-group">
-                        <label>Vehículo</label>
-                        <input type="text" placeholder="Ej. ABC-1234">
+                        <input type="text" id="filtro-folio" placeholder="Ej. TK-0045">
                     </div>
                     <div class="filter-group">
                         <label>Estado</label>
-                        <select>
+                        <select id="filtro-estado">
                             <option value="">Todos</option>
                             <option value="pendiente">Pendiente</option>
                             <option value="proceso">En Proceso</option>
@@ -82,40 +86,21 @@
                         </select>
                     </div>
                     <div class="filter-actions">
-                        <button class="btn-secondary">Limpiar</button>
-                        <button class="btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+                        <button class="btn-secondary" id="btn-limpiar-filtros">Limpiar</button>
+                        <button class="btn-primary" id="btn-buscar-filtros" style="display: inline-flex; align-items: center; gap: 6px;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
                             <span>Buscar</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- TABLA DE DATOS -->
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
                             <tr><th>Fecha</th><th>Ticket ID</th><th>Asunto</th><th>Vehículo Involucrado</th><th>Estado</th><th>Acciones</th></tr>
                         </thead>
                         <tbody>
-                            <!-- Este está resuelto para ver el hilo completo -->
-                            <tr>
-                                <td>20/Jun/2026</td><td>#TK-0044</td><td>Falla en acceso a plataforma</td><td>N/A (Soporte Sistema)</td>
-                                <td><span class="badge ok">Resuelto</span></td>
-                                <td class="actions">
-                                    <button class="btn-icon" title="Ver detalle" aria-label="Ver detalle" data-action="view" style="display: inline-flex; align-items: center; justify-content: center;">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>24/Jun/2026</td><td>#TK-0045</td><td>Choque por alcance (Defensa trasera)</td><td><strong>ABC-1234</strong></td>
-                                <td><span class="badge warning">En Proceso</span></td>
-                                <td class="actions">
-                                    <button class="btn-icon" title="Ver detalle" aria-label="Ver detalle" data-action="view" style="display: inline-flex; align-items: center; justify-content: center;">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                    </button>
-                                </td>
-                            </tr>
+                            <tr><td colspan="6" style="text-align:center; padding: 20px;">Cargando tickets...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -131,44 +116,48 @@
                 <button class="btn-close" id="btn-cerrar-modal">&times;</button>
             </div>
             <div class="modal-body">
-                <form class="data-form">
-                    <div class="form-group">
-                        <label>Tipo de Reporte</label>
-                        <select required>
-                            <option value="" disabled selected>Seleccione una opción...</option>
-                            <option value="siniestro">Siniestro / Accidente</option>
-                            <option value="falla">Falla Mecánica Imprevista</option>
-                            <option value="soporte">Soporte del Sistema</option>
-                            <option value="otro">Otro</option>
-                        </select>
+                <form class="data-form" id="form-ticket-datos" enctype="multipart/form-data">
+                    <div class="form-row" style="display: flex; gap: 10px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Tipo de Reporte</label>
+                            <select name="tipo_reporte" required>
+                                <option value="" disabled selected>Seleccione...</option>
+                                <option value="Siniestro">Siniestro / Accidente</option>
+                                <option value="Falla Mecánica">Falla Mecánica Imprevista</option>
+                                <option value="Soporte Sistema">Soporte del Sistema</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Nivel de Urgencia</label>
+                            <select name="nivel_urgencia" required>
+                                <option value="Baja" selected>Baja</option>
+                                <option value="Media">Media</option>
+                                <option value="Alta">Alta</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Fecha del Incidente</label>
-                        <input type="date" required>
+                        <input type="date" name="fecha_incidente" required>
                     </div>
                     <div class="form-group">
-                        <label>Vehículo (Si aplica)</label>
-                        <select>
-                            <option value="NA">N/A - Soporte del Sistema</option>
-                            <option value="ABC-1234">ABC-1234 (Nissan NP300)</option>
-                            <option value="XYZ-9876">XYZ-9876 (Ford Transit)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Nivel de Urgencia</label>
-                        <select required>
-                            <option value="baja" selected>Baja</option>
-                            <option value="media">Media</option>
-                            <option value="alta">Alta</option>
+                        <label>Vehículo Involucrado</label>
+                        <select id="vehiculo-ticket" name="id_vehiculo">
+                            <option value="NA">Cargando vehículos...</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Asunto Breve</label>
-                        <input type="text" placeholder="Ej. Choque lateral derecho" required>
+                        <input type="text" name="asunto_breve" placeholder="Ej. Choque lateral derecho o Error al iniciar" required>
                     </div>
                     <div class="form-group">
                         <label>Descripción Detallada</label>
-                        <textarea rows="4" placeholder="Describa cómo ocurrió el incidente o el error en el sistema..." required style="resize: vertical;"></textarea>
+                        <textarea name="descripcion_detallada" rows="3" placeholder="Describa cómo ocurrió el incidente o el error..." required style="resize: vertical;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Evidencia / Foto <span style="color: var(--text-muted); font-size: 12px;">(Opcional)</span></label>
+                        <input type="file" name="evidencia" accept="image/*,.pdf" style="padding: 10px; border: 1px dashed #d1d5db; background-color: #f9fafb; cursor: pointer;">
                     </div>
                 </form>
             </div>
@@ -187,100 +176,25 @@
                 <button class="btn-close" id="btn-cerrar-visor">&times;</button>
             </div>
             
-            <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
-                
+            <div class="modal-body">
                 <!-- Hilo de mensajes dinámico -->
-                <div id="visor-contenido"></div>
+                <div id="visor-contenido" style="max-height: 45vh; overflow-y: auto; padding-right: 10px;"></div>
                 
                 <!-- Área de respuesta del cliente -->
-                <div style="margin-top: 25px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
-                    <h3 style="font-size: 15px; margin-bottom: 10px; color: var(--text-main);">¿El problema persiste o tienes dudas?</h3>
+                <div style="margin-top: 15px; border-top: 1px solid #e5e7eb; padding-top: 15px;">
+                    <h3 style="font-size: 14px; margin-bottom: 10px; color: var(--text-main);">Responder / Actualizar Ticket</h3>
                     <form class="data-form">
-                        <div class="form-group">
-                            <textarea rows="3" id="cliente-respuesta" placeholder="Escribe tu respuesta para actualizar o reabrir el ticket..." required style="resize: vertical;"></textarea>
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <textarea rows="2" id="cliente-respuesta" placeholder="Escribe tu respuesta para actualizar el caso..." style="resize: vertical;"></textarea>
                         </div>
-                        <button type="button" class="btn-primary" id="btn-responder-ticket" style="width: 100%;">Enviar Respuesta (Reabrir Ticket)</button>
+                        <button type="button" class="btn-primary" id="btn-responder-ticket" style="width: 100%;">Enviar Respuesta</button>
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
 
-    <script>
-        // MODAL NUEVO TICKET
-        const modalTicket = document.getElementById('modal-ticket');
-        const cerrarTicket = () => modalTicket.classList.remove('active');
-        
-        document.getElementById('btn-abrir-modal').addEventListener('click', () => modalTicket.classList.add('active'));
-        document.getElementById('btn-cerrar-modal').addEventListener('click', cerrarTicket);
-        document.getElementById('btn-cancelar-modal').addEventListener('click', cerrarTicket);
-        document.getElementById('btn-guardar-ticket').addEventListener('click', (e) => {
-            e.preventDefault();
-            cerrarTicket();
-            alert("Ticket creado exitosamente.");
-        });
-
-        // MODAL VISOR DE TICKET (CHAT)
-        const modalVisor = document.getElementById('modal-visor');
-        const cerrarVisor = () => {
-            modalVisor.classList.remove('active');
-            document.getElementById('cliente-respuesta').value = '';
-        };
-        
-        document.getElementById('btn-cerrar-visor').addEventListener('click', cerrarVisor);
-        
-        document.getElementById('btn-responder-ticket').addEventListener('click', () => {
-            const respuesta = document.getElementById('cliente-respuesta').value.trim();
-            if(respuesta === "") {
-                alert("Por favor, escribe una respuesta.");
-                return;
-            }
-            cerrarVisor();
-            alert("Tu respuesta ha sido enviada. El estado de tu ticket ha cambiado a 'Pendiente de revisión por Soporte'.");
-        });
-
-        document.querySelectorAll('.data-table .btn-icon').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const button = e.currentTarget;
-                if (button.dataset.action === 'view') {
-                    const fila = button.closest('tr');
-                    const estado = fila.cells[4].innerText.trim();
-                    const fecha = fila.cells[0].innerText;
-                    const idTicket = fila.cells[1].innerText;
-                    const asunto = fila.cells[2].innerText;
-                    
-                    document.getElementById('visor-titulo').innerText = `Seguimiento de Ticket: ${idTicket}`;
-                    
-                    let htmlChat = `
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                            <div><small style="color: var(--text-muted);">Apertura:</small> <br>${fecha}</div>
-                            <div>${fila.cells[4].innerHTML}</div>
-                        </div>
-                        
-                        <!-- Burbuja Cliente (Mensaje original) -->
-                        <div class="chat-bubble-cliente">
-                            <small style="color: var(--primary-color); font-weight: 600;">Tú (Transportes García)</small>
-                            <p style="margin-top: 5px; font-size: 14px; color: var(--text-main);">${asunto}</p>
-                        </div>
-                    `;
-
-                    // Si el estado no es pendiente, significa que soporte ya respondió
-                    if (estado !== 'Pendiente') {
-                        htmlChat += `
-                        <!-- Burbuja Admin (Respuesta Soporte) -->
-                        <div class="chat-bubble-admin">
-                            <small style="color: #065f46; font-weight: 600;">Soporte Técnico OptiFlota</small>
-                            <p style="margin-top: 5px; font-size: 14px; color: var(--text-main);">Hemos revisado tu caso en el sistema. El inconveniente ha sido identificado y solucionado en nuestra base de datos. Por favor, intenta realizar la acción nuevamente. Si el error persiste, avísanos respondiendo a este mensaje.</p>
-                        </div>
-                        `;
-                    }
-
-                    document.getElementById('visor-contenido').innerHTML = htmlChat;
-                    modalVisor.classList.add('active');
-                }
-            });
-        });
-    </script>
+    <script src="../../js/cliente/global.js"></script>
+    <script src="../../js/cliente/tickets.js"></script>
 </body>
 </html>

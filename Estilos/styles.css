@@ -594,7 +594,7 @@ body {
         font-size: 14px;
     }
 
-    /* La barra indicadora cambia de la izquierda a la parte inferior */
+    /* La barra indicadora cambia de la izquierda a la izquierda a la parte inferior */
     .nav-item:hover, .nav-item.active {
         border-left: none;
         border-bottom: 4px solid var(--primary-color);
@@ -619,3 +619,54 @@ body {
     }
 }
 
+/* Estilos para el contenedor de la gráfica y la tabla */
+.chart-and-table-container {
+    display: flex;
+    gap: 24px; /* Espacio entre las columnas */
+    flex-wrap: wrap; /* Permite que las columnas se apilen en pantallas pequeñas */
+    margin-top: 32px;
+}
+
+.chart-column {
+    flex: 1; /* Ocupa el espacio disponible */
+    min-width: 300px; /* Ancho mínimo para la columna del gráfico */
+    background-color: var(--card-bg);
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.chart-column h2 {
+    font-size: 18px;
+    color: var(--text-main);
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.table-column {
+    flex: 2; /* Ocupa el doble de espacio que la columna del gráfico */
+    min-width: 400px; /* Ancho mínimo para la columna de la tabla */
+    background-color: var(--card-bg);
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.table-column h2 {
+    font-size: 18px;
+    color: var(--text-main);
+    margin-bottom: 16px;
+}
+
+/* Ajuste para pantallas más pequeñas */
+@media (max-width: 992px) {
+    .chart-and-table-container {
+        flex-direction: column; /* Apila las columnas en pantallas medianas */
+    }
+
+    .chart-column,
+    .table-column {
+        min-width: unset; /* Elimina el ancho mínimo para que ocupen todo el ancho */
+        width: 100%;
+    }
+}

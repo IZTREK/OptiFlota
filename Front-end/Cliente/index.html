@@ -13,13 +13,13 @@
                 <h2>OptiFlota</h2>
             </div>
             <nav class="sidebar-nav">
-                <a href="../Cliente/index.html" class="nav-item active">Dashboard</a>
-                <a href="../Cliente/Vehiculos/vehiculos.html" class="nav-item">Vehículos</a>
-                <a href="../Cliente/Diagnosticos/diagnosticos.html" class="nav-item">Diagnósticos</a>
-                <a href="../Cliente/Combustible/combustible.html" class="nav-item">Combustible</a>
-                <a href="../Cliente/Mantenimiento/mantenimiento.html" class="nav-item">Mantenimiento</a>
-                <a href="../Cliente/Siniestros/tickets.html" class="nav-item">Tickets</a>
-                <a href="../Cliente/Suscripcion/suscripcion.html" class="nav-item">Suscripción</a>
+                <a id="nav-dashboard" href="../Cliente/index.html" class="nav-item active">Dashboard</a>
+                <a id="nav-vehiculos" href="../Cliente/Vehiculos/vehiculos.html" class="nav-item">Vehículos</a>
+                <a id="nav-diagnosticos" href="../Cliente/Diagnosticos/diagnosticos.html" class="nav-item">Diagnósticos</a>
+                <a id="nav-combustible" href="../Cliente/Combustible/combustible.html" class="nav-item">Combustible</a>
+                <a id="nav-mantenimiento" href="../Cliente/Mantenimiento/mantenimiento.html" class="nav-item">Mantenimiento</a>
+                <a id="nav-tickets" href="../Cliente/Siniestros/tickets.html" class="nav-item">Tickets</a>
+                <a id="nav-suscripcion" href="../Cliente/Suscripcion/suscripcion.html" class="nav-item">Suscripción</a>
             </nav>
         </aside>
 
@@ -54,13 +54,52 @@
                 </section>
                 
                 <section class="recent-activity">
-                    <h2>Últimos Movimientos</h2>
-                    <div class="placeholder-box">
-                        <p>Tabla de últimos tickets de gasolina...</p>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px;">
+    
+                    <div style="background: var(--card-bg); padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h3 style="text-align: center; margin-bottom: 20px; font-size: 16px; color: var(--text-main);">Estado de la Flotilla</h3>
+                        <div style="position: relative; height: 300px; width: 100%; display: flex; justify-content: center;">
+                            <canvas id="flotaChart"></canvas>
+                        </div>
                     </div>
+
+                    <div style="background: var(--card-bg); padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h3 style="margin-bottom: 20px; font-size: 16px; color: var(--text-main);">Últimos Movimientos</h3>
+                        
+                        <div class="placeholder-box" style="margin-top: 0; height: 300px; display: flex; align-items: center; justify-content: center;">
+                            <p>Tabla de últimos tickets de gasolina...</p>
+                        </div>
+                    </div>
+
+                </div>
                 </section>
             </main>
         </div>
     </div>
+
+    <div class="modal-overlay" id="modal-bloqueo-pago">
+        <div class="modal-content" style="max-width: 450px; text-align: center; border-top: 5px solid var(--danger);">
+            <div class="modal-body" style="padding: 40px 30px;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 20px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                
+                <h2 style="color: var(--text-main); margin-bottom: 10px;">Suscripción Vencida</h2>
+                <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 25px;">
+                    El tiempo de tu plan ha terminado. Para seguir gestionando tu flotilla y desbloquear tus módulos, por favor sube tu comprobante de pago.
+                </p>
+                
+                <form class="data-form" id="form-pago-obligatorio" style="text-align: left;">
+                    <div class="form-group">
+                        <label>Subir comprobante de pago (PDF, JPG)</label>
+                        <input type="file" required style="width: 100%; padding: 10px; border: 1px dashed #d1d5db; background-color: #f9fafb; cursor: pointer;">
+                    </div>
+                    <button type="button" class="btn-primary" style="width: 100%; margin-top: 15px;" onclick="alert('Enviando pago a revisión...')">Enviar Comprobante y Solicitar Desbloqueo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../js/cliente/global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/cliente/index.js"></script>
 </body>
 </html>

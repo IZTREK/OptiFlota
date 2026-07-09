@@ -12,26 +12,36 @@
         <aside class="sidebar">
             <div class="sidebar-logo"><h2>OptiFlota</h2></div>
             <nav class="sidebar-nav">
-                <a href="../index.html" class="nav-item">Dashboard</a>
-                <a href="../vehiculos/vehiculos.html" class="nav-item active">Vehículos</a>
-                <a href="../diagnosticos/diagnosticos.html" class="nav-item">Diagnósticos</a>
-                <a href="../combustible/combustible.html" class="nav-item">Combustible</a>
-                <a href="../mantenimiento/mantenimiento.html" class="nav-item">Mantenimiento</a>
-                <a href="../siniestros/tickets.html" class="nav-item">Tickets</a>
-                <a href="../suscripcion/suscripcion.html" class="nav-item">Suscripción</a>
+                <a id="nav-dashboard" href="../index.html" class="nav-item">Dashboard</a>
+                <a id="nav-vehiculos" href="../vehiculos/vehiculos.html" class="nav-item">Vehículos</a>
+                <a id="nav-diagnosticos" href="../diagnosticos/diagnosticos.html" class="nav-item">Diagnósticos</a>
+                <a id="nav-combustible" href="../combustible/combustible.html" class="nav-item">Combustible</a>
+                <a id="nav-mantenimiento" href="../mantenimiento/mantenimiento.html" class="nav-item active">Mantenimiento</a>
+                <a id="nav-tickets" href="../siniestros/tickets.html" class="nav-item">Tickets</a>
+                <a id="nav-suscripcion" href="../suscripcion/suscripcion.html" class="nav-item">Suscripción</a>
             </nav>
         </aside> 
 
         <div class="main-content">
             <header class="topbar">
                 <div class="page-title"><h1>Control de Mantenimiento</h1></div>
-                <div class="user-profile"><span>Transportes García</span><div class="avatar">TG</div></div>
+                <div class="user-profile">
+                    <span>Cargando...</span>
+                    <div class="avatar">C</div>
+                </div>
             </header>
 
             <main class="content-area">
                 <section class="kpi-grid">
-                    <div class="kpi-card"><h3>Inversión en Mantenimiento (Mes)</h3><p class="kpi-value">$12,400</p></div>
-                    <div class="kpi-card"><h3>Servicios Programados</h3><p class="kpi-value">3</p><span class="badge warning">Próximos a vencer</span></div>
+                    <div class="kpi-card">
+                        <h3>Inversión Mantenimiento (Este Mes)</h3>
+                        <p class="kpi-value" id="kpi-gasto">Cargando...</p>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Vehículos En Taller</h3>
+                        <p class="kpi-value" id="kpi-taller">Cargando...</p>
+                        <span class="badge warning">No disponibles</span>
+                    </div>
                 </section>
                 
                 <div class="section-header">
@@ -40,10 +50,29 @@
                 </div>
 
                 <div class="filter-bar">
-                    <div class="filter-group"><label>Mes de Servicio</label><input type="month"></div>
-                    <div class="filter-group"><label>Vehículo</label><input type="text" placeholder="Ej. ABC-1234"></div>
-                    <div class="filter-group"><label>Tipo de Servicio</label><select><option value="">Todos</option><option value="preventivo">Preventivo</option><option value="correctivo">Correctivo</option></select></div>
-                    <div class="filter-actions"><button class="btn-secondary">Limpiar</button><button class="btn-primary" style="display: inline-flex; align-items: center; gap: 6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><span>Buscar</span></button></div>
+                    <div class="filter-group">
+                        <label id="filtro-mes-label">Mes de Servicio</label>
+                        <input type="month" id="filtro-mes">
+                    </div>
+                    <div class="filter-group">
+                        <label>Vehículo (Placas o Marca)</label>
+                        <input type="text" id="filtro-placas" placeholder="Ej. ABC-1234">
+                    </div>
+                    <div class="filter-group">
+                        <label>Tipo de Servicio</label>
+                        <select id="filtro-tipo">
+                            <option value="">Todos</option>
+                            <option value="preventivo">Preventivo</option>
+                            <option value="correctivo">Correctivo</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn-secondary">Limpiar</button>
+                        <button class="btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+                            <span>Buscar</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="table-container">
@@ -52,16 +81,7 @@
                             <tr><th>Fecha</th><th>Vehículo</th><th>Tipo</th><th>Detalle</th><th>Costo</th><th>Estado</th><th>Acciones</th></tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>22/Jun/2026</td><td><strong>ABC-1234</strong></td><td><span class="badge ok">Preventivo</span></td>
-                                <td>Afinación mayor y cambio de aceite</td><td>$2,500.00</td><td>Terminado</td>
-                                <td class="actions"><button class="btn-icon" title="Ver detalle" aria-label="Ver detalle" data-action="view" style="display: inline-flex; align-items: center; justify-content: center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></td>
-                            </tr>
-                            <tr>
-                                <td>24/Jun/2026</td><td><strong>XYZ-9876</strong></td><td><span class="badge danger">Correctivo</span></td>
-                                <td>Cambio de balatas y rectificado</td><td>$4,200.00</td><td>En Taller</td>
-                                <td class="actions"><button class="btn-icon" title="Ver detalle" aria-label="Ver detalle" data-action="view" style="display: inline-flex; align-items: center; justify-content: center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></td>
-                            </tr>
+                            <tr><td colspan="7" style="text-align:center; padding: 20px;">Cargando historial de mantenimientos...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -76,49 +96,50 @@
             <button class="btn-close" id="btn-cerrar-modal">&times;</button>
         </div>
         <div class="modal-body">
-            <form class="data-form">
+            <form class="data-form" id="form-mantenimiento-datos" enctype="multipart/form-data">
                 
                 <div class="form-group">
                     <label>Vehículo</label>
-                    <select required style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; background-color: white;">
-                        <option value="1">ABC-1234</option>
+                    <select id="vehiculo-mant" name="id_vehiculo" required style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; background-color: white;">
+                        <option value="" disabled selected>Cargando vehículos...</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label>Fecha</label>
-                    <input type="date" required style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px;">
+                    <label>Fecha del Ingreso/Servicio</label>
+                    <input type="date" name="fecha" required style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px;">
                 </div>
                 
-                <div class="form-group">
-                    <label>Tipo de Servicio</label>
-                    <select style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; background-color: white;">
-                        <option value="preventivo">Preventivo</option>
-                        <option value="correctivo">Correctivo</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Costo Total ($)</label>
-                    <input type="number" required style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px;">
+                <div class="form-row" style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Tipo de Servicio</label>
+                        <select name="tipo" style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; background-color: white;">
+                            <option value="preventivo">Preventivo</option>
+                            <option value="correctivo">Correctivo</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Costo Total ($)</label>
+                        <input type="number" step="0.01" name="costo_total" required style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px;">
+                    </div>
                 </div>
                 
                 <div class="form-group">
                     <label>Detalle de los Trabajos</label>
-                    <textarea rows="3" style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
+                    <textarea name="detalle" rows="3" required style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
                 </div>
                 
                 <div class="form-group">
                     <label>Estado</label>
-                    <select style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; background-color: white;">
+                    <select name="estado" style="width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; background-color: white;">
                         <option value="taller">En Taller</option>
                         <option value="terminado">Terminado</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label>Factura</label>
-                    <input type="file" style="width: 100%; padding: 10px; border: 1px dashed #d1d5db; border-radius: 6px; background-color: #f9fafb;">
+                   <label>Factura / Cotización <span style="color: var(--text-muted); font-size: 12px;">(Opcional)</span></label>
+                    <input type="file" name="factura" accept="image/*,.pdf" style="width: 100%; padding: 10px; border: 1px dashed #d1d5db; border-radius: 6px; background-color: #f9fafb;">
                 </div>
                 
             </form>
@@ -130,43 +151,20 @@
     </div>
 </div>
 
-    <script>
-        const modalMant = document.getElementById('modal-mantenimiento');
-        const cerrarMant = () => modalMant.classList.remove('active');
-        document.getElementById('btn-abrir-modal').addEventListener('click', () => modalMant.classList.add('active'));
-        document.getElementById('btn-cerrar-modal').addEventListener('click', cerrarMant);
-        document.getElementById('btn-cancelar-modal').addEventListener('click', cerrarMant);
-        document.getElementById('btn-guardar-mant').addEventListener('click', cerrarMant);
+<div class="modal-overlay" id="modal-visor">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="visor-titulo">Orden de Servicio</h2>
+            <button class="btn-close" id="btn-cerrar-visor">&times;</button>
+        </div>
+        <div class="modal-body" id="visor-contenido"></div>
+        <div class="modal-footer">
+            <button class="btn-primary" id="btn-entendido-visor">Cerrar</button>
+        </div>
+    </div>
+</div>
 
-        const modalVisor = document.getElementById('modal-visor');
-        const cerrarVisor = () => modalVisor.classList.remove('active');
-        document.getElementById('btn-cerrar-visor').addEventListener('click', cerrarVisor);
-        document.getElementById('btn-entendido-visor').addEventListener('click', cerrarVisor);
-
-        document.querySelectorAll('.data-table .btn-icon').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const button = e.currentTarget;
-                if (button.dataset.action === 'view') {
-                    const fila = button.closest('tr');
-                    document.getElementById('visor-titulo').innerText = "Orden de Servicio";
-                    document.getElementById('visor-contenido').innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <span style="font-size: 14px;"><strong>Vehículo:</strong> ${fila.cells[1].innerText}</span>
-                            ${fila.cells[2].innerHTML}
-                        </div>
-                        <div style="background: #f9fafb; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb; margin-bottom: 15px;">
-                            <small style="color: var(--text-muted);">Trabajos Realizados</small>
-                            <p style="margin-top: 5px; font-weight: 500;">${fila.cells[3].innerText}</p>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
-                            <div><small style="color: var(--text-muted);">Fecha</small><p>${fila.cells[0].innerText}</p></div>
-                            <div><small style="color: var(--text-muted);">Costo</small><p style="color: var(--primary-color); font-weight:bold;">${fila.cells[4].innerText}</p></div>
-                            <div><small style="color: var(--text-muted);">Estado</small><p>${fila.cells[5].innerText}</p></div>
-                        </div>`;
-                    modalVisor.classList.add('active');
-                }
-            });
-        });
-    </script>
+    <script src="../../js/cliente/global.js"></script>
+    <script src="../../js/cliente/mantenimiento.js"></script>
 </body>
 </html>

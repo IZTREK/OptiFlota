@@ -14,13 +14,13 @@
                 <h2>OptiFlota</h2>
             </div>
             <nav class="sidebar-nav">
-                <a href="../index.html" class="nav-item">Dashboard</a>
-                <a href="../vehiculos/vehiculos.html" class="nav-item active">Vehículos</a>
-                <a href="../diagnosticos/diagnosticos.html" class="nav-item">Diagnósticos</a>
-                <a href="../combustible/combustible.html" class="nav-item">Combustible</a>
-                <a href="../mantenimiento/mantenimiento.html" class="nav-item">Mantenimiento</a>
-                <a href="../siniestros/tickets.html" class="nav-item">Tickets</a>
-                <a href="../suscripcion/suscripcion.html" class="nav-item">Suscripción</a>
+                <a id="nav-dashboard" href="../index.html" class="nav-item">Dashboard</a>
+                <a id="nav-vehiculos" href="../vehiculos/vehiculos.html" class="nav-item active">Vehículos</a>
+                <a id="nav-diagnosticos" href="../diagnosticos/diagnosticos.html" class="nav-item">Diagnósticos</a>
+                <a id="nav-combustible" href="../combustible/combustible.html" class="nav-item">Combustible</a>
+                <a id="nav-mantenimiento" href="../mantenimiento/mantenimiento.html" class="nav-item">Mantenimiento</a>
+                <a id="nav-tickets" href="../siniestros/tickets.html" class="nav-item">Tickets</a>
+                <a id="nav-suscripcion" href="../suscripcion/suscripcion.html" class="nav-item">Suscripción</a>
             </nav>
         </aside> 
 
@@ -130,25 +130,25 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="placas">Placas</label>
-                            <input type="text" id="placas" placeholder="Ej. ABC-1234" required>
+                            <input type="text" id="placas" name="placas" placeholder="Ej. ABC-1234" required>
                         </div>
                         <div class="form-group">
                             <label for="anio">Año</label>
-                            <input type="number" id="anio" placeholder="Ej. 2024" required>
+                            <input type="number" id="anio" name="anio" placeholder="Ej. 2024" required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="marca">Marca y Modelo</label>
-                        <input type="text" id="marca" placeholder="Ej. Nissan NP300" required>
+                        <input type="text" id="marca" name="marca_modelo" placeholder="Ej. Nissan NP300" required>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="kilometraje">Kilometraje Inicial</label>
-                            <input type="number" id="kilometraje" placeholder="Ej. 15000" required>
+                            <input type="number" id="kilometraje" name="kilometraje_inicial" placeholder="Ej. 15000" required>
                         </div>
                         <div class="form-group">
                             <label for="estado">Estado Inicial</label>
-                            <select id="estado">
+                            <select id="estado" name="estado">
                                 <option value="activo">Activo</option>
                                 <option value="taller">En Taller</option>
                             </select>
@@ -157,44 +157,13 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" id="btn-cancelar-modal">Cancelar</button>
-                <button class="btn-primary" id="btn-guardar-vehiculo">Guardar Vehículo</button>
+                <button type="button" class="btn-secondary" id="btn-cancelar-modal">Cancelar</button>
+                <button type="button" class="btn-primary" id="btn-guardar-vehiculo">Guardar Vehículo</button>
             </div>
         </div>
     </div>
 
-    <script>
-        const modalVehiculo = document.getElementById('modal-vehiculo');
-        const cerrarModal = () => modalVehiculo.classList.remove('active');
-        
-        document.getElementById('btn-cerrar-modal').addEventListener('click', cerrarModal);
-        document.getElementById('btn-cancelar-modal').addEventListener('click', cerrarModal);
-        document.getElementById('btn-guardar-vehiculo').addEventListener('click', cerrarModal);
-        
-        document.getElementById('btn-abrir-modal').addEventListener('click', () => {
-            document.querySelector('.modal-header h2').innerText = 'Añadir Nuevo Vehículo';
-            document.getElementById('form-vehiculo').reset();
-            modalVehiculo.classList.add('active');
-        });
-
-        document.querySelectorAll('.data-table .btn-icon').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const button = e.currentTarget;
-                const fila = button.closest('tr');
-                if (button.dataset.action === 'edit') {
-                    document.querySelector('.modal-header h2').innerText = 'Editar Vehículo';
-                    document.getElementById('placas').value = fila.cells[0].innerText;
-                    document.getElementById('marca').value = fila.cells[1].innerText;
-                    document.getElementById('anio').value = fila.cells[2].innerText;
-                    document.getElementById('kilometraje').value = fila.cells[3].innerText.replace(/[^0-9]/g, '');
-                    modalVehiculo.classList.add('active');
-                } else if (button.dataset.action === 'delete') {
-                    if (confirm(`¿Dar de baja la unidad ${fila.cells[0].innerText}?`)) {
-                        fila.cells[4].innerHTML = '<span class="badge danger">Inactivo</span>';
-                    }
-                }
-            });
-        });
-    </script>
+    <script src="../../js/cliente/global.js"></script>
+    <script src="../../js/cliente/vehiculos.js"></script>
 </body>
 </html>

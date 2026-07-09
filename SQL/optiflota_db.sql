@@ -7,8 +7,23 @@ CREATE TABLE planes_suscripcion (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
     limite_vehiculos INT NOT NULL,
-    costo_mensual DECIMAL(10,2) NOT NULL
+    costo_mensual DECIMAL(10,2) NOT NULL,
+
+    mod_vehiculos BOOLEAN DEFAULT 0,
+    mod_combustible BOOLEAN DEFAULT 0,
+    mod_diagnosticos BOOLEAN DEFAULT 0,
+    mod_mantenimiento BOOLEAN DEFAULT 0,
+    mod_tickets BOOLEAN DEFAULT 0
 );
+
+    INSERT INTO planes_suscripcion 
+    (nombre, limite_vehiculos, costo_mensual, 
+    mod_vehiculos, mod_combustible, mod_diagnosticos, mod_mantenimiento, mod_tickets)
+    VALUES
+    ('Trial',5,0,1,1,0,0,0),
+    ('Básico',15,500,1,1,0,0,0),
+    ('Pro',50,1500,1,1,1,1,1),
+    ('Ilimitado',200,3000,1,1,1,1,1);
 
 CREATE TABLE empresas (
     id INT AUTO_INCREMENT PRIMARY KEY,
