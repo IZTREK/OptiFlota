@@ -14,10 +14,13 @@ async function verificarSesion() {
         const currentUrl = window.location.pathname.toLowerCase();
 
         if (data.expirada) {
-            if (!currentUrl.includes('index.html')) {
+            // NUEVO: Le permitimos estar en index.html O en suscripcion.html
+            if (!currentUrl.includes('index.html') && !currentUrl.includes('suscripcion.html')) {
                 window.location.href = '/Front-end/Cliente/index.html'; 
                 return;
             } 
+            
+            // Si está en el dashboard, mostramos el modal de bloqueo
             if (currentUrl.includes('index.html')) {
                 const modalBloqueo = document.getElementById('modal-bloqueo-pago');
                 if(modalBloqueo) modalBloqueo.classList.add('active');

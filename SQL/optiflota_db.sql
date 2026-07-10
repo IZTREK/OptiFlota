@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS tickets_comentarios;
 DROP TABLE IF EXISTS tickets;
 DROP TABLE IF EXISTS mantenimientos;
 DROP TABLE IF EXISTS cargas_combustible;
+DROP TABLE IF EXISTS registro_combustible;
 DROP TABLE IF EXISTS diagnosticos;
 DROP TABLE IF EXISTS vehiculos;
 DROP TABLE IF EXISTS pagos_suscripcion;
