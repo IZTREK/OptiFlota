@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OptiFlota Admin - Dashboard</title>
-
     <link rel="stylesheet" href="../../Estilos/styles.css">
 </head>
 <body>
@@ -17,7 +16,7 @@
                 <a href="admin_dashboard.html" class="nav-item active">Vista Global</a>
                 <a href="../Admin/empresas/empresas.html" class="nav-item">Empresas</a>
                 <a href="../Admin/pagos/pagos.html" class="nav-item">Control de Pagos</a>
-                <a href="../Admin/soporte/tickets_admin.html" class="nav-item active">Soporte Técnico</a>
+                <a href="../Admin/soporte/tickets_admin.html" class="nav-item">Soporte Técnico</a>
             </nav>
         </aside> 
 
@@ -37,25 +36,27 @@
                 <section class="kpi-grid">
                     <div class="kpi-card">
                         <h3>Total Clientes Activos</h3>
-                        <p class="kpi-value">12</p>
+                        <p class="kpi-value" id="kpi-clientes">0</p>
                     </div>
                     <div class="kpi-card">
                         <h3>Vehículos Gestionados</h3>
-                        <p class="kpi-value">345</p>
+                        <p class="kpi-value" id="kpi-vehiculos">0</p>
                     </div>
                     <div class="kpi-card">
                         <h3>Tickets de Soporte Abiertos</h3>
-                        <p class="kpi-value" style="color: var(--danger);">8</p>
+                        <p class="kpi-value" id="kpi-tickets" style="color: var(--danger);">0</p>
                     </div>
                     <div class="kpi-card">
                         <h3>Próximos a Vencer (Esta semana)</h3>
-                        <p class="kpi-value" style="color: var(--warning);">3</p>
+                        <p class="kpi-value" id="kpi-vencimientos" style="color: var(--warning);">0</p>
                     </div>
                 </section>
-                <div class="split-layout">
-                    <div class="table-panel">
-                        <h2>Próximos Vencimientos</h2>
-                        <table class="data-table">
+                
+                <div class="split-layout" style="display: flex; gap: 24px; margin-top: 24px; flex-wrap: wrap;">
+                    
+                    <div class="table-panel" style="flex: 1; min-width: 300px; background-color: var(--card-bg); padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--text-main);">Próximos Vencimientos</h2>
+                        <table class="data-table" id="tabla-vencimientos">
                             <thead>
                                 <tr>
                                     <th>Empresa</th>
@@ -63,21 +64,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Transportes García</td>
-                                    <td><span class="badge warning">25 Jun</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Logística del Norte</td>
-                                    <td><span class="badge warning">28 Jun</span></td>
-                                </tr>
+                                <tr><td colspan="2" style="text-align:center;">Cargando...</td></tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <div class="table-panel">
-                        <h2>Soporte Técnico</h2>
-                        <table class="data-table">
+                    <div class="table-panel" style="flex: 1; min-width: 300px; background-color: var(--card-bg); padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--text-main);">Soporte Técnico Reciente</h2>
+                        <table class="data-table" id="tabla-soporte">
                             <thead>
                                 <tr>
                                     <th>Empresa</th>
@@ -85,14 +79,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Transportes García</td>
-                                    <td>Error al cargar reporte Excel</td>
-                                </tr>
-                                <tr>
-                                    <td>Logística del Norte</td>
-                                    <td>Duda sobre API</td>
-                                </tr>
+                                <tr><td colspan="2" style="text-align:center;">Cargando...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -102,5 +89,7 @@
             </main>
         </div>
     </div>
+    
+    <script src="../../js/admin/dashboard.js"></script>
 </body>
 </html>

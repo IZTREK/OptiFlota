@@ -27,7 +27,7 @@
                     <h1>Gestión de Clientes (SaaS)</h1>
                 </div>
                 <div class="user-profile">
-                    <span>SuperAdministrador</span>
+                    <span id="admin-name">Cargando...</span>
                     <div class="avatar" style="background-color: #4b5563;">SA</div>
                 </div>
             </header>
@@ -36,17 +36,17 @@
                 <section class="kpi-grid">
                     <div class="kpi-card">
                         <h3>Empresas Activas</h3>
-                        <p class="kpi-value">12</p>
-                        <span class="badge ok">+2 este mes</span>
+                        <p class="kpi-value" id="kpi-activas">0</p>
+                        <span class="badge ok">Al día</span>
                     </div>
                     <div class="kpi-card">
                         <h3>Cuentas Suspendidas / Morosas</h3>
-                        <p class="kpi-value">1</p>
+                        <p class="kpi-value" id="kpi-suspendidas">0</p>
                         <span class="badge danger">Requiere seguimiento</span>
                     </div>
                     <div class="kpi-card">
                         <h3>Total Vehículos en Plataforma</h3>
-                        <p class="kpi-value">345</p>
+                        <p class="kpi-value" id="kpi-vehiculos">0</p>
                     </div>
                 </section>
                 <div class="section-header">
@@ -64,13 +64,12 @@
                         <select id="filtro-estado-cuenta">
                             <option value="">Todos</option>
                             <option value="activa">Activa</option>
-                            <option value="prueba">En Prueba (Trial)</option>
-                            <option value="suspendida">Suspendida (Falta de pago)</option>
+                            <option value="suspendida">Suspendida</option>
                         </select>
                     </div>
                     <div class="filter-actions">
-                        <button class="btn-secondary">Limpiar</button>
-                        <button class="btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+                        <button class="btn-secondary" id="btn-limpiar-filtros">Limpiar</button>
+                        <button class="btn-primary" id="btn-buscar-filtros" style="display: inline-flex; align-items: center; gap: 6px;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
                             <span>Buscar</span>
                         </button>
@@ -90,36 +89,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><strong>Transportes García S.A.</strong></td>
-                                <td>admin@tgarcia.com</td>
-                                <td>45 unidades</td>
-                                <td>31/Dic/2026</td>
-                                <td><span class="badge ok">Activa</span></td>
-                                <td class="actions">
-                                    <button class="btn-icon" title="Editar Suscripción" aria-label="Editar Suscripción" data-action="edit" style="display: inline-flex; align-items: center; justify-content: center;">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 20 4-1 11-11-3-3L5 16l-1 4Z"></path><path d="M13 6 17 10"></path></svg>
-                                    </button>
-                                    <button class="btn-icon" title="Bloquear Acceso" aria-label="Bloquear Acceso" data-action="block" style="display: inline-flex; align-items: center; justify-content: center;">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 8 8 8"></path></svg>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>Logística del Centro</strong></td>
-                                <td>gerencia@logcentro.mx</td>
-                                <td>12 unidades</td>
-                                <td>15/Jun/2026</td>
-                                <td><span class="badge danger">Suspendida</span></td>
-                                <td class="actions">
-                                    <button class="btn-icon" title="Editar Suscripción" aria-label="Editar Suscripción" data-action="edit" style="display: inline-flex; align-items: center; justify-content: center;">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 20 4-1 11-11-3-3L5 16l-1 4Z"></path><path d="M13 6 17 10"></path></svg>
-                                    </button>
-                                    <button class="btn-icon ok" title="Reactivar" aria-label="Reactivar" data-action="reactivate" style="display: inline-flex; align-items: center; justify-content: center;">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
-                                    </button>
-                                </td>
-                            </tr>
+                            <tr><td colspan="6" style="text-align:center;">Cargando directorio...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -136,35 +106,34 @@
             
             <div class="modal-body">
                 <form class="data-form" id="form-empresa">
-                    <div class="form-group">
+                    <input type="hidden" name="id_empresa" id="id_empresa_input"> <div class="form-group">
                         <label>Nombre de la Empresa</label>
-                        <input type="text" placeholder="Ej. Transportes García S.A. de C.V." style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        <input type="text" name="nombre" required placeholder="Ej. Transportes García S.A. de C.V." style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
                     </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label>Correo del Administrador</label>
-                            <input type="email" placeholder="admin@empresa.com" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                            <input type="email" name="email" required placeholder="admin@empresa.com" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
                         </div>
                         <div class="form-group">
                             <label>Contraseña Temporal</label>
-                            <input type="text" value="OptiFlota2026!" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                            <input type="text" name="password" required value="OptiFlota2026!" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
                         </div>
                     </div>
-                    
                     
                     <div class="form-row">
                         <div class="form-group">
                             <label>Plan Inicial</label>
-                            <select style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
-                                <option value="trial">Prueba (Trial - 5 vehículos)</option>
-                                <option value="basico">Básico (15 vehículos)</option>
-                                <option value="pro">Pro (50 vehículos)</option>
-                                <option value="ilimitado">Ilimitado</option>
+                            <select name="plan" required style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                                <option value="1">Prueba (Trial - 5 vehículos)</option>
+                                <option value="2">Básico (15 vehículos)</option>
+                                <option value="3">Pro (50 vehículos)</option>
+                                <option value="4">Ilimitado</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Fecha de Vencimiento</label>
-                            <input type="date" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                            <input type="date" name="vencimiento" required style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
                         </div>
                     </div>
                 </form>

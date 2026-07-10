@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../config/database.php';
+require_once '../../vendor/autoload.php'; // Cargamos Stripe
 
 header('Content-Type: application/json');
 
@@ -37,7 +38,6 @@ switch ($request_method) {
 
         if ($action == 'get_planes') {
             try {
-                // AQUÍ AGREGAMOS LAS COLUMNAS DE LOS MÓDULOS
                 $query = "SELECT id, nombre, limite_vehiculos, costo_mensual, mod_vehiculos, mod_combustible, mod_diagnosticos, mod_mantenimiento, mod_tickets FROM planes_suscripcion ORDER BY costo_mensual ASC";
                 $stmt = $db->prepare($query);
                 $stmt->execute();
@@ -55,30 +55,52 @@ switch ($request_method) {
             exit;
         }
         try {
-            $comprobante_url = null;
-            if (isset($_FILES['comprobante']) && $_FILES['comprobante']['error'] == 0) {
-                $upload_dir = '../../uploads/pagos/';
-                if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
-                $file_name = time() . '_pago_' . preg_replace("/[^a-zA-Z0-9.]/", "", basename($_FILES['comprobante']['name']));
-                $target_file = $upload_dir . $file_name;
-                if (move_uploaded_file($_FILES['comprobante']['tmp_name'], $target_file)) {
-                    $comprobante_url = '/uploads/pagos/' . $file_name;
-                }
-            } else {
-                echo json_encode(['success' => false, 'message' => 'El archivo del comprobante es obligatorio.']);
-                exit;
-            }
-
-            $query = "INSERT INTO pagos_suscripcion (id_empresa, fecha_pago, monto, plan_solicitado, comprobante_url, estado) 
-                      VALUES (:id_empresa, CURDATE(), :monto, :plan_solicitado, :comprobante_url, 'Pendiente')";
+            // 1. Guardar pago Pendiente en BD
+            $query = "INSERT INTO pagos_suscripcion (id_empresa, fecha_pago, monto, plan_solicitado, estado) 
+                      VALUES (:id_empresa, CURDATE(), :monto, :plan_solicitado, 'Pendiente')";
             $stmt = $db->prepare($query);
             $stmt->execute([
-                ':id_empresa' => $id_empresa, ':monto' => $_POST['monto'],
-                ':plan_solicitado' => $_POST['id_plan'], ':comprobante_url' => $comprobante_url
+                ':id_empresa' => $id_empresa, 
+                ':monto' => $_POST['monto'],
+                ':plan_solicitado' => $_POST['id_plan']
             ]);
-            echo json_encode(['success' => true, 'message' => '¡Comprobante enviado con éxito! El administrador lo validará a la brevedad.']);
-        } catch (PDOException $e) {
-            echo json_encode(['success' => false, 'message' => 'Error al procesar el pago.']);
+            $id_pago = $db->lastInsertId();
+
+            // 2. Configurar Stripe
+            // REEMPLAZAR POR EL REAL ESTE ES EL DE PRUEBA
+            // Aquí pondrás tu Secret Key de prueba (empieza con sk_test_...)
+            \Stripe\Stripe::setApiKey('sk_test_51TrepOGz0qKL4xBEVqKrIBXd4tsdQmNLT7iNTTktNg3jE6H1yRb73nPFmH1207bSXyxKxo8XcMJMq7Ty6VlMRQPu00U6hJ0A27');
+
+            // 3. Crear la sesión de pago (Checkout)
+            $checkout_session = \Stripe\Checkout\Session::create([
+                'payment_method_types' => ['card'],
+                'line_items' => [[
+                    'price_data' => [
+                        'currency' => 'mxn',
+                        'product_data' => [
+                            'name' => 'Suscripción OptiFlota',
+                        ],
+                        'unit_amount' => (int)($_POST['monto'] * 100), // Stripe pide el valor en centavos
+                    ],
+                    'quantity' => 1,
+                ]],
+                'mode' => 'payment',
+                // Enviamos nuestro ID interno para reconocerlo cuando paguen
+                'client_reference_id' => (string)$id_pago,
+                // A dónde regresan tras pagar o cancelar
+                'success_url' => 'http://localhost:9090/Front-end/Cliente/suscripcion/suscripcion.html',
+                'cancel_url' => 'http://localhost:9090/Front-end/Cliente/suscripcion/suscripcion.html',
+            ]);
+
+            // 4. Actualizamos la BD con el ID de la sesión de Stripe
+            $db->prepare("UPDATE pagos_suscripcion SET stripe_session_id = ? WHERE id = ?")
+               ->execute([$checkout_session->id, $id_pago]);
+
+            // 5. Devolvemos la URL al JS para redirigir
+            echo json_encode(['success' => true, 'init_point' => $checkout_session->url]);
+
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Error con Stripe: ' . $e->getMessage()]);
         }
         break;
 }

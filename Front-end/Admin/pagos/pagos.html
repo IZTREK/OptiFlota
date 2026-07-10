@@ -16,7 +16,7 @@
             <nav class="sidebar-nav">
                 <a href="../admin_dashboard.html" class="nav-item">Vista Global</a>
                 <a href="../empresas/empresas.html" class="nav-item">Empresas</a>
-                <a href="../pagos/pagos.html" class="nav-item active">Control de Pagos</a>
+                <a href="pagos.html" class="nav-item active">Control de Pagos</a>
                 <a href="../soporte/tickets_admin.html" class="nav-item">Soporte Técnico</a>
             </nav>
         </aside> 
@@ -24,10 +24,10 @@
         <div class="main-content">
             <header class="topbar">
                 <div class="page-title">
-                    <h1>Historial de Pagos</h1>
+                    <h1>Historial de Ingresos</h1>
                 </div>
                 <div class="user-profile">
-                    <span>SuperAdministrador</span>
+                    <span id="admin-name">Cargando...</span>
                     <div class="avatar" style="background-color: #4b5563;">SA</div>
                 </div>
             </header>
@@ -35,34 +35,34 @@
             <main class="content-area">
                 <section class="kpi-grid">
                     <div class="kpi-card">
-                        <h3>Cobrado este Mes</h3>
-                        <p class="kpi-value">$185,000</p>
+                        <h3>Cobrado este Mes (Stripe)</h3>
+                        <p class="kpi-value" id="kpi-cobrado-mes" style="color: var(--success);">$0.00</p>
                     </div>
                     <div class="kpi-card">
-                        <h3>Pendientes de Validación</h3>
-                        <p class="kpi-value" style="color: var(--warning);">4</p>
+                        <h3>Transacciones Exitosas</h3>
+                        <p class="kpi-value" id="kpi-tx-exitosas">0</p>
                     </div>
                 </section>
                 <div class="section-header">
-                    <p class="subtitle">Conciliación de transferencias y depósitos</p>
+                    <p class="subtitle">Monitor de ingresos automáticos validados por la pasarela de pago.</p>
                 </div>
 
                 <div class="filter-bar">
                     <div class="filter-group">
-                        <label for="filtro-cliente">Cliente</label>
+                        <label for="filtro-cliente">Empresa / Cliente</label>
                         <input type="text" id="filtro-cliente" placeholder="Nombre de empresa...">
                     </div>
                     <div class="filter-group">
                         <label for="filtro-estado-pago">Estado</label>
                         <select id="filtro-estado-pago">
                             <option value="">Todos</option>
-                            <option value="pendiente">Pendiente de Validar</option>
+                            <option value="pendiente">Pendiente / Abandonado</option>
                             <option value="aprobado">Aprobado</option>
                         </select>
                     </div>
                     <div class="filter-actions">
-                        <button class="btn-secondary">Limpiar</button>
-                        <button class="btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+                        <button class="btn-secondary" id="btn-limpiar-filtros">Limpiar</button>
+                        <button class="btn-primary" id="btn-buscar-filtros" style="display: inline-flex; align-items: center; gap: 6px;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
                             <span>Buscar</span>
                         </button>
@@ -73,35 +73,15 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Fecha Registro</th>
+                                <th>Fecha de Registro</th>
                                 <th>Empresa</th>
                                 <th>Monto</th>
-                                <th>Referencia / Comprobante</th>
+                                <th>ID Transacción (Stripe)</th>
                                 <th>Estado</th>
-                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>24/Jun/2026</td>
-                                <td><strong>Transportes García</strong></td>
-                                <td>$1,500.00</td>
-                                <td><button class="btn-icon adjunto" style="display: inline-flex; align-items: center; gap: 6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"></path><path d="M14 3v5h5"></path></svg><span>Ver Archivo</span></button></td>
-                                <td><span class="badge warning">Pendiente</span></td>
-                                <td class="actions">
-                                    <button class="btn-primary" style="padding: 5px 10px; font-size: 12px;">Confirmar Pago</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>22/Jun/2026</td>
-                                <td><strong>Logística del Norte</strong></td>
-                                <td>$3,200.00</td>
-                                <td><button class="btn-icon adjunto" style="display: inline-flex; align-items: center; gap: 6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"></path><path d="M14 3v5h5"></path></svg><span>Ver Archivo</span></button></td>
-                                <td><span class="badge ok">Aprobado</span></td>
-                                <td class="actions">
-                                    <span style="color:var(--text-muted); font-size: 12px;">Validado</span>
-                                </td>
-                            </tr>
+                            <tr><td colspan="5" style="text-align:center; padding: 20px;">Cargando historial de pagos...</td></tr>
                         </tbody>
                     </table>
                 </div>

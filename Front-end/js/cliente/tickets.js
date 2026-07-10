@@ -176,18 +176,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     const comentarios = await resCom.json();
 
                     comentarios.forEach(c => {
-                        const esAdmin = c.rol.toLowerCase().includes('admin');
+                        // AQUÍ SE CORRIGIÓ EL BUG: Validamos estrictamente que sea el SuperAdmin
+                        const esAdmin = c.rol === 'SuperAdmin';
+                        
                         if (esAdmin) {
                             htmlChat += `
                                 <div class="chat-bubble-admin">
-                                    <small style="color: #065f46; font-weight: 600;">Soporte OptiFlota (${c.nombre})</small>
+                                    <small style="color: #065f46; font-weight: 600;">Soporte OptiFlota</small>
                                     <p style="margin-top: 5px; font-size: 14px; color: var(--text-main);">${c.comentario}</p>
                                 </div>
                             `;
                         } else {
                             htmlChat += `
                                 <div class="chat-bubble-cliente">
-                                    <small style="color: var(--primary-color); font-weight: 600;">Tú</small>
+                                    <small style="color: var(--primary-color); font-weight: 600;">Tú (${c.nombre})</small>
                                     <p style="margin-top: 5px; font-size: 14px; color: var(--text-main);">${c.comentario}</p>
                                 </div>
                             `;

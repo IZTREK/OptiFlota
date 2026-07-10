@@ -40,8 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
             plansContainer.innerHTML = ''; 
             
             planes.forEach(p => {
-                
-                // 🛑 MAGIA AQUÍ: Si el plan se llama "Trial", lo ignoramos y no lo dibujamos
                 if(p.nombre.toLowerCase() === 'trial') return;
 
                 const costoFormateado = '$' + parseFloat(p.costo_mensual).toLocaleString('es-MX', {minimumFractionDigits: 2});
@@ -84,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 idPlanSeleccionado = id;
                 montoPlanSeleccionado = precio;
                 
-                document.getElementById('titulo-modal-pago').innerText = `Adquirir/Renovar: ${nombre}`;
+                document.getElementById('titulo-modal-pago').innerText = `Adquirir: ${nombre}`;
                 inputPlanSeleccionado.value = `${nombre} ($${parseFloat(precio).toLocaleString('es-MX')} / mes)`;
                 
                 formPago.reset();
@@ -93,31 +91,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    document.getElementById('btn-enviar-comprobante').addEventListener('click', async (e) => {
+    document.getElementById('btn-proceder-pago').addEventListener('click', async (e) => {
         e.preventDefault();
-        const fileInput = document.getElementById('comprobante-file');
-        if(fileInput.files.length === 0) {
-            alert("Por favor, sube el comprobante de pago (PDF o Imagen).");
-            return;
-        }
 
-        const formData = new FormData(formPago);
+        const formData = new FormData();
         formData.append('id_plan', idPlanSeleccionado);
         formData.append('monto', montoPlanSeleccionado);
 
-        const btnEnviar = document.getElementById('btn-enviar-comprobante');
-        btnEnviar.innerText = "Enviando...";
+        const btnEnviar = document.getElementById('btn-proceder-pago');
+        btnEnviar.innerText = "Conectando con Stripe...";
         btnEnviar.disabled = true;
 
         try {
             const res = await fetch('/Back-end/cliente/suscripcion.php', { method: 'POST', body: formData });
             const result = await res.json();
-            alert(result.message);
-            if(result.success) document.getElementById('modal-pago').classList.remove('active');
+            
+            if(result.success) {
+                window.location.href = result.init_point; // Redirigir al pago de Stripe
+            } else {
+                alert(result.message);
+                btnEnviar.innerText = "Pagar con Tarjeta (Stripe)";
+                btnEnviar.disabled = false;
+            }
         } catch (err) {
-            alert("Error de conexión al enviar el comprobante.");
-        } finally {
-            btnEnviar.innerText = "Enviar Comprobante";
+            alert("Error de conexión al generar el pago.");
+            btnEnviar.innerText = "Pagar con Tarjeta (Stripe)";
             btnEnviar.disabled = false;
         }
     });
