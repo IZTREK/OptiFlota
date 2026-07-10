@@ -1,17 +1,29 @@
 document.addEventListener('DOMContentLoaded', () => {
     let todasLasCargas = [];
+    let todosLosAnalisis = []; // Datos de la nueva Vista SQL
     
     // Variables para la importación masiva con SheetJS
     let excelData = [];
     let excelHeaders = [];
 
     // Referencias al DOM
-    const tableBody = document.querySelector('.data-table tbody');
+    const tableBodyHistorial = document.querySelector('#tabla-historial tbody');
+    const tableBodyAnalisis = document.querySelector('#tabla-analisis tbody');
     const modalCombustible = document.getElementById('modal-combustible');
     const formCombustible = document.getElementById('form-combustible-datos');
     const modalVisor = document.getElementById('modal-visor');
     const selectVehiculoModal = document.getElementById('vehiculo-carga');
     const modalImportar = document.getElementById('modal-importar');
+
+    // CONTROL DE PESTAÑAS (TABS)
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            document.getElementById(e.currentTarget.dataset.target).classList.add('active');
+        });
+    });
 
     const cargarVehiculosParaSelect = async () => {
         try {
@@ -22,40 +34,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 selectVehiculoModal.innerHTML += `<option value="${v.id_vehiculo}">${v.placas} (${v.marca_modelo})</option>`;
             });
         } catch (e) { 
-            console.error("Error al cargar vehículos para el formulario"); 
+            console.error("Error al cargar vehículos"); 
         }
     };
 
-    const actualizarDatalistEstaciones = () => {
-        const datalist = document.getElementById('lista-estaciones');
-        if(!datalist) return;
-        
-        const estacionesUnicas = [...new Set(todasLasCargas.map(c => c.estacion ? c.estacion.trim() : ''))].filter(e => e !== '');
-        
-        datalist.innerHTML = '';
-        estacionesUnicas.forEach(est => {
-            const option = document.createElement('option');
-            option.value = est;
-            datalist.appendChild(option);
-        });
-    };
-
+    // Cargar datos DATA normal
     const cargarCargas = async () => {
         try {
             const res = await fetch('/Back-end/cliente/combustible.php');
             todasLasCargas = await res.json();
-            renderizarTabla(todasLasCargas);
-            calcularKPIs(todasLasCargas); // Inicializa las tarjetas con el total de la flota
-            actualizarDatalistEstaciones();
+            renderizarTablaHistorial(todasLasCargas);
+            calcularKPIs(todasLasCargas); 
         } catch (e) {
-            tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Error de conexión al cargar datos.</td></tr>`;
+            tableBodyHistorial.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Error de conexión.</td></tr>`;
         }
     };
 
-    const renderizarTabla = (datos) => {
-        tableBody.innerHTML = '';
+    // Cargar datos VISTA ANÁLISIS
+    const cargarAnalisis = async () => {
+        try {
+            const res = await fetch('/Back-end/cliente/combustible.php?action=get_analisis');
+            todosLosAnalisis = await res.json();
+            renderizarTablaAnalisis(todosLosAnalisis);
+        } catch (e) {
+            tableBodyAnalisis.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Error de conexión al cargar análisis.</td></tr>`;
+        }
+    };
+
+    const renderizarTablaHistorial = (datos) => {
+        tableBodyHistorial.innerHTML = '';
         if (datos.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay registros para mostrar.</td></tr>';
+            tableBodyHistorial.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay registros.</td></tr>';
             return;
         }
 
@@ -63,10 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const costoF = '$' + parseFloat(d.costo_total).toLocaleString('es-MX', {minimumFractionDigits: 2});
             const litrosF = parseFloat(d.litros).toFixed(2) + ' L';
             const kmF = parseInt(d.odometro).toLocaleString('es-MX') + ' km';
-            
-            const badgeExcel = d.origen_registro === 'Importacion_Excel' ? '<span class="badge" style="background:#e0e7ff; color:#1e40af; margin-left:8px; font-size:10px;">Excel</span>' : '';
+            const badgeExcel = d.origen_registro === 'Importacion_Excel' ? '<span class="badge" style="background:#e0e7ff; color:#1e40af; font-size:10px;">Excel</span>' : '';
 
-            tableBody.innerHTML += `
+            tableBodyHistorial.innerHTML += `
                 <tr>
                     <td>${d.fecha}</td>
                     <td><strong>${d.placas}</strong></td>
@@ -75,12 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${kmF}</td>
                     <td>${d.estacion} ${badgeExcel}</td>
                     <td class="actions">
-                        <button class="btn-icon btn-ver" title="Ver detalle" data-id="${d.id}">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        </button>
-                        <button class="btn-icon delete btn-eliminar" title="Eliminar registro" data-id="${d.id}">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M6 6l1 14h10l1-14"></path><path d="M10 11v5M14 11v5"></path></svg>
-                        </button>
+                        <button class="btn-icon btn-ver" data-id="${d.id}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+                        <button class="btn-icon delete btn-eliminar" data-id="${d.id}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M6 6l1 14h10l1-14"></path><path d="M10 11v5M14 11v5"></path></svg></button>
                     </td>
                 </tr>
             `;
@@ -88,72 +92,70 @@ document.addEventListener('DOMContentLoaded', () => {
         asignarEventosBotones();
     };
 
-    // --- INDICADORES DINÁMICOS BASADOS EN LOS DATOS FILTRADOS  ---
-    const calcularKPIs = (cargasAAnalizar = todasLasCargas) => {
-        const mesActual = new Date().toISOString().substring(0, 7); // Formato YYYY-MM
-        let gastoMes = 0;
+    // RENDERIZAR TABLA DE ANÁLISIS DINÁMICO
+    const renderizarTablaAnalisis = (datos) => {
+        tableBodyAnalisis.innerHTML = '';
+        if (datos.length === 0) {
+            tableBodyAnalisis.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay registros analizados.</td></tr>';
+            return;
+        }
 
-        // Agrupamos el subconjunto de datos por vehículo para ordenarlos cronológicamente
-        const cargasPorVehiculo = {};
-        cargasAAnalizar.forEach(c => {
-            const vehiculo = c.placas;
-            if (!cargasPorVehiculo[vehiculo]) {
-                cargasPorVehiculo[vehiculo] = [];
-            }
-            cargasPorVehiculo[vehiculo].push({
-                fecha: c.fecha,
-                litros: parseFloat(c.litros) || 0,
-                costo_total: parseFloat(c.costo_total) || 0,
-                odometro: parseInt(c.odometro) || 0
-            });
-        });
-
-        let totalKilometrosMes = 0;
-        let totalLitrosMes = 0;
-
-        // Calculamos las diferencias de odómetros dentro de la línea de tiempo de cada auto
-        Object.keys(cargasPorVehiculo).forEach(vehiculo => {
-            const listaCargas = cargasPorVehiculo[vehiculo];
+        datos.forEach(d => {
+            const idealF = parseFloat(d.Km_L_Ideal).toFixed(2);
+            const realF = parseFloat(d.Km_L_Real).toFixed(2);
+            const diffPorcentaje = (parseFloat(d.Diferencia) * 100).toFixed(1) + '%';
             
-            // Ordenamos por kilometraje para garantizar la coherencia cronológica
-            listaCargas.sort((a, b) => a.odometro - b.odometro);
+            let badgeConf = '';
+            if (d.Comentario_Confiabilidad === 'OK') {
+                badgeConf = '<span style="background:#dcfce7; color:#166534; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight:bold;">OK</span>';
+            } else {
+                badgeConf = `<span style="background:#fee2e2; color:#991b1b; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight:bold;">${d.Comentario_Confiabilidad}</span>`;
+            }
 
-            for (let i = 0; i < listaCargas.length; i++) {
-                const cargaActual = listaCargas[i];
+            let diffStyle = d.Comentario_Confiabilidad === 'OK' ? 'color:#166534;' : 'color:#991b1b; font-weight:bold;';
 
-                // Acumulamos el costo si pertenece al mes actual
-                if (cargaActual.fecha && cargaActual.fecha.startsWith(mesActual)) {
-                    gastoMes += cargaActual.costo_total;
-                }
+            tableBodyAnalisis.innerHTML += `
+                <tr>
+                    <td>${d.Fecha_Carga}</td>
+                    <td><strong>${d.Vehiculo}</strong> <br><small>${d.Modelo || ''}</small></td>
+                    <td>${d.Km_Recorridos} km</td>
+                    <td>${idealF}</td>
+                    <td><strong>${realF}</strong></td>
+                    <td style="${diffStyle}">${diffPorcentaje}</td>
+                    <td>${badgeConf}</td>
+                </tr>
+            `;
+        });
+    };
 
-                // Necesitamos un punto de comparación anterior para calcular el kilometraje recorrido
-                if (i > 0) {
-                    const cargaAnterior = listaCargas[i - 1];
-                    const kilometrosRecorridos = cargaActual.odometro - cargaAnterior.odometro;
+    const calcularKPIs = (cargasAAnalizar = todasLasCargas) => {
+        const mesActual = new Date().toISOString().substring(0, 7); 
+        let gastoMes = 0;
+        let totalLitrosMes = 0;
+        let totalKmRecorridosMes = 0;
 
-                    // Si el viaje es lógico y la recarga actual pertenece al mes evaluado, sumamos al rendimiento
-                    if (kilometrosRecorridos > 0 && cargaActual.fecha && cargaActual.fecha.startsWith(mesActual)) {
-                        totalKilometrosMes += kilometrosRecorridos;
-                        totalLitrosMes += cargaActual.litros;
-                    }
-                }
+        cargasAAnalizar.forEach(c => {
+            if (c.fecha && c.fecha.startsWith(mesActual)) {
+                gastoMes += parseFloat(c.costo_total);
+                // Si tienes los datos en Analysis Data puedes hacer cálculos más precisos,
+                // Pero esto sirve de aproximación.
             }
         });
 
-        // Cálculo definitivo de rendimiento
-        const rendimientoPromedio = totalLitrosMes > 0 ? (totalKilometrosMes / totalLitrosMes) : 0;
+        // Usar los datos del analisis para el KPI promedio (Rendimiento Global)
+        todosLosAnalisis.forEach(a => {
+             if (a.Fecha_Carga && a.Fecha_Carga.startsWith(mesActual) && parseFloat(a.Km_Recorridos) > 0) {
+                 totalKmRecorridosMes += parseFloat(a.Km_Recorridos);
+                 totalLitrosMes += parseFloat(a.Litros);
+             }
+        });
+
+        const rendimientoPromedio = totalLitrosMes > 0 ? (totalKmRecorridosMes / totalLitrosMes) : 0;
 
         const kpiGasto = document.getElementById('kpi-gasto-mes');
         const kpiRend = document.getElementById('kpi-rendimiento');
-        
-        if (kpiGasto) {
-            kpiGasto.innerText = '$' + gastoMes.toLocaleString('es-MX', { minimumFractionDigits: 2 });
-        }
-        if (kpiRend) {
-            kpiRend.innerText = rendimientoPromedio > 0 
-                ? rendimientoPromedio.toFixed(2) + ' km/L' 
-                : '0.00 km/L';
-        }
+        if (kpiGasto) kpiGasto.innerText = '$' + gastoMes.toLocaleString('es-MX', { minimumFractionDigits: 2 });
+        if (kpiRend) kpiRend.innerText = rendimientoPromedio > 0 ? rendimientoPromedio.toFixed(2) + ' km/L' : '0.00 km/L';
     };
 
     // --- REGISTRO MANUAL ---
@@ -165,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Rellena todos los campos obligatorios."); return;
         }
         const btnGuardar = document.getElementById('btn-guardar-combustible');
-        btnGuardar.innerText = "Guardando..."; btnGuardar.disabled = true;
+        btnGuardar.innerText = "Calculando y Guardando..."; btnGuardar.disabled = true;
 
         try {
             const res = await fetch('/Back-end/cliente/combustible.php', { method: 'POST', body: formData });
@@ -173,6 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (result.success) {
                 modalCombustible.classList.remove('active');
                 cargarCargas(); 
+                cargarAnalisis();
             } else alert(result.message);
         } catch (err) { alert('Error de conexión.'); } 
         finally { btnGuardar.innerText = "Guardar Registro"; btnGuardar.disabled = false; }
@@ -200,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 modalVisor.classList.add('active');
             });
         });
+        
         document.querySelectorAll('.btn-eliminar').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 if(confirm('¿Seguro que deseas eliminar este registro?')) {
@@ -207,49 +211,46 @@ document.addEventListener('DOMContentLoaded', () => {
                     try {
                         const res = await fetch('/Back-end/cliente/combustible.php', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }) });
                         const result = await res.json();
-                        if (result.success) cargarCargas();
+                        if (result.success) { cargarCargas(); cargarAnalisis(); }
                     } catch (err) { alert('Error al intentar eliminar.'); }
                 }
             });
         });
     };
 
-    // --- FILTROS DE BÚSQUEDA REACTIVOS ---
-    const btnBuscarFiltros = document.getElementById('btn-buscar-filtros');
-    const btnLimpiarFiltros = document.getElementById('btn-limpiar-filtros');
+    // --- FILTROS ---
+    document.getElementById('btn-buscar-filtros').addEventListener('click', () => {
+        const fInicio = document.getElementById('filtro-fecha-inicio').value;
+        const fFin = document.getElementById('filtro-fecha-fin').value;
+        const fPlacas = document.getElementById('filtro-placas').value.toLowerCase();
 
-    if (btnBuscarFiltros) {
-        btnBuscarFiltros.addEventListener('click', () => {
-            const fInicio = document.getElementById('filtro-fecha-inicio').value;
-            const fFin = document.getElementById('filtro-fecha-fin').value;
-            const fPlacas = document.getElementById('filtro-placas').value.toLowerCase();
-            const fEstacion = document.getElementById('filtro-estacion').value.toLowerCase();
-
-            const filtrados = todasLasCargas.filter(c => {
-                let pasa = true;
-                if (fInicio && c.fecha < fInicio) pasa = false;
-                if (fFin && c.fecha > fFin) pasa = false;
-                if (fPlacas && !c.placas.toLowerCase().includes(fPlacas)) pasa = false;
-                if (fEstacion && !c.estacion.toLowerCase().includes(fEstacion)) pasa = false;
-                return pasa;
-            });
-            
-            renderizarTabla(filtrados);
-            calcularKPIs(filtrados); //  Las tarjetas analizan solo las filas filtradas
+        const filtradosData = todasLasCargas.filter(c => {
+            let pasa = true;
+            if (fInicio && c.fecha < fInicio) pasa = false;
+            if (fFin && c.fecha > fFin) pasa = false;
+            if (fPlacas && !c.placas.toLowerCase().includes(fPlacas)) pasa = false;
+            return pasa;
         });
-    }
 
-    if (btnLimpiarFiltros) {
-        btnLimpiarFiltros.addEventListener('click', () => {
-            document.getElementById('filtro-fecha-inicio').value = '';
-            document.getElementById('filtro-fecha-fin').value = '';
-            document.getElementById('filtro-placas').value = '';
-            document.getElementById('filtro-estacion').value = '';
-            
-            renderizarTabla(todasLasCargas);
-            calcularKPIs(todasLasCargas); // Restaura los cálculos globales al limpiar filtros
+        const filtradosAnalisis = todosLosAnalisis.filter(a => {
+            let pasa = true;
+            if (fInicio && a.Fecha_Carga < fInicio) pasa = false;
+            if (fFin && a.Fecha_Carga > fFin) pasa = false;
+            if (fPlacas && !a.Vehiculo.toLowerCase().includes(fPlacas)) pasa = false;
+            return pasa;
         });
-    }
+        
+        renderizarTablaHistorial(filtradosData);
+        renderizarTablaAnalisis(filtradosAnalisis);
+    });
+
+    document.getElementById('btn-limpiar-filtros').addEventListener('click', () => {
+        document.getElementById('filtro-fecha-inicio').value = '';
+        document.getElementById('filtro-fecha-fin').value = '';
+        document.getElementById('filtro-placas').value = '';
+        renderizarTablaHistorial(todasLasCargas);
+        renderizarTablaAnalisis(todosLosAnalisis);
+    });
 
     // --- IMPORTACIÓN EXCEL / CSV (SHEETJS) ---
     document.getElementById('btn-siguiente-mapeo').addEventListener('click', () => {
@@ -339,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })).filter(item => item.placas && item.fecha); 
 
         const btn = document.getElementById('btn-procesar-archivo');
-        btn.innerText = "Importando datos..."; btn.disabled = true;
+        btn.innerText = "Analizando anomalías..."; btn.disabled = true;
 
         try {
             const res = await fetch('/Back-end/cliente/combustible.php?action=importar', {
@@ -348,32 +349,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await res.json();
             
             if(result.success) {
-                let mensaje = `Se registraron ${result.exitos} cargas nuevas.\n`;
-                if(result.duplicados > 0) mensaje += `Se ignoraron ${result.duplicados} filas por estar duplicadas.\n`;
-                if(result.errores.length > 0) mensaje += `Vehículos no encontrados: ${result.errores.join(', ')}`;
+                let mensaje = `Se registraron y analizaron ${result.exitos} cargas.\n`;
+                if(result.duplicados > 0) mensaje += `Se ignoraron ${result.duplicados} filas duplicadas.\n`;
                 
                 alert(mensaje);
                 modalImportar.classList.remove('active');
                 cargarCargas();
+                cargarAnalisis(); // Recargar el tablero también
             } else alert(result.message || 'Error en el procesamiento.');
         } catch (e) { alert("Error conectando al servidor."); } 
-        finally { btn.innerText = "Procesar y Guardar"; btn.disabled = false; }
+        finally { btn.innerText = "Importar a Base de Datos"; btn.disabled = false; }
     });
 
-    // CONTROL DE MODALES
+    // CERRAR MODALES
     document.getElementById('btn-abrir-combustible').addEventListener('click', () => { formCombustible.reset(); modalCombustible.classList.add('active'); });
     document.getElementById('btn-cerrar-combustible').addEventListener('click', () => modalCombustible.classList.remove('active'));
     document.getElementById('btn-cancelar-combustible').addEventListener('click', () => modalCombustible.classList.remove('active'));
     document.getElementById('btn-cerrar-visor').addEventListener('click', () => modalVisor.classList.remove('active'));
     document.getElementById('btn-entendido-visor').addEventListener('click', () => modalVisor.classList.remove('active'));
-    
-    document.getElementById('btn-abrir-importar').addEventListener('click', () => {
-        document.getElementById('archivo-excel').value = '';
-        document.getElementById('btn-volver-importar').click(); 
-        modalImportar.classList.add('active');
-    });
+    document.getElementById('btn-abrir-importar').addEventListener('click', () => { document.getElementById('archivo-excel').value = ''; document.getElementById('btn-volver-importar').click(); modalImportar.classList.add('active'); });
     document.getElementById('btn-cerrar-importar').addEventListener('click', () => modalImportar.classList.remove('active'));
 
+    // INIT
     cargarVehiculosParaSelect();
     cargarCargas();
+    cargarAnalisis(); // Ejecuta la carga de la vista analítica al iniciar
 });

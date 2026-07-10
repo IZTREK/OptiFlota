@@ -9,6 +9,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS tickets_comentarios;
 DROP TABLE IF EXISTS tickets;
 DROP TABLE IF EXISTS mantenimientos;
+DROP VIEW IF EXISTS vista_analisis_combustible;
 DROP TABLE IF EXISTS cargas_combustible;
 DROP TABLE IF EXISTS registro_combustible;
 DROP TABLE IF EXISTS diagnosticos;
@@ -86,7 +87,7 @@ CREATE TABLE logs_auditoria (
     FOREIGN KEY (id_empresa) REFERENCES empresas(id)
 );
 
--- 4. FINANZAS Y PAGOS (Estructura adaptada para MercadoPago)
+-- 4. FINANZAS Y PAGOS
 CREATE TABLE pagos_suscripcion (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_empresa INT NOT NULL,
@@ -108,6 +109,8 @@ CREATE TABLE vehiculos (
     placas VARCHAR(20) NOT NULL,
     marca_modelo VARCHAR(100) NOT NULL,
     anio INT NOT NULL,
+    region VARCHAR(100) NULL,           
+    centro_costos VARCHAR(100) NULL,    
     kilometraje_inicial DECIMAL(10,2) NOT NULL,
     kilometraje_actual DECIMAL(10,2) NOT NULL,
     rendimiento_ideal DECIMAL(10,2) DEFAULT 0.00,
@@ -135,15 +138,25 @@ CREATE TABLE diagnosticos (
     FOREIGN KEY (creado_por) REFERENCES usuarios(id)
 );
 
+
 CREATE TABLE cargas_combustible (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_empresa INT NOT NULL,
     id_vehiculo INT NOT NULL,
+    conductor VARCHAR(150) NULL,             
     fecha DATE NOT NULL,
+    hora TIME NULL,                          
     estacion VARCHAR(150),
-    litros DECIMAL(8,2) NOT NULL,
+    tipo_combustible VARCHAR(50) NULL,       
+    litros DECIMAL(10,2) NOT NULL,
+    precio_por_litro DECIMAL(10,2) NULL,     
     costo_total DECIMAL(10,2) NOT NULL,
-    odometro DECIMAL(10,2) NOT NULL,
+    kilometraje_anterior DECIMAL(10,2) NOT NULL, 
+    odometro DECIMAL(10,2) NOT NULL,         
+    distancia_recorrida DECIMAL(10,2) NULL,  
+    rendimiento_real DECIMAL(10,2) NULL,     
+    diferencia_rendimiento DECIMAL(10,2) NULL, 
+    confiabilidad VARCHAR(50) NULL,          
     comprobante_url VARCHAR(255),
     origen_registro VARCHAR(50) DEFAULT 'Manual', 
     creado_por INT NOT NULL,
@@ -200,3 +213,31 @@ CREATE TABLE tickets_comentarios (
     FOREIGN KEY (id_ticket) REFERENCES tickets(id),
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );
+
+-- =========================================================================
+-- VISTAS PARA DASHBOARDS (Equivalente a la "Hoja Dinámica")
+-- =========================================================================
+
+CREATE OR REPLACE VIEW vista_analisis_combustible AS
+SELECT 
+    cc.id_empresa,
+    cc.id AS id_carga,
+    v.placas AS Vehiculo,
+    v.marca_modelo AS Modelo,
+    v.region AS Region,
+    v.centro_costos AS Centro_Costos,
+    cc.conductor AS Conductor,
+    cc.estacion AS Gasolinera,
+    cc.fecha AS Fecha_Carga,
+    WEEK(cc.fecha) AS Semana,
+    cc.litros AS Litros,
+    cc.costo_total AS Importe,
+    cc.kilometraje_anterior AS Km_Anterior,
+    cc.odometro AS Km_Actual,
+    cc.distancia_recorrida AS Km_Recorridos,
+    v.rendimiento_ideal AS Km_L_Ideal,
+    cc.rendimiento_real AS Km_L_Real,
+    cc.diferencia_rendimiento AS Diferencia,
+    cc.confiabilidad AS Comentario_Confiabilidad
+FROM cargas_combustible cc
+JOIN vehiculos v ON cc.id_vehiculo = v.id;
