@@ -24,8 +24,7 @@ $request_method = $_SERVER["REQUEST_METHOD"];
 switch ($request_method) {
     case 'GET':
         try {
-       
-            $query = "SELECT id as id_vehiculo, placas, marca_modelo, anio, kilometraje_actual, estado 
+            $query = "SELECT id as id_vehiculo, placas, marca_modelo, anio, kilometraje_actual, rendimiento_ideal, estado 
                       FROM vehiculos WHERE id_empresa = :id_empresa ORDER BY id DESC";
             $stmt = $db->prepare($query);
             $stmt->bindParam(':id_empresa', $id_empresa, PDO::PARAM_INT);
@@ -70,14 +69,14 @@ switch ($request_method) {
                 $placaLimpia = preg_replace('/[^A-Z0-9]/', '', strtoupper($row->placas));
                 if (in_array($placaLimpia, $mapaExistentes)) { $duplicados++; continue; }
 
-                $estado = strtolower($row->estado);
+                $estado = strtolower($row->estado ?? 'activo');
                 if($estado != 'activo' && $estado != 'en taller' && $estado != 'inactivo') $estado = 'activo';
 
                 try {
                     $stmtInsert->execute([
                         ':id_empresa' => $id_empresa, ':placas' => htmlspecialchars(strip_tags($row->placas)),
                         ':marca' => htmlspecialchars(strip_tags($row->marca_modelo)), ':anio' => intval($row->anio),
-                        ':km' => floatval($row->kilometraje), ':estado' => ucfirst($estado), ':creado_por' => $id_usuario
+                        ':km' => floatval($row->kilometraje ?? 0), ':estado' => ucfirst($estado), ':creado_por' => $id_usuario
                     ]);
                     $mapaExistentes[] = $placaLimpia;
                     $exitos++;
@@ -88,9 +87,14 @@ switch ($request_method) {
         }
 
         $data = json_decode(file_get_contents("php://input"));
-        if (!isset($data->placas) || !isset($data->marca_modelo) || !isset($data->anio) || !isset($data->kilometraje_inicial)) {
-            http_response_code(400); echo json_encode(['success' => false, 'message' => 'Datos incompletos.']); exit;
+        
+        // Validación limpia que soluciona el problema de las barras (||)
+        if (!isset($data->placas, $data->marca_modelo, $data->anio, $data->kilometraje_inicial, $data->rendimiento_ideal)) {
+            http_response_code(400); 
+            echo json_encode(['success' => false, 'message' => 'Datos incompletos para el registro.']); 
+            exit;
         }
+
         try {
             $qLimite = "SELECT p.limite_vehiculos, (SELECT COUNT(*) FROM vehiculos WHERE id_empresa = :id1 AND estado != 'Inactivo') as total FROM empresas e JOIN planes_suscripcion p ON e.id_plan = p.id WHERE e.id = :id2";
             $stmtLimite = $db->prepare($qLimite);
@@ -102,12 +106,17 @@ switch ($request_method) {
                 exit;
             }
 
-            $query = "INSERT INTO vehiculos (id_empresa, placas, marca_modelo, anio, kilometraje_inicial, kilometraje_actual, estado, creado_por) VALUES (:id_empresa, :placas, :marca, :anio, :km, :km, :estado, :creado_por)";
+            $query = "INSERT INTO vehiculos (id_empresa, placas, marca_modelo, anio, kilometraje_inicial, kilometraje_actual, rendimiento_ideal, estado, creado_por) VALUES (:id_empresa, :placas, :marca, :anio, :km, :km, :rendimiento, :estado, :creado_por)";
             $stmt = $db->prepare($query);
             $stmt->execute([
-                ':id_empresa' => $id_empresa, ':placas' => htmlspecialchars(strip_tags($data->placas)),
-                ':marca' => htmlspecialchars(strip_tags($data->marca_modelo)), ':anio' => intval($data->anio),
-                ':km' => floatval($data->kilometraje_inicial), ':estado' => htmlspecialchars(strip_tags($data->estado)), ':creado_por' => $id_usuario
+                ':id_empresa' => $id_empresa, 
+                ':placas' => htmlspecialchars(strip_tags($data->placas)),
+                ':marca' => htmlspecialchars(strip_tags($data->marca_modelo)), 
+                ':anio' => intval($data->anio),
+                ':km' => floatval($data->kilometraje_inicial), 
+                ':rendimiento' => floatval($data->rendimiento_ideal),
+                ':estado' => htmlspecialchars(strip_tags($data->estado ?? 'Activo')), 
+                ':creado_por' => $id_usuario
             ]);
             http_response_code(201); echo json_encode(['success' => true, 'message' => 'Vehículo registrado con éxito.']);
         } catch (PDOException $e) {
@@ -119,15 +128,40 @@ switch ($request_method) {
 
     case 'PUT':
         $data = json_decode(file_get_contents("php://input"));
+        
+        // Asignación ultra-segura
+        $placas = $data->placas ?? '';
+        $marca = $data->marca_modelo ?? '';
+        $anio = $data->anio ?? 0;
+        $rendimiento = floatval($data->rendimiento_ideal ?? 0);
+        $estado = $data->estado ?? 'Activo';
+        $id_veh_actual = $data->id_vehiculo ?? 0;
+
+        if (empty($id_veh_actual)) {
+            echo json_encode(['success' => false, 'message' => 'No se recibió el ID del vehículo a editar.']);
+            exit;
+        }
+
         try {
-            $query = "UPDATE vehiculos SET placas = :placas, marca_modelo = :marca, anio = :anio, estado = :estado WHERE id = :id_vehiculo AND id_empresa = :id_empresa";
+            $query = "UPDATE vehiculos SET placas = :placas, marca_modelo = :marca, anio = :anio, rendimiento_ideal = :rendimiento, estado = :estado WHERE id = :id_vehiculo AND id_empresa = :id_empresa";
             $stmt = $db->prepare($query);
             $stmt->execute([
-                ':placas' => $data->placas, ':marca' => $data->marca_modelo, ':anio' => $data->anio,
-                ':estado' => $data->estado, ':id_vehiculo' => $data->id_vehiculo, ':id_empresa' => $id_empresa
+                ':placas' => $placas, 
+                ':marca' => $marca, 
+                ':anio' => $anio,
+                ':rendimiento' => $rendimiento,
+                ':estado' => $estado, 
+                ':id_vehiculo' => $id_veh_actual, 
+                ':id_empresa' => $id_empresa
             ]);
-            echo json_encode(['success' => true, 'message' => 'Vehículo actualizado.']);
-        } catch (PDOException $e) { echo json_encode(['success' => false, 'message' => 'Error al actualizar.']); }
+            echo json_encode(['success' => true, 'message' => 'Vehículo actualizado con éxito.']);
+        } catch (PDOException $e) { 
+            if ($e->getCode() == 23000) {
+                echo json_encode(['success' => false, 'message' => 'No se pudo actualizar: Las placas ingresadas ya pertenecen a otro vehículo.']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error SQL: ' . $e->getMessage()]); 
+            }
+        }
         break;
 
     case 'DELETE':
@@ -139,3 +173,4 @@ switch ($request_method) {
         } catch (PDOException $e) { echo json_encode(['success' => false, 'message' => 'Error al eliminar.']); }
         break;
 }
+?>

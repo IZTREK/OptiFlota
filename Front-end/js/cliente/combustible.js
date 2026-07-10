@@ -28,9 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const cargarVehiculosParaSelect = async () => {
         try {
             const res = await fetch('/Back-end/cliente/combustible.php?action=get_vehiculos');
-            const vehiculos = await res.json();
+            const MathVehiculos = await res.json();
             selectVehiculoModal.innerHTML = '<option value="" disabled selected>Seleccione una unidad...</option>';
-            vehiculos.forEach(v => {
+            MathVehiculos.forEach(v => {
                 selectVehiculoModal.innerHTML += `<option value="${v.id_vehiculo}">${v.placas} (${v.marca_modelo})</option>`;
             });
         } catch (e) { 
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('/Back-end/cliente/combustible.php');
             todasLasCargas = await res.json();
             renderizarTablaHistorial(todasLasCargas);
-            calcularKPIs(todasLasCargas); 
+            calcularKPIs(todasLasCargas, todosLosAnalisis); 
         } catch (e) {
             tableBodyHistorial.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Error de conexión.</td></tr>`;
         }
@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('/Back-end/cliente/combustible.php?action=get_analisis');
             todosLosAnalisis = await res.json();
             renderizarTablaAnalisis(todosLosAnalisis);
+            calcularKPIs(todasLasCargas, todosLosAnalisis); 
         } catch (e) {
             tableBodyAnalisis.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Error de conexión al cargar análisis.</td></tr>`;
         }
@@ -128,27 +129,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const calcularKPIs = (cargasAAnalizar = todasLasCargas) => {
+    // CORRECCIÓN: Adaptamos los argumentos para admitir arreglos globales o filtrados de forma segura
+    const calcularKPIs = (cargasAAnalizar = todasLasCargas, analisisAAnalizar = todosLosAnalisis) => {
         const mesActual = new Date().toISOString().substring(0, 7); 
         let gastoMes = 0;
         let totalLitrosMes = 0;
         let totalKmRecorridosMes = 0;
 
-        cargasAAnalizar.forEach(c => {
-            if (c.fecha && c.fecha.startsWith(mesActual)) {
-                gastoMes += parseFloat(c.costo_total);
-                // Si tienes los datos en Analysis Data puedes hacer cálculos más precisos,
-                // Pero esto sirve de aproximación.
-            }
-        });
+        if (Array.isArray(cargasAAnalizar)) {
+            cargasAAnalizar.forEach(c => {
+                if (c.fecha && c.fecha.startsWith(mesActual)) {
+                    gastoMes += parseFloat(c.costo_total);
+                }
+            });
+        }
 
-        // Usar los datos del analisis para el KPI promedio (Rendimiento Global)
-        todosLosAnalisis.forEach(a => {
-             if (a.Fecha_Carga && a.Fecha_Carga.startsWith(mesActual) && parseFloat(a.Km_Recorridos) > 0) {
-                 totalKmRecorridosMes += parseFloat(a.Km_Recorridos);
-                 totalLitrosMes += parseFloat(a.Litros);
-             }
-        });
+        if (Array.isArray(analisisAAnalizar)) {
+            analisisAAnalizar.forEach(a => {
+                 if (a.Fecha_Carga && a.Fecha_Carga.startsWith(mesActual) && parseFloat(a.Km_Recorridos) > 0) {
+                     totalKmRecorridosMes += parseFloat(a.Km_Recorridos);
+                     totalLitrosMes += parseFloat(a.Litros);
+                 }
+            });
+        }
 
         const rendimientoPromedio = totalLitrosMes > 0 ? (totalKmRecorridosMes / totalLitrosMes) : 0;
 
@@ -174,8 +177,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await res.json();
             if (result.success) {
                 modalCombustible.classList.remove('active');
-                cargarCargas(); 
-                cargarAnalisis();
+                await cargarCargas(); 
+                await cargarAnalisis();
             } else alert(result.message);
         } catch (err) { alert('Error de conexión.'); } 
         finally { btnGuardar.innerText = "Guardar Registro"; btnGuardar.disabled = false; }
@@ -211,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     try {
                         const res = await fetch('/Back-end/cliente/combustible.php', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }) });
                         const result = await res.json();
-                        if (result.success) { cargarCargas(); cargarAnalisis(); }
+                        if (result.success) { await cargarCargas(); await cargarAnalisis(); }
                     } catch (err) { alert('Error al intentar eliminar.'); }
                 }
             });
@@ -242,6 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         renderizarTablaHistorial(filtradosData);
         renderizarTablaAnalisis(filtradosAnalisis);
+        calcularKPIs(filtradosData, filtradosAnalisis); // CORRECCIÓN: Actualiza KPIs reactivos al buscar
     });
 
     document.getElementById('btn-limpiar-filtros').addEventListener('click', () => {
@@ -250,6 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('filtro-placas').value = '';
         renderizarTablaHistorial(todasLasCargas);
         renderizarTablaAnalisis(todosLosAnalisis);
+        calcularKPIs(todasLasCargas, todosLosAnalisis); // CORRECCIÓN: Restaura KPIs al limpiar
     });
 
     // --- IMPORTACIÓN EXCEL / CSV (SHEETJS) ---
@@ -354,8 +359,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 alert(mensaje);
                 modalImportar.classList.remove('active');
-                cargarCargas();
-                cargarAnalisis(); // Recargar el tablero también
+                await cargarCargas();
+                await cargarAnalisis(); 
             } else alert(result.message || 'Error en el procesamiento.');
         } catch (e) { alert("Error conectando al servidor."); } 
         finally { btn.innerText = "Importar a Base de Datos"; btn.disabled = false; }
@@ -373,5 +378,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // INIT
     cargarVehiculosParaSelect();
     cargarCargas();
-    cargarAnalisis(); // Ejecuta la carga de la vista analítica al iniciar
+    cargarAnalisis(); 
 });

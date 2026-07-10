@@ -23,10 +23,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const cargarVehiculos = async () => {
         try {
             const res = await fetch('/Back-end/cliente/vehiculos.php');
-            vehiculos = await res.json();
+            const data = await res.json();
+            
+            // LIMPIEZA DE DATOS: Si algún estado viene null, lo forzamos a 'Activo'
+            vehiculos = data.map(v => ({
+                ...v,
+                estado: v.estado ? v.estado : 'Activo'
+            }));
+
             renderizarTabla(vehiculos);
         } catch (error) {
-            tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red;">Error de conexión.</td></tr>';
+            console.error("Error detallado:", error);
+            tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red;">Error al procesar la información de los vehículos.</td></tr>';
         }
     };
 
@@ -82,7 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('input-marca').value = v.marca_modelo;
                     document.getElementById('input-km').value = v.kilometraje_actual;
                     
-                    // 🔥 Mapeo inteligente del estado al editar
+                    // Poblar el rendimiento ideal en el formulario
+                    const inputRendimiento = document.querySelector('input[name="rendimiento_ideal"]');
+                    if (inputRendimiento) inputRendimiento.value = v.rendimiento_ideal;
+
+                    // Mapeo inteligente del estado al editar
                     const est = v.estado.toLowerCase();
                     if(est.includes('taller')) document.getElementById('input-estado').value = 'En Taller';
                     else if(est.includes('inactivo')) document.getElementById('input-estado').value = 'Inactivo';
@@ -93,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Evento Eliminar
+        // Evento Eliminar (Baja Lógica)
         document.querySelectorAll('.btn-eliminar').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 if (confirm('¿Seguro que deseas dar de baja este vehículo? (Pasará a estado Inactivo)')) {
@@ -114,31 +126,84 @@ document.addEventListener('DOMContentLoaded', () => {
         formVehiculo.reset(); 
         document.getElementById('id_vehiculo').value = '';
         document.getElementById('input-estado').value = 'Activo';
+        
+        // Asegurar limpiar rendimiento
+        const inputRendimiento = document.querySelector('input[name="rendimiento_ideal"]');
+        if (inputRendimiento) inputRendimiento.value = '';
+
         document.getElementById('titulo-modal-vehiculo').innerText = 'Añadir Nuevo Vehículo';
         modalVehiculo.classList.add('active'); 
     });
+    
     btnCerrarModal.addEventListener('click', () => { modalVehiculo.classList.remove('active'); });
     btnCancelarModal.addEventListener('click', () => { modalVehiculo.classList.remove('active'); });
 
+    // EL NUEVO BOTÓN DE GUARDAR BLINDADO CONTRA ERRORES
     btnGuardarVehiculo.addEventListener('click', async () => {
         const formData = new FormData(formVehiculo);
         const data = Object.fromEntries(formData.entries());
 
-        if (!data.placas || !data.anio || !data.marca_modelo || !data.kilometraje_inicial) {
-            alert('Por favor, llena todos los campos obligatorios.'); return;
+        // 1. Forzar ID si HTML no tiene "name"
+        const inputId = document.getElementById('id_vehiculo');
+        if (inputId && inputId.value) {
+            data.id_vehiculo = inputId.value;
+        }
+
+        // 2. Forzar Estado si el select no se capturó
+        const inputEstado = document.getElementById('input-estado');
+        if (inputEstado && inputEstado.value) {
+            data.estado = inputEstado.value;
         }
 
         const isEdit = !!data.id_vehiculo;
         const method = isEdit ? 'PUT' : 'POST';
 
-        btnGuardarVehiculo.innerText = 'Guardando...'; btnGuardarVehiculo.disabled = true;
+        // 3. Validación flexible
+        if (!data.placas || !data.anio || !data.marca_modelo || !data.rendimiento_ideal) {
+            alert('Por favor, llena los campos obligatorios (Placas, Año, Marca, Rendimiento).'); 
+            return;
+        }
+        // El kilometraje inicial solo es obligatorio al registrar uno nuevo
+        if (!isEdit && !data.kilometraje_inicial) {
+            alert('El kilometraje inicial es obligatorio al registrar un vehículo nuevo.'); 
+            return;
+        }
+
+        btnGuardarVehiculo.innerText = 'Guardando...'; 
+        btnGuardarVehiculo.disabled = true;
+        
         try {
-            const response = await fetch('/Back-end/cliente/vehiculos.php', { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-            const result = await response.json();
-            if (result.success) { modalVehiculo.classList.remove('active'); cargarVehiculos(); } 
-            else { alert(result.message); }
-        } catch (error) { alert('Error de conexión al servidor.'); } 
-        finally { btnGuardarVehiculo.innerText = 'Guardar Vehículo'; btnGuardarVehiculo.disabled = false; }
+            const response = await fetch('/Back-end/cliente/vehiculos.php', { 
+                method: method, 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify(data) 
+            });
+            
+            // 4. Lectura de respuesta a prueba de fallos de PHP
+            const textResult = await response.text(); 
+            let result;
+            try {
+                result = JSON.parse(textResult);
+            } catch (e) {
+                console.error("El servidor devolvió un error de PHP:", textResult);
+                alert("Error en el servidor PHP. Abre la consola (F12) para ver los detalles.");
+                btnGuardarVehiculo.innerText = 'Guardar Vehículo'; 
+                btnGuardarVehiculo.disabled = false;
+                return;
+            }
+
+            if (result.success) { 
+                modalVehiculo.classList.remove('active'); 
+                cargarVehiculos(); 
+            } else { 
+                alert(result.message); 
+            }
+        } catch (error) { 
+            alert('Error de red. Revisa tu conexión.'); 
+        } finally { 
+            btnGuardarVehiculo.innerText = 'Guardar Vehículo'; 
+            btnGuardarVehiculo.disabled = false; 
+        }
     });
 
     // --- LÓGICA DE FILTROS EN LA TABLA ---
