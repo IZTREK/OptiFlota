@@ -45,10 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const formatearSalud = (salud) => {
         switch(salud) {
-            case 'optimo': return '<span class="badge ok">Óptimo (Verde)</span>';
-            case 'regular': return '<span class="badge warning">Regular (Amarillo)</span>';
-            case 'critico': return '<span class="badge danger">Crítico (Rojo)</span>';
-            default: return `<span class="badge">${salud}</span>`;
+            case 'optimo': return '<span class="badge ok" style="background:#dcfce7; color:#166534; padding:4px 8px; border-radius:12px; font-size:12px;">Óptimo (Verde)</span>';
+            case 'regular': return '<span class="badge warning" style="background:#fef3c7; color:#92400e; padding:4px 8px; border-radius:12px; font-size:12px;">Regular (Amarillo)</span>';
+            case 'critico': return '<span class="badge danger" style="background:#fee2e2; color:#991b1b; padding:4px 8px; border-radius:12px; font-size:12px;">Crítico (Rojo)</span>';
+            default: return `<span class="badge" style="background:#f3f4f6; color:#374151; padding:4px 8px; border-radius:12px; font-size:12px;">${salud}</span>`;
         }
     };
 
@@ -59,9 +59,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Definición de SVGs unificados (16x16)
+        const svgOjo = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+        const svgEdit = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+        const svgTrash = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M6 6l1 14h10l1-14"></path><path d="M10 11v5M14 11v5"></path></svg>`;
+
         datos.forEach(d => {
             const obsCortas = d.observaciones ? (d.observaciones.length > 40 ? d.observaciones.substring(0,40)+'...' : d.observaciones) : 'Ninguna';
             
+            // Botones estilizados para mantener tamaño y alineación exacta
+            const btnVerHTML = `<button class="btn-icon btn-ver" title="Ver detalle" data-id="${d.id}" style="color:var(--text-main); display:inline-flex; align-items:center; justify-content:center;">${svgOjo}</button>`;
+            const btnEditarHTML = `<button class="btn-icon btn-editar" title="Corregir (Editar)" data-id="${d.id}" style="color:var(--text-main); display:inline-flex; align-items:center; justify-content:center;">${svgEdit}</button>`;
+            const btnEliminarHTML = `<button class="btn-icon delete btn-eliminar" title="Eliminar" data-id="${d.id}" style="display:inline-flex; align-items:center; justify-content:center;">${svgTrash}</button>`;
+
             tableBody.innerHTML += `
                 <tr>
                     <td>${d.fecha}</td>
@@ -69,16 +79,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${d.evaluador}</td>
                     <td>${formatearSalud(d.salud_general)}</td>
                     <td>${obsCortas}</td>
-                    <td class="actions">
-                        <button class="btn-icon btn-ver" title="Ver detalle" data-id="${d.id}">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        </button>
-                        <button class="btn-icon btn-editar" title="Corregir (Editar)" data-id="${d.id}">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 20 4-1 11-11-3-3L5 16l-1 4Z"></path><path d="M13 6 17 10"></path></svg>
-                        </button>
-                        <button class="btn-icon delete btn-eliminar" title="Eliminar" data-id="${d.id}">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M6 6l1 14h10l1-14"></path><path d="M10 11v5M14 11v5"></path></svg>
-                        </button>
+                    <td>
+                        <div style="display: flex; gap: 8px; align-items: center; justify-content: flex-start;">
+                            ${btnVerHTML}
+                            ${btnEditarHTML}
+                            ${btnEliminarHTML}
+                        </div>
                     </td>
                 </tr>
             `;

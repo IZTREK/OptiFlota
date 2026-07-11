@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('/Back-end/cliente/vehiculos.php');
             const data = await res.json();
             
-            // LIMPIEZA DE DATOS: Si algún estado viene null, lo forzamos a 'Activo'
             vehiculos = data.map(v => ({
                 ...v,
                 estado: v.estado ? v.estado : 'Activo'
@@ -42,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         estado = estado.toLowerCase();
         if (estado === 'activo') return '<span class="badge ok">Activo</span>';
         if (estado === 'en taller' || estado === 'taller') return '<span class="badge warning">En Taller</span>';
-        if (estado === 'inactivo') return '<span class="badge danger" style="background:#fee2e2; color:#b91c1c;">Baja / Inactivo</span>';
+        if (estado === 'inactivo') return '<span class="badge danger" style="background:#fee2e2; color:#b91c1c;">Inactivo</span>';
         return `<span class="badge">${estado}</span>`;
     };
 
@@ -54,8 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         datos.forEach(v => {
-            // Estilo visual si está inactivo
-            const rowStyle = v.estado.toLowerCase() === 'inactivo' ? 'opacity: 0.6; background-color: #f9fafb;' : '';
+            const esInactivo = v.estado.toLowerCase() === 'inactivo';
+            const rowStyle = esInactivo ? 'opacity: 0.6; background-color: #f9fafb;' : '';
+            
+            // Colores dinámicos para el botón de prender/apagar
+            const colorToggle = esInactivo ? '#10b981' : '#f59e0b';
+            const titleToggle = esInactivo ? 'Activar vehículo' : 'Desactivar vehículo (Liberar espacio)';
             
             const tr = document.createElement('tr');
             tr.style = rowStyle;
@@ -66,10 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${parseInt(v.kilometraje_actual).toLocaleString('es-MX')} km</td>
                 <td>${formatearEstado(v.estado)}</td>
                 <td class="actions">
-                    <button class="btn-icon edit btn-editar" data-id="${v.id_vehiculo}" title="Editar vehículo">
+                    <button class="btn-icon edit btn-editar" data-id="${v.id_vehiculo}" title="Editar información">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                     </button>
-                    <button class="btn-icon delete btn-eliminar" data-id="${v.id_vehiculo}" title="Dar de baja">
+                    <button class="btn-icon toggle btn-toggle" data-id="${v.id_vehiculo}" title="${titleToggle}">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${colorToggle}" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+                    </button>
+                    <button class="btn-icon delete btn-eliminar" data-id="${v.id_vehiculo}" title="Eliminar Permanentemente">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M6 6l1 14h10l1-14"></path><path d="M10 11v5M14 11v5"></path></svg>
                     </button>
                 </td>
@@ -77,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tableBody.appendChild(tr);
         });
 
-        // Evento Editar
+        // 1. Evento Editar (Abre el Modal)
         document.querySelectorAll('.btn-editar').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const id = e.currentTarget.dataset.id;
@@ -90,11 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('input-marca').value = v.marca_modelo;
                     document.getElementById('input-km').value = v.kilometraje_actual;
                     
-                    // Poblar el rendimiento ideal en el formulario
                     const inputRendimiento = document.querySelector('input[name="rendimiento_ideal"]');
                     if (inputRendimiento) inputRendimiento.value = v.rendimiento_ideal;
 
-                    // Mapeo inteligente del estado al editar
                     const est = v.estado.toLowerCase();
                     if(est.includes('taller')) document.getElementById('input-estado').value = 'En Taller';
                     else if(est.includes('inactivo')) document.getElementById('input-estado').value = 'Inactivo';
@@ -105,17 +109,57 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Evento Eliminar (Baja Lógica)
+        // 2. Evento Activar/Desactivar
+        document.querySelectorAll('.btn-toggle').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = e.currentTarget.dataset.id;
+                try {
+                    const res = await fetch('/Back-end/cliente/vehiculos.php?action=toggle', { 
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' }, 
+                        body: JSON.stringify({ id_vehiculo: id }) 
+                    });
+                    const result = await res.json();
+                    
+                    if (result.success) {
+                        cargarVehiculos(); // Recarga la tabla para ver el cambio
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (error) { 
+                    alert('Error de conexión con el servidor.'); 
+                }
+            });
+        });
+
+        // 3. Evento Eliminar Permanentemente (Hard Delete)
         document.querySelectorAll('.btn-eliminar').forEach(btn => {
             btn.addEventListener('click', async (e) => {
-                if (confirm('¿Seguro que deseas dar de baja este vehículo? (Pasará a estado Inactivo)')) {
+                const confirmacion = confirm(
+                    '⚠️ ¡ADVERTENCIA DE BORRADO PERMANENTE!\n\n' +
+                    '¿Estás completamente seguro de eliminar este vehículo del sistema?\n\n' +
+                    'Al hacerlo, SE BORRARÁ TAMBIÉN TODO SU HISTORIAL de Cargas de Combustible, Mantenimientos y Tickets asociados.\n\n' +
+                    'Esta acción NO se puede deshacer.'
+                );
+
+                if (confirmacion) {
                     const id = e.currentTarget.dataset.id;
                     try {
-                        const res = await fetch('/Back-end/cliente/vehiculos.php', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_vehiculo: id }) });
+                        const res = await fetch('/Back-end/cliente/vehiculos.php', { 
+                            method: 'DELETE', 
+                            headers: { 'Content-Type': 'application/json' }, 
+                            body: JSON.stringify({ id_vehiculo: id }) 
+                        });
                         const result = await res.json();
-                        if (result.success) cargarVehiculos();
-                        else alert(result.message);
-                    } catch (error) { alert('Error de conexión.'); }
+                        
+                        if (result.success) {
+                            cargarVehiculos();
+                        } else {
+                            alert(result.message);
+                        }
+                    } catch (error) { 
+                        alert('Error de conexión.'); 
+                    }
                 }
             });
         });
@@ -127,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('id_vehiculo').value = '';
         document.getElementById('input-estado').value = 'Activo';
         
-        // Asegurar limpiar rendimiento
         const inputRendimiento = document.querySelector('input[name="rendimiento_ideal"]');
         if (inputRendimiento) inputRendimiento.value = '';
 
@@ -138,32 +181,23 @@ document.addEventListener('DOMContentLoaded', () => {
     btnCerrarModal.addEventListener('click', () => { modalVehiculo.classList.remove('active'); });
     btnCancelarModal.addEventListener('click', () => { modalVehiculo.classList.remove('active'); });
 
-    // EL NUEVO BOTÓN DE GUARDAR BLINDADO CONTRA ERRORES
     btnGuardarVehiculo.addEventListener('click', async () => {
         const formData = new FormData(formVehiculo);
         const data = Object.fromEntries(formData.entries());
 
-        // 1. Forzar ID si HTML no tiene "name"
         const inputId = document.getElementById('id_vehiculo');
-        if (inputId && inputId.value) {
-            data.id_vehiculo = inputId.value;
-        }
+        if (inputId && inputId.value) { data.id_vehiculo = inputId.value; }
 
-        // 2. Forzar Estado si el select no se capturó
         const inputEstado = document.getElementById('input-estado');
-        if (inputEstado && inputEstado.value) {
-            data.estado = inputEstado.value;
-        }
+        if (inputEstado && inputEstado.value) { data.estado = inputEstado.value; }
 
         const isEdit = !!data.id_vehiculo;
         const method = isEdit ? 'PUT' : 'POST';
 
-        // 3. Validación flexible
         if (!data.placas || !data.anio || !data.marca_modelo || !data.rendimiento_ideal) {
             alert('Por favor, llena los campos obligatorios (Placas, Año, Marca, Rendimiento).'); 
             return;
         }
-        // El kilometraje inicial solo es obligatorio al registrar uno nuevo
         if (!isEdit && !data.kilometraje_inicial) {
             alert('El kilometraje inicial es obligatorio al registrar un vehículo nuevo.'); 
             return;
@@ -179,7 +213,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(data) 
             });
             
-            // 4. Lectura de respuesta a prueba de fallos de PHP
             const textResult = await response.text(); 
             let result;
             try {
@@ -218,10 +251,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const filtrados = vehiculos.filter(v => {
                 let pasa = true;
-                // Busca coincidencias tanto en las placas como en el modelo
                 if (fPlacas && !v.placas.toLowerCase().includes(fPlacas) && !v.marca_modelo.toLowerCase().includes(fPlacas)) pasa = false;
                 if (fAnio && v.anio != fAnio) pasa = false;
-                // Busca coincidencia exacta con el select de estado
                 if (fEstado && !v.estado.toLowerCase().includes(fEstado)) pasa = false;
                 return pasa;
             });
@@ -234,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('filtro-placas').value = '';
             document.getElementById('filtro-anio').value = '';
             document.getElementById('filtro-estado').value = '';
-            renderizarTabla(vehiculos); // Restaura la tabla original
+            renderizarTabla(vehiculos); 
         });
     }
 

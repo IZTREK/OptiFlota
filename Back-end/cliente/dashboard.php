@@ -25,8 +25,8 @@ try {
     $stmtG->execute([':id' => $id_empresa, ':mes' => $mes_filtro]);
     $gasto_combustible = $stmtG->fetchColumn() ?: 0;
 
-    // 3. Mantenimientos en Taller
-    $qMant = "SELECT COUNT(*) FROM mantenimientos WHERE id_empresa = :id AND estado = 'En Taller'";
+    // 3. CORRECCIÓN: Vehículos actualmente en Taller
+    $qMant = "SELECT COUNT(*) FROM vehiculos WHERE id_empresa = :id AND LOWER(estado) IN ('en taller', 'taller')";
     $stmtM = $db->prepare($qMant);
     $stmtM->execute([':id' => $id_empresa]);
     $mantenimientos = $stmtM->fetchColumn();
@@ -36,6 +36,7 @@ try {
     $stmtE = $db->prepare($qEstado);
     $stmtE->execute([':id' => $id_empresa]);
     $estados = $stmtE->fetchAll(PDO::FETCH_ASSOC);
+    
     $activos = 0; $taller = 0; $inactivos = 0;
     foreach($estados as $e) {
         if(strtolower($e['estado']) == 'activo') $activos = $e['cantidad'];

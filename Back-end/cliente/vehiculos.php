@@ -36,6 +36,41 @@ switch ($request_method) {
         break;
 
     case 'POST':
+        // NUEVA ACCIÓN: Activar o Desactivar vehículo
+        if (isset($_GET['action']) && $_GET['action'] == 'toggle') {
+            $data = json_decode(file_get_contents("php://input"));
+            $id_vehiculo = $data->id_vehiculo ?? 0;
+            
+            $stmt = $db->prepare("SELECT estado FROM vehiculos WHERE id = ? AND id_empresa = ?");
+            $stmt->execute([$id_vehiculo, $id_empresa]);
+            $veh = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($veh) {
+                $nuevo_estado = ($veh['estado'] === 'Inactivo') ? 'Activo' : 'Inactivo';
+                
+                // ESCUDO DE SEGURIDAD: Si lo vamos a activar, revisamos que no se pase del límite de su plan
+                if ($nuevo_estado === 'Activo') {
+                    $qLimite = "SELECT p.limite_vehiculos, (SELECT COUNT(*) FROM vehiculos WHERE id_empresa = :id1 AND estado != 'Inactivo') as total FROM empresas e JOIN planes_suscripcion p ON e.id_plan = p.id WHERE e.id = :id2";
+                    $stmtLimite = $db->prepare($qLimite);
+                    $stmtLimite->execute([':id1' => $id_empresa, ':id2' => $id_empresa]);
+                    $limiteData = $stmtLimite->fetch(PDO::FETCH_ASSOC);
+
+                    if ($limiteData['total'] >= $limiteData['limite_vehiculos']) {
+                        echo json_encode(['success' => false, 'message' => 'Límite alcanzado. No puedes activar este vehículo porque tu plan permite un máximo de ' . $limiteData['limite_vehiculos'] . ' vehículos activos.']);
+                        exit;
+                    }
+                }
+
+                $db->prepare("UPDATE vehiculos SET estado = ? WHERE id = ? AND id_empresa = ?")
+                   ->execute([$nuevo_estado, $id_vehiculo, $id_empresa]);
+                echo json_encode(['success' => true, 'message' => "Vehículo " . ($nuevo_estado === 'Activo' ? 'activado' : 'desactivado') . " correctamente."]);
+            } else {
+                echo json_encode(['success' => false, 'message' => "Vehículo no encontrado."]);
+            }
+            exit;
+        }
+
+        // --- IMPORTACIÓN EXCEL ---
         if (isset($_GET['action']) && $_GET['action'] == 'importar') {
             $registros = json_decode(file_get_contents("php://input"));
             if (!is_array($registros)) { echo json_encode(['success' => false, 'message' => 'Formato inválido.']); exit; }
@@ -86,9 +121,9 @@ switch ($request_method) {
             exit;
         }
 
+        // --- CREACIÓN MANUAL DE VEHÍCULO ---
         $data = json_decode(file_get_contents("php://input"));
         
-        // Validación limpia que soluciona el problema de las barras (||)
         if (!isset($data->placas, $data->marca_modelo, $data->anio, $data->kilometraje_inicial, $data->rendimiento_ideal)) {
             http_response_code(400); 
             echo json_encode(['success' => false, 'message' => 'Datos incompletos para el registro.']); 
@@ -129,7 +164,6 @@ switch ($request_method) {
     case 'PUT':
         $data = json_decode(file_get_contents("php://input"));
         
-        // Asignación ultra-segura
         $placas = $data->placas ?? '';
         $marca = $data->marca_modelo ?? '';
         $anio = $data->anio ?? 0;
@@ -165,12 +199,21 @@ switch ($request_method) {
         break;
 
     case 'DELETE':
+        // AHORA ELIMINA POR COMPLETO DE LA BASE DE DATOS
         $data = json_decode(file_get_contents("php://input"));
+        if (!isset($data->id_vehiculo)) {
+            echo json_encode(['success' => false, 'message' => 'ID de vehículo no proporcionado.']);
+            exit;
+        }
+
         try {
-            $stmt = $db->prepare("UPDATE vehiculos SET estado = 'Inactivo' WHERE id = :id_vehiculo AND id_empresa = :id_empresa");
+            // El motor SQL se encargará de borrar en cascada Combustible y Mantenimientos asociados a este ID
+            $stmt = $db->prepare("DELETE FROM vehiculos WHERE id = :id_vehiculo AND id_empresa = :id_empresa");
             $stmt->execute([':id_vehiculo' => $data->id_vehiculo, ':id_empresa' => $id_empresa]);
-            echo json_encode(['success' => true, 'message' => 'Vehículo dado de baja.']);
-        } catch (PDOException $e) { echo json_encode(['success' => false, 'message' => 'Error al eliminar.']); }
+            echo json_encode(['success' => true, 'message' => 'Vehículo e historial eliminados permanentemente.']);
+        } catch (PDOException $e) { 
+            echo json_encode(['success' => false, 'message' => 'Error al eliminar. Es posible que existan registros bloqueando la eliminación.']); 
+        }
         break;
 }
 ?>
