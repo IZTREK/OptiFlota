@@ -4,197 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OptiFlota - Vehículos</title>
-   
     <link rel="stylesheet" href="../../../Estilos/styles.css">
+    <style>
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; font-family: inherit; background-color: white; transition: border-color 0.3s, box-shadow 0.3s; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1); }
+    </style>
 </head>
 <body>
     <div class="app-container">
         
-        <!-- Menú Lateral -->
         <aside class="sidebar">
-            <div class="sidebar-logo">
-                <h2>OptiFlota</h2>
-            </div>
+            <div class="sidebar-logo"><h2>OptiFlota</h2></div>
             <nav class="sidebar-nav">
-                <a href="../index.html" class="nav-item">📊 Dashboard</a>
-                <a href="../vehiculos/vehiculos.html" class="nav-item active">🚗 Vehículos</a>
-                <a href="../diagnosticos/diagnosticos.html" class="nav-item">📋 Diagnósticos</a>
-                <a href="../combustible/combustible.html" class="nav-item">⛽ Combustible</a>
-                <a href="../mantenimiento/mantenimiento.html" class="nav-item">🔧 Mantenimiento</a>
-                <a href="../siniestros/tickets.html" class="nav-item">🎫 Tickets</a>
-                <a href="../suscripcion/suscripcion.html" class="nav-item">👤 Suscripción</a>
+                <a id="nav-dashboard" href="../index.html" class="nav-item">Dashboard</a>
+                <a id="nav-vehiculos" href="../Vehiculos/vehiculos.html" class="nav-item active">Vehículos</a>
+                <a id="nav-diagnosticos" href="../Diagnosticos/diagnosticos.html" class="nav-item">Diagnósticos</a>
+                <a id="nav-combustible" href="../Combustible/combustible.html" class="nav-item">Combustible</a>
+                <a id="nav-mantenimiento" href="../Mantenimiento/mantenimiento.html" class="nav-item">Mantenimiento</a>
+                <a id="nav-tickets" href="../Siniestros/tickets.html" class="nav-item">Tickets</a>
+                <a id="nav-suscripcion" href="../suscripcion/suscripcion.html" class="nav-item">Suscripción</a>
+
+                <a href="#" id="btn-logout" class="nav-item" style="margin-top: 40px; color: #f87171; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: sub; margin-right: 8px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Cerrar Sesión
+                </a>
             </nav>
         </aside> 
 
-        <!-- Contenido Principal -->
         <div class="main-content">
-            <!-- Barra Superior -->
             <header class="topbar">
-                <div class="page-title">
-                    <h1>Gestión de Vehículos</h1>
-                </div>
-                <div class="user-profile">
-                    <span>Transportes García</span>
-                    <div class="avatar">TG</div>
-                </div>
+                <div class="page-title"><h1>Gestión de Vehículos</h1></div>
+                <div class="user-profile"><span>Cargando...</span><div class="avatar">C</div></div>
             </header>
 
-            <!-- Área de Trabajo -->
             <main class="content-area">
                 
                 <div class="section-header">
                     <p class="subtitle">Administra el inventario de tu flotilla</p>
-                    <!-- Agregamos el ID para abrir el modal -->
-                    <button class="btn-primary btn-auto" id="btn-abrir-modal">+ Añadir Vehículo</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-secondary btn-auto" id="btn-abrir-importar">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 5px; vertical-align: middle;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            Importar Excel/CSV
+                        </button>
+                        <button class="btn-primary btn-auto" id="btn-abrir-modal">+ Añadir Vehículo</button>
+                    </div>
                 </div>
 
-                <!-- 🔍 BARRA DE BÚSQUEDA - VEHÍCULOS -->
                 <div class="filter-bar">
-                    <div class="filter-group">
-                        <label for="filtro-placas">Placas / Modelo</label>
-                        <input type="text" id="filtro-placas" placeholder="Ej. ABC-1234">
-                    </div>
-                    <div class="filter-group">
-                        <label for="filtro-anio">Año</label>
-                        <input type="number" id="filtro-anio" placeholder="Ej. 2022">
-                    </div>
-                    <div class="filter-group">
-                        <label for="filtro-estado">Estado Actual</label>
-                        <select id="filtro-estado">
-                            <option value="">Todos</option>
-                            <option value="activo">Activo</option>
-                            <option value="taller">En Taller</option>
-                            <option value="inactivo">Baja / Inactivo</option>
-                        </select>
-                    </div>
-                    <div class="filter-actions">
-                        <button class="btn-secondary">Limpiar</button>
-                        <button class="btn-primary">🔍 Buscar</button>
-                    </div>
+                    <div class="filter-group"><label>Placas / Modelo</label><input type="text" id="filtro-placas" placeholder="Ej. ABC-1234"></div>
+                    <div class="filter-group"><label>Año</label><input type="number" id="filtro-anio" placeholder="Ej. 2022"></div>
+                    <div class="filter-group"><label>Estado Actual</label><select id="filtro-estado"><option value="">Todos</option><option value="activo">Activo</option><option value="taller">En Taller</option><option value="inactivo">Baja / Inactivo</option></select></div>
+                    <div class="filter-actions"><button class="btn-secondary">Limpiar</button><button class="btn-primary" style="display: inline-flex; align-items: center; gap: 6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><span>Buscar</span></button></div>
                 </div>
 
-                <!-- Tabla de Datos -->
                 <div class="table-container">
                     <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Placas</th>
-                                <th>Marca y Modelo</th>
-                                <th>Año</th>
-                                <th>Kilometraje</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>ABC-1234</strong></td>
-                                <td>Nissan NP300</td>
-                                <td>2022</td>
-                                <td>45,000 km</td>
-                                <td><span class="badge ok">Activo</span></td>
-                                <td class="actions">
-                                    <button class="btn-icon">✏️</button>
-                                    <button class="btn-icon delete">🗑️</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>XYZ-9876</strong></td>
-                                <td>Ford Transit</td>
-                                <td>2020</td>
-                                <td>112,400 km</td>
-                                <td><span class="badge warning">Taller</span></td>
-                                <td class="actions">
-                                    <button class="btn-icon">✏️</button>
-                                    <button class="btn-icon delete">🗑️</button>
-                                </td>
-                            </tr>
-                        </tbody>
+                        <thead><tr><th>Placas</th><th>Marca y Modelo</th><th>Año</th><th>Kilometraje</th><th>Estado</th><th>Acciones</th></tr></thead>
+                        <tbody><tr><td colspan="6" style="text-align:center; padding: 20px;">Cargando inventario de vehículos...</td></tr></tbody>
                     </table>
                 </div>
-
             </main>
         </div>
-        
     </div> 
 
-    <!-- ========================================== -->
-    <!-- 🪟 MODAL: AÑADIR VEHÍCULO -->
-    <!-- ========================================== -->
     <div class="modal-overlay" id="modal-vehiculo">
         <div class="modal-content">
-            
             <div class="modal-header">
-                <h2>Añadir Nuevo Vehículo</h2>
+                <h2 id="titulo-modal-vehiculo">Añadir Nuevo Vehículo</h2>
                 <button class="btn-close" id="btn-cerrar-modal">&times;</button>
             </div>
-            
             <div class="modal-body">
-                <form class="data-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="placas">Placas</label>
-                            <input type="text" id="placas" placeholder="Ej. ABC-1234" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="anio">Año</label>
-                            <input type="number" id="anio" placeholder="Ej. 2024" required>
-                        </div>
+                <form class="data-form" id="form-vehiculo">
+                    <input type="hidden" name="id_vehiculo" id="id_vehiculo"> <div class="form-row">
+                        <div class="form-group"><label>Placas</label><input type="text" name="placas" id="input-placas" placeholder="Ej. ABC-1234" required></div>
+                        <div class="form-group"><label>Año</label><input type="number" name="anio" id="input-anio" placeholder="Ej. 2024" required></div>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="marca">Marca y Modelo</label>
-                        <input type="text" id="marca" placeholder="Ej. Nissan NP300" required>
-                    </div>
-                    
+                    <div class="form-group"><label>Marca y Modelo</label><input type="text" name="marca_modelo" id="input-marca" placeholder="Ej. Nissan NP300" required></div>
                     <div class="form-row">
-                        <div class="form-group">
-                            <label for="kilometraje">Kilometraje Inicial</label>
-                            <input type="number" id="kilometraje" placeholder="Ej. 15000" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="estado">Estado Inicial</label>
-                            <select id="estado">
-                                <option value="activo">Activo</option>
-                                <option value="taller">En Taller</option>
-                            </select>
-                        </div>
+                        <div class="form-group"><label>Kilometraje (Inicial/Actual)</label><input type="number" name="kilometraje_inicial" id="input-km" placeholder="Ej. 15000" required></div>
+                        <div class="form-group"><label>Estado</label><select name="estado" id="input-estado"><option value="activo">Activo</option><option value="en taller">En Taller</option></select></div>
+                    </div>
+                   <div class="form-group">
+                        <label>Rendimiento Ideal (km/L)</label>
+                        <input type="number" step="0.1" name="rendimiento_ideal" placeholder="Ej: 10.5" required>
                     </div>
                 </form>
             </div>
-            
             <div class="modal-footer">
-                <button class="btn-secondary" id="btn-cancelar-modal">Cancelar</button>
-                <button class="btn-primary">Guardar Vehículo</button>
+                <button type="button" class="btn-secondary" id="btn-cancelar-modal">Cancelar</button>
+                <button type="button" class="btn-primary" id="btn-guardar-vehiculo">Guardar Vehículo</button>
             </div>
-            
         </div>
     </div>
 
-    <!-- ⚙️ SCRIPT PARA EL MODAL -->
-    <script>
-        const btnAbrir = document.getElementById('btn-abrir-modal');
-        const btnCerrar = document.getElementById('btn-cerrar-modal');
-        const btnCancelar = document.getElementById('btn-cancelar-modal');
-        const modal = document.getElementById('modal-vehiculo');
+    <div class="modal-overlay" id="modal-importar">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header"><h2>Importación de Vehículos</h2><button class="btn-close" id="btn-cerrar-importar">&times;</button></div>
+            <div class="modal-body">
+                <div id="paso-1-importacion">
+                    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Sube tu inventario de vehículos. El sistema omitirá automáticamente los que ya estén registrados en tu cuenta.</p>
+                    <form class="data-form">
+                        <div class="form-group"><label>Archivo de Inventario (.csv, .xlsx)</label><input type="file" id="archivo-excel-veh" required accept=".csv, .xlsx" style="width: 100%; padding: 10px; border: 1px dashed #d1d5db; background-color: #f9fafb; cursor: pointer;"></div>
+                    </form>
+                </div>
+                <div id="paso-2-mapeo" style="display: none;">
+                    <p style="color: var(--primary-color); font-weight: 600; font-size: 14px; margin-bottom: 15px;">Empareja los datos con las columnas de tu archivo.</p>
+                    <div style="background-color: #f9fafb; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; margin-bottom: 10px;"><span style="font-size: 14px; font-weight: 500;">Placas (Obligatorio):</span><select class="select-mapeo-veh" data-type="placas" id="map-placas" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;"></select></div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; margin-bottom: 10px;"><span style="font-size: 14px; font-weight: 500;">Marca / Modelo:</span><select class="select-mapeo-veh" data-type="marca" id="map-marca" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;"></select></div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; margin-bottom: 10px;"><span style="font-size: 14px; font-weight: 500;">Año:</span><select class="select-mapeo-veh" data-type="anio" id="map-anio" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;"></select></div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; margin-bottom: 10px;"><span style="font-size: 14px; font-weight: 500;">Kilometraje:</span><select class="select-mapeo-veh" data-type="km" id="map-km" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;"></select></div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center;"><span style="font-size: 14px; font-weight: 500;">Estado:</span><select class="select-mapeo-veh" data-type="estado" id="map-estado" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;"></select></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="btn-volver-importar" style="display: none;">Volver</button>
+                <button class="btn-primary" id="btn-siguiente-mapeo">Analizar Archivo</button>
+                <button class="btn-primary" id="btn-procesar-archivo" style="display: none;">Importar a Base de Datos</button>
+            </div>
+        </div>
+    </div>
 
-        // Función para abrir
-        btnAbrir.addEventListener('click', () => {
-            modal.classList.add('active');
-        });
-
-        // Función para cerrar (con la X o el botón cancelar)
-        const cerrarModal = () => modal.classList.remove('active');
-        btnCerrar.addEventListener('click', cerrarModal);
-        btnCancelar.addEventListener('click', cerrarModal);
-
-        // Cerrar si el usuario da clic afuera de la caja blanca
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                cerrarModal();
-            }
-        });
-    </script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="../../js/cliente/global.js"></script>
+    <script src="../../js/cliente/vehiculos.js"></script>
 </body>
 </html>

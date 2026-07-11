@@ -4,22 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OptiFlota Admin - Dashboard</title>
-
     <link rel="stylesheet" href="../../Estilos/styles.css">
 </head>
 <body>
     <div class="app-container">
-        
-        <!-- Menú Lateral SUPER ADMIN -->
         <aside class="sidebar" style="background-color: #111827;">
             <div class="sidebar-logo">
                 <h2>OptiFlota <span style="color: var(--primary-color); font-size: 14px;">ADMIN</span></h2>
             </div>
             <nav class="sidebar-nav">
-                <a href="admin_dashboard.html" class="nav-item active">📊 Vista Global</a>
-                <a href="../Admin/empresas/empresas.html" class="nav-item">🏢 Empresas</a>
-                <a href="../Admin/pagos/pagos.html" class="nav-item">💳 Control de Pagos</a>
-                <a href="../Admin/soporte/tickets_admin.html" class="nav-item active">🎫 Soporte Técnico</a>
+                <a href="admin_dashboard.html" class="nav-item active">Vista Global</a>
+                <a href="../Admin/empresas/empresas.html" class="nav-item">Empresas</a>
+                <a href="../Admin/pagos/pagos.html" class="nav-item">Control de Pagos</a>   
+                <a href="../Admin/soporte/tickets_admin.html" class="nav-item">Soporte Técnico</a>
+                <div style="margin-top: 40px;"></div>
+                <a href="#" class="nav-item" id="btn-logout-admin" style="color: #ef4444;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px; vertical-align: middle; margin-bottom: 2px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Cerrar Sesión
+                </a>
             </nav>
         </aside> 
 
@@ -36,33 +38,30 @@
 
             <main class="content-area">
 
-                <!-- 📊 KPIs DEL NEGOCIO -->
                 <section class="kpi-grid">
                     <div class="kpi-card">
                         <h3>Total Clientes Activos</h3>
-                        <p class="kpi-value">12</p>
+                        <p class="kpi-value" id="kpi-clientes">0</p>
                     </div>
                     <div class="kpi-card">
                         <h3>Vehículos Gestionados</h3>
-                        <p class="kpi-value">345</p>
+                        <p class="kpi-value" id="kpi-vehiculos">0</p>
                     </div>
                     <div class="kpi-card">
-                        <h3>Tickets de Soporte Abiertos</h3>
-                        <p class="kpi-value" style="color: var(--danger);">8</p>
+                        <h3>Tickets de Abiertos</h3>
+                        <p class="kpi-value" id="kpi-tickets" style="color: var(--danger);">0</p>
                     </div>
                     <div class="kpi-card">
-                        <h3>Próximos a Vencer (Esta semana)</h3>
-                        <p class="kpi-value" style="color: var(--warning);">3</p>
+                        <h3>Próximos a Vencer</h3>
+                        <p class="kpi-value" id="kpi-vencimientos" style="color: var(--warning);">0</p>
                     </div>
                 </section>
                 
-                <!-- 🔔 ALERTAS Y ACTIVIDAD -->
-                <div class="split-layout">
+                <div class="split-layout" style="display: flex; gap: 24px; margin-top: 24px; flex-wrap: wrap;">
                     
-                    <!-- Clientes con pago próximo -->
-                    <div class="table-panel">
-                        <h2>Próximos Vencimientos</h2>
-                        <table class="data-table">
+                    <div class="table-panel" style="flex: 2; min-width: 300px; background-color: var(--card-bg); padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--text-main);">Próximos Vencimientos</h2>
+                        <table class="data-table" id="tabla-vencimientos">
                             <thead>
                                 <tr>
                                     <th>Empresa</th>
@@ -70,22 +69,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Transportes García</td>
-                                    <td><span class="badge warning">25 Jun</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Logística del Norte</td>
-                                    <td><span class="badge warning">28 Jun</span></td>
-                                </tr>
+                                <tr><td colspan="2" style="text-align:center;">Cargando...</td></tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- Tickets de soporte técnico (SaaS) -->
-                    <div class="table-panel">
-                        <h2>Soporte Técnico</h2>
-                        <table class="data-table">
+                    <div class="table-panel" style="flex: 2; min-width: 300px; background-color: var(--card-bg); padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--text-main);">Soporte Técnico Reciente</h2>
+                        <table class="data-table" id="tabla-soporte">
                             <thead>
                                 <tr>
                                     <th>Empresa</th>
@@ -93,22 +84,39 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Transportes García</td>
-                                    <td>Error al cargar reporte Excel</td>
-                                </tr>
-                                <tr>
-                                    <td>Logística del Norte</td>
-                                    <td>Duda sobre API</td>
-                                </tr>
+                                <tr><td colspan="2" style="text-align:center;">Cargando...</td></tr>
                             </tbody>
                         </table>
                     </div>
 
-                </div>
+                    <div class="table-panel" style="flex: 1.5; min-width: 300px; background-color: var(--card-bg); padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--text-main);">Registrar Administrador</h2>
+                        <form id="form-nuevo-admin">
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px;">Nombre Completo:</label>
+                                <input type="text" name="nombre" class="form-control" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #d1d5db;" placeholder="Ej. Juan Pérez" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px;">Correo Electrónico:</label>
+                                <input type="email" name="correo" class="form-control" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #d1d5db;" placeholder="admin@optiflota.com" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 20px;">
+                                <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px;">Contraseña:</label>
+                                <input type="password" name="password" class="form-control" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #d1d5db;" placeholder="Mínimo 8 caracteres" required>
+                            </div>
+                            <button type="submit" class="btn-primary" style="width: 100%; padding: 10px; border: none; border-radius: 4px; cursor: pointer; background-color: var(--primary-color); color: white; font-weight: bold;">
+                                Crear Administrador
+                            </button>
+                        </form>
+                        <div id="mensaje-admin" style="margin-top: 15px; font-size: 14px; font-weight: bold; text-align: center;"></div>
+                    </div>
 
+                </div>
             </main>
         </div>
     </div>
+    
+    <script src="../js/admin/dashboard.js"></script>
+    <script src="../js/admin/global_admin.js"></script>
 </body>
 </html>

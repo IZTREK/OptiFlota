@@ -298,7 +298,7 @@ body {
     width: 100%;
     border-collapse: collapse;
     text-align: left;
-    min-width: 600px; /* Fuerza el scroll horizontal en móviles */
+
 }
 
 .data-table th, 
@@ -316,10 +316,15 @@ body {
     letter-spacing: 0.05em;
 }
 
+/* CORRECCIÓN: Control de textos largos en celdas de la tabla */
 .data-table td {
     font-size: 14px;
     color: var(--text-main);
     vertical-align: middle;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .data-table tbody tr:hover {
@@ -531,6 +536,84 @@ body {
 .modal-body .form-group {
     flex: 1;
 }
+
+/* =========================================
+   📊 DASHBOARD ADMIN
+========================================= */
+
+.split-layout{
+    display: grid;
+    grid-template-columns: 2fr 2fr 1.2fr;
+    gap: 24px;
+    margin-top: 24px;
+    align-items: start;
+}
+
+.table-panel{
+    background-color: var(--card-bg);
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,.05);
+    min-width: 0;
+}
+
+.table-panel h2{
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: var(--text-main);
+}
+
+/* Las tablas ocupan el espacio disponible */
+.table-panel .data-table{
+    width: 100%;
+    min-width: 0;
+}
+
+/* Permite que el texto se corte si es muy largo */
+.table-panel .data-table td,
+.table-panel .data-table th{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Formulario lateral */
+.admin-form{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.admin-form .form-group{
+    margin-bottom: 0;
+}
+
+.admin-form .btn-primary{
+    margin-top: 10px;
+}
+
+/* Tablets */
+@media (max-width:1200px){
+
+    .split-layout{
+        grid-template-columns: 1fr;
+    }
+
+}
+
+/* Celulares */
+@media (max-width:768px){
+
+    .split-layout{
+        grid-template-columns: 1fr;
+    }
+
+    .table-panel{
+        padding:18px;
+    }
+
+}
+
 /* =========================================
    📦 TARJETAS DE PLANES (Suscripción)
 ========================================= */
@@ -594,7 +677,7 @@ body {
         font-size: 14px;
     }
 
-    /* La barra indicadora cambia de la izquierda a la parte inferior */
+    /* La barra indicadora cambia de la izquierda a la izquierda a la parte inferior */
     .nav-item:hover, .nav-item.active {
         border-left: none;
         border-bottom: 4px solid var(--primary-color);
@@ -619,3 +702,54 @@ body {
     }
 }
 
+/* Estilos para el contenedor de la gráfica y la tabla */
+.chart-and-table-container {
+    display: flex;
+    gap: 24px; /* Espacio entre las columnas */
+    flex-wrap: wrap; /* Permite que las columnas se apilen en pantallas pequeñas */
+    margin-top: 32px;
+}
+
+.chart-column {
+    flex: 1; /* Ocupa el espacio disponible */
+    min-width: 300px; /* Ancho mínimo para la columna del gráfico */
+    background-color: var(--card-bg);
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.chart-column h2 {
+    font-size: 18px;
+    color: var(--text-main);
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.table-column {
+    flex: 2; /* Ocupa el doble de espacio que la columna del gráfico */
+    min-width: 400px; /* Ancho mínimo para la columna de la tabla */
+    background-color: var(--card-bg);
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.table-column h2 {
+    font-size: 18px;
+    color: var(--text-main);
+    margin-bottom: 16px;
+}
+
+/* Ajuste para pantallas más pequeñas */
+@media (max-width: 992px) {
+    .chart-and-table-container {
+        flex-direction: column; /* Apila las columnas en pantallas medianas */
+    }
+
+    .chart-column,
+    .table-column {
+        min-width: unset; /* Elimina el ancho mínimo para que ocupen todo el ancho */
+        width: 100%;
+    }
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiFlota - Acceso Administrativo</title>
+    <link rel="stylesheet" href="../../Estilos/styles.css">
+</head>
+<body style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #111827;">
+    <div class="modal-content" style="max-width: 400px; width: 100%; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); background: white;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="color: var(--primary-color); margin-bottom: 10px;">OptiFlota <span style="font-size: 14px; background: #e5e7eb; padding: 2px 6px; border-radius: 4px; color: #374151;">ADMIN</span></h2>
+            <p style="color: var(--text-muted); font-size: 14px;">Ingresa tus credenciales de SuperAdministrador</p>
+        </div>
+        <form id="form-login-admin" class="data-form">
+            <div class="form-group">
+                <label style="font-weight: 600;">Correo Electrónico</label>
+                <input type="email" id="admin-email" required placeholder="admin@optiflota.com" style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box;">
+            </div>
+            <div class="form-group">
+                <label style="font-weight: 600;">Contraseña</label>
+                <input type="password" id="admin-password" required placeholder="••••••••" style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box;">
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; margin-top: 10px; font-size: 16px;">Iniciar Sesión Segura</button>
+        </form>
+    </div>
+
+    <script src="../js/admin/login_admin.js"></script>
+</body>
+</html>
