@@ -27,7 +27,6 @@ switch ($request_method) {
             exit;
         }
 
-        //  "Hoja Dinámica" (Vista de Análisis)
         if (isset($_GET['action']) && $_GET['action'] == 'get_analisis') {
             try {
                 $query = "SELECT * FROM vista_analisis_combustible WHERE id_empresa = :id_empresa ORDER BY Fecha_Carga DESC";
@@ -59,7 +58,7 @@ switch ($request_method) {
         break;
 
     case 'POST':
-        // --- IMPORTACIÓN MASIVA DESDE EXCEL ---
+        // --- 1. IMPORTACIÓN MASIVA DESDE EXCEL ---
         if (isset($_GET['action']) && $_GET['action'] == 'importar') {
             $registros = json_decode(file_get_contents("php://input"));
             
@@ -68,13 +67,11 @@ switch ($request_method) {
                 exit;
             }
 
-            // Obtener vehículos y su info actual para cálculos matemáticos
             $qVehiculos = "SELECT id, placas, kilometraje_actual, rendimiento_ideal FROM vehiculos WHERE id_empresa = :id_empresa AND estado != 'Inactivo'";
             $stmtV = $db->prepare($qVehiculos);
             $stmtV->execute([':id_empresa' => $id_empresa]);
             $vehiculosDB = $stmtV->fetchAll(PDO::FETCH_ASSOC);
             $mapaVehiculos = [];
-            
             foreach ($vehiculosDB as $v) {
                 $placaLimpia = preg_replace('/[^A-Z0-9]/', '', strtoupper($v['placas']));
                 $mapaVehiculos[$placaLimpia] = [
@@ -86,9 +83,8 @@ switch ($request_method) {
 
             $exitos = 0; $duplicados = 0; $errores = [];
 
-            // Preparar consultas
             $qInsert = "INSERT INTO cargas_combustible (id_empresa, id_vehiculo, fecha, estacion, litros, costo_total, kilometraje_anterior, odometro, distancia_recorrida, rendimiento_real, diferencia_rendimiento, confiabilidad, origen_registro, creado_por) 
-                        VALUES (:id_empresa, :id_vehiculo, :fecha, 'Importación Excel', :litros, :costo_total, :km_anterior, :odometro, :distancia, :rend_real, :diferencia, :confiabilidad, 'Importacion_Excel', :creado_por)";
+                        VALUES (:id_empresa, :id_vehiculo, :fecha, :estacion, :litros, :costo_total, :km_anterior, :odometro, :distancia, :rend_real, :diferencia, :confiabilidad, 'Importacion_Excel', :creado_por)";
             $stmtInsert = $db->prepare($qInsert);
 
             $qCheck = "SELECT id FROM cargas_combustible WHERE id_vehiculo = :id_vehiculo AND fecha = :fecha AND costo_total = :costo_total";
@@ -111,16 +107,17 @@ switch ($request_method) {
                 $costo_total = floatval(preg_replace('/[^0-9.]/', '', $row->costo_total));
                 $litros = floatval(preg_replace('/[^0-9.]/', '', $row->litros));
                 $odometro = floatval(preg_replace('/[^0-9.]/', '', $row->odometro));
+                $estacion = isset($row->estacion) ? $row->estacion : 'No especificada';
 
                 $stmtCheck->execute([':id_vehiculo' => $id_vehiculo, ':fecha' => $fecha, ':costo_total' => $costo_total]);
                 if ($stmtCheck->rowCount() > 0) { $duplicados++; continue; }
 
-                // --- CÁLCULOS MATEMÁTICOS DE RENDIMIENTO ---
                 $km_anterior = $vehiculoData['km_actual'];
                 $distancia = ($odometro > $km_anterior) ? ($odometro - $km_anterior) : 0;
                 $rend_real = ($litros > 0 && $distancia > 0) ? ($distancia / $litros) : 0;
                 
-                $confiabilidad = 'OK'; $diferencia_porcentual = 0;
+                $confiabilidad = 'OK';
+                $diferencia_porcentual = 0;
                 $rend_ideal = $vehiculoData['rendimiento_ideal'];
 
                 if ($rend_ideal > 0 && $rend_real > 0) {
@@ -135,6 +132,7 @@ switch ($request_method) {
                 try {
                     $stmtInsert->execute([
                         ':id_empresa' => $id_empresa, ':id_vehiculo' => $id_vehiculo, ':fecha' => $fecha,
+                        ':estacion' => htmlspecialchars(strip_tags($estacion)),
                         ':litros' => $litros, ':costo_total' => $costo_total, ':km_anterior' => $km_anterior, 
                         ':odometro' => $odometro, ':distancia' => $distancia, ':rend_real' => $rend_real, 
                         ':diferencia' => $diferencia_porcentual, ':confiabilidad' => $confiabilidad, ':creado_por' => $id_usuario
@@ -142,7 +140,6 @@ switch ($request_method) {
 
                     if ($odometro > $km_anterior) {
                         $stmtKm->execute([':odometro' => $odometro, ':id_vehiculo' => $id_vehiculo]);
-                        // Actualizar en memoria para el siguiente loop
                         $mapaVehiculos[$placaExcelLimpia]['km_actual'] = $odometro;
                     }
                     $exitos++;
@@ -155,8 +152,21 @@ switch ($request_method) {
             exit;
         }
 
-        // --- REGISTRO MANUAL TRADICIONAL ---
-        if (!isset($_POST['id_vehiculo']) || !isset($_POST['fecha']) || !isset($_POST['litros']) || !isset($_POST['costo_total'])) {
+
+        // --- 2. MODO NUEVO O EDICIÓN MANUAL (TICKET) ---
+        
+        // Validación con array para evitar el error de sintaxis \vert de PHP
+        $campos_obligatorios = ['id_vehiculo', 'fecha', 'litros', 'costo_total'];
+        $faltan_datos = false;
+
+        foreach ($campos_obligatorios as $campo) {
+            if (!isset($_POST[$campo])) {
+                $faltan_datos = true;
+                break;
+            }
+        }
+
+        if ($faltan_datos) {
             echo json_encode(['success' => false, 'message' => 'Faltan datos obligatorios.']);
             exit;
         }
@@ -164,14 +174,26 @@ switch ($request_method) {
         try {
             $db->beginTransaction(); 
 
-            // Obtener el KM anterior y rendimiento ideal
+            // Datos del vehículo
             $stmtV = $db->prepare("SELECT kilometraje_actual, rendimiento_ideal FROM vehiculos WHERE id = ?");
             $stmtV->execute([$_POST['id_vehiculo']]);
             $vehData = $stmtV->fetch(PDO::FETCH_ASSOC);
-
-            $km_anterior = $vehData['kilometraje_actual'] ?? 0;
             $rend_ideal = $vehData['rendimiento_ideal'] ?? 0;
 
+            // Detectamos si es registro nuevo o edición
+            $id_carga = isset($_POST['id_carga']) && !empty($_POST['id_carga']) ? $_POST['id_carga'] : null;
+
+            if ($id_carga) {
+                // Al editar, respetamos los km anteriores que tenía el ticket original
+                $stmtC = $db->prepare("SELECT kilometraje_anterior FROM cargas_combustible WHERE id = ?");
+                $stmtC->execute([$id_carga]);
+                $km_anterior = $stmtC->fetchColumn() ?: 0;
+            } else {
+                // Si es nuevo, usamos el odómetro actual del vehículo
+                $km_anterior = $vehData['kilometraje_actual'] ?? 0;
+            }
+
+            // Manejo de la foto del ticket
             $comprobante_url = null;
             if (isset($_FILES['comprobante']) && $_FILES['comprobante']['error'] == 0) {
                 $upload_dir = '../../uploads/';
@@ -182,22 +204,19 @@ switch ($request_method) {
                 }
             }
 
+            // Asignación de variables
             $estacion = isset($_POST['estacion']) ? $_POST['estacion'] : 'No especificada';
-            
-            // CORRECCIÓN VITAL: Limpiar cualquier coma o letra antes de hacer las matemáticas
-            // También respaldamos revisando 'kilometraje' por si tu input se llama así en el HTML
-            $raw_odometro = isset($_POST['odometro']) ? $_POST['odometro'] : (isset($_POST['kilometraje']) ? $_POST['kilometraje'] : 0);
-            
-            $odometro = floatval(preg_replace('/[^0-9.]/', '', $raw_odometro));
-            $litros = floatval(preg_replace('/[^0-9.]/', '', $_POST['litros']));
-            $costo_total = floatval(preg_replace('/[^0-9.]/', '', $_POST['costo_total']));
+            $odometro = isset($_POST['odometro']) ? (float)$_POST['odometro'] : 0;
+            $litros = (float)$_POST['litros'];
+            $costo_total = (float)$_POST['costo_total'];
 
-            // --- CÁLCULOS MATEMÁTICOS DE RENDIMIENTO ---
+            // Cálculos y anomalías
             $distancia = ($odometro > $km_anterior) ? ($odometro - $km_anterior) : 0;
             $rend_real = ($litros > 0 && $distancia > 0) ? ($distancia / $litros) : 0;
             
-            $confiabilidad = 'OK'; $diferencia_porcentual = 0;
-
+            $confiabilidad = 'OK';
+            $diferencia_porcentual = 0;
+            
             if ($rend_ideal > 0 && $rend_real > 0) {
                 $diferencia_porcentual = abs($rend_real - $rend_ideal) / $rend_ideal;
                 if ($diferencia_porcentual > 0.21) {
@@ -207,35 +226,72 @@ switch ($request_method) {
                 $confiabilidad = 'Error en km';
             }
 
-            $query = "INSERT INTO cargas_combustible (id_empresa, id_vehiculo, fecha, estacion, litros, costo_total, kilometraje_anterior, odometro, distancia_recorrida, rendimiento_real, diferencia_rendimiento, confiabilidad, comprobante_url, creado_por) 
-                      VALUES (:id_empresa, :id_vehiculo, :fecha, :estacion, :litros, :costo_total, :km_anterior, :odometro, :distancia, :rend_real, :diferencia, :confiabilidad, :comprobante_url, :creado_por)";
-            $stmt = $db->prepare($query);
+            if ($id_carga) {
+                // ACTUALIZAR TICKET EXISTENTE
+                $query = "UPDATE cargas_combustible 
+                          SET id_vehiculo = :id_vehiculo, fecha = :fecha, estacion = :estacion, litros = :litros, costo_total = :costo_total, odometro = :odometro, distancia_recorrida = :distancia, rendimiento_real = :rend_real, diferencia_rendimiento = :diferencia, confiabilidad = :confiabilidad";
+                
+                if ($comprobante_url) {
+                    $query .= ", comprobante_url = :comprobante_url";
+                }
+                
+                $query .= " WHERE id = :id AND id_empresa = :id_empresa";
+                
+                $stmt = $db->prepare($query);
+                $stmt->bindParam(':id', $id_carga);
+                $stmt->bindParam(':id_empresa', $id_empresa);
+                
+                if ($comprobante_url) {
+                    $stmt->bindParam(':comprobante_url', $comprobante_url);
+                }
+            } else {
+                // INSERTAR NUEVO TICKET
+                $query = "INSERT INTO cargas_combustible (id_empresa, id_vehiculo, fecha, estacion, litros, costo_total, kilometraje_anterior, odometro, distancia_recorrida, rendimiento_real, diferencia_rendimiento, confiabilidad, comprobante_url, creado_por) 
+                          VALUES (:id_empresa, :id_vehiculo, :fecha, :estacion, :litros, :costo_total, :km_anterior, :odometro, :distancia, :rend_real, :diferencia, :confiabilidad, :comprobante_url, :creado_por)";
+                $stmt = $db->prepare($query);
+                $stmt->bindParam(':id_empresa', $id_empresa);
+                $stmt->bindParam(':km_anterior', $km_anterior);
+                $stmt->bindParam(':comprobante_url', $comprobante_url);
+                $stmt->bindParam(':creado_por', $id_usuario);
+            }
 
-            $stmt->execute([
-                ':id_empresa' => $id_empresa, ':id_vehiculo' => $_POST['id_vehiculo'], ':fecha' => $_POST['fecha'],
-                ':estacion' => $estacion, ':litros' => $litros, ':costo_total' => $costo_total,
-                ':km_anterior' => $km_anterior, ':odometro' => $odometro, ':distancia' => $distancia, 
-                ':rend_real' => $rend_real, ':diferencia' => $diferencia_porcentual, ':confiabilidad' => $confiabilidad,
-                ':comprobante_url' => $comprobante_url, ':creado_por' => $id_usuario
-            ]);
+            // Parámetros compartidos (tanto para INSERT como UPDATE)
+            $stmt->bindParam(':id_vehiculo', $_POST['id_vehiculo']);
+            $stmt->bindParam(':fecha', $_POST['fecha']);
+            $stmt->bindParam(':estacion', $estacion);
+            $stmt->bindParam(':litros', $litros);
+            $stmt->bindParam(':costo_total', $costo_total);
+            $stmt->bindParam(':odometro', $odometro);
+            $stmt->bindParam(':distancia', $distancia);
+            $stmt->bindParam(':rend_real', $rend_real);
+            $stmt->bindParam(':diferencia', $diferencia_porcentual);
+            $stmt->bindParam(':confiabilidad', $confiabilidad);
+            
+            $stmt->execute();
 
+            // Actualizar vehículo si el odómetro es mayor al actual
             if($odometro > $km_anterior) {
                 $db->prepare("UPDATE vehiculos SET kilometraje_actual = :od WHERE id = :id_v AND kilometraje_actual < :od")
                    ->execute([':od' => $odometro, ':id_v' => $_POST['id_vehiculo']]);
             }
 
             $db->commit(); 
-            echo json_encode(['success' => true, 'message' => 'Carga y análisis registrados correctamente.']);
+
+            $mensajeFinal = $id_carga ? 'Carga actualizada correctamente.' : 'Carga registrada correctamente.';
+            echo json_encode(['success' => true, 'message' => $mensajeFinal]);
 
         } catch (PDOException $e) {
-            $db->rollBack();
-            echo json_encode(['success' => false, 'message' => 'Error al guardar la carga: ' . $e->getMessage()]);
+            $db->rollBack(); 
+            echo json_encode(['success' => false, 'message' => 'Error al guardar la carga: ' . $e->getMessage()]); 
         }
         break;
 
     case 'DELETE':
         $data = json_decode(file_get_contents("php://input"));
-        if (!isset($data->id)) { echo json_encode(['success' => false, 'message' => 'ID no proporcionado.']); exit; }
+        if (!isset($data->id)) { 
+            echo json_encode(['success' => false, 'message' => 'ID no proporcionado.']); 
+            exit; 
+        }
         try {
             $stmt = $db->prepare("DELETE FROM cargas_combustible WHERE id = :id AND id_empresa = :id_empresa");
             if ($stmt->execute([':id' => $data->id, ':id_empresa' => $id_empresa])) {

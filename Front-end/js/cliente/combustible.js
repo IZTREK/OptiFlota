@@ -1,12 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     let todasLasCargas = [];
-    let todosLosAnalisis = []; // Datos de la nueva Vista SQL
-    
-    // Variables para la importación masiva con SheetJS
+    let todosLosAnalisis = []; 
     let excelData = [];
     let excelHeaders = [];
 
-    // Referencias al DOM
     const tableBodyHistorial = document.querySelector('#tabla-historial tbody');
     const tableBodyAnalisis = document.querySelector('#tabla-analisis tbody');
     const modalCombustible = document.getElementById('modal-combustible');
@@ -15,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectVehiculoModal = document.getElementById('vehiculo-carga');
     const modalImportar = document.getElementById('modal-importar');
 
-    // CONTROL DE PESTAÑAS (TABS)
     document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', (e) => {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -28,35 +24,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const cargarVehiculosParaSelect = async () => {
         try {
             const res = await fetch('/Back-end/cliente/combustible.php?action=get_vehiculos');
-            const MathVehiculos = await res.json();
+            const vehiculos = await res.json();
             selectVehiculoModal.innerHTML = '<option value="" disabled selected>Seleccione una unidad...</option>';
-            MathVehiculos.forEach(v => {
+            vehiculos.forEach(v => {
                 selectVehiculoModal.innerHTML += `<option value="${v.id_vehiculo}">${v.placas} (${v.marca_modelo})</option>`;
             });
-        } catch (e) { 
-            console.error("Error al cargar vehículos"); 
-        }
+        } catch (e) { console.error("Error al cargar vehículos"); }
     };
 
-    // Cargar datos DATA normal
     const cargarCargas = async () => {
         try {
             const res = await fetch('/Back-end/cliente/combustible.php');
             todasLasCargas = await res.json();
             renderizarTablaHistorial(todasLasCargas);
-            calcularKPIs(todasLasCargas, todosLosAnalisis); 
+            calcularKPIs(); 
         } catch (e) {
             tableBodyHistorial.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Error de conexión.</td></tr>`;
         }
     };
 
-    // Cargar datos VISTA ANÁLISIS
     const cargarAnalisis = async () => {
         try {
             const res = await fetch('/Back-end/cliente/combustible.php?action=get_analisis');
             todosLosAnalisis = await res.json();
             renderizarTablaAnalisis(todosLosAnalisis);
-            calcularKPIs(todasLasCargas, todosLosAnalisis); 
+            // 🐛 FIX DEL BUG AQUI: Volvemos a calcular los KPIs asegurándonos de que ya llegaron los datos de Rendimiento
+            calcularKPIs(); 
         } catch (e) {
             tableBodyAnalisis.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Error de conexión al cargar análisis.</td></tr>`;
         }
@@ -73,7 +66,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const costoF = '$' + parseFloat(d.costo_total).toLocaleString('es-MX', {minimumFractionDigits: 2});
             const litrosF = parseFloat(d.litros).toFixed(2) + ' L';
             const kmF = parseInt(d.odometro).toLocaleString('es-MX') + ' km';
-            const badgeExcel = d.origen_registro === 'Importacion_Excel' ? '<span class="badge" style="background:#e0e7ff; color:#1e40af; font-size:10px;">Excel</span>' : '';
+            
+            const badgeExcel = d.origen_registro === 'Importacion_Excel' ? '<span class="badge" style="background:#e0e7ff; color:#1e40af; font-size:10px; margin-left:5px;">Excel</span>' : '';
+
+            const svgOjo = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+            const svgEdit = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+            const svgTrash = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M6 6l1 14h10l1-14"></path><path d="M10 11v5M14 11v5"></path></svg>`;
+
+            const btnVerHTML = `<button class="btn-icon btn-ver" data-id="${d.id}" title="Ver Detalles" style="display:inline-flex; align-items:center; justify-content:center; color:var(--text-main);">${svgOjo}</button>`;
+            const btnEditarHTML = `<button class="btn-icon btn-editar" data-id="${d.id}" title="Corregir Carga" style="display:inline-flex; align-items:center; justify-content:center; color:var(--text-main);">${svgEdit}</button>`;
+            const btnEliminarHTML = `<button class="btn-icon delete btn-eliminar" data-id="${d.id}" title="Eliminar Registro" style="display:inline-flex; align-items:center; justify-content:center;">${svgTrash}</button>`;
 
             tableBodyHistorial.innerHTML += `
                 <tr>
@@ -83,9 +85,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${costoF}</td>
                     <td>${kmF}</td>
                     <td>${d.estacion} ${badgeExcel}</td>
-                    <td class="actions">
-                        <button class="btn-icon btn-ver" data-id="${d.id}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
-                        <button class="btn-icon delete btn-eliminar" data-id="${d.id}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M6 6l1 14h10l1-14"></path><path d="M10 11v5M14 11v5"></path></svg></button>
+                    <td>
+                        <div style="display: flex; gap: 8px; align-items: center; justify-content: flex-start;">
+                            ${btnVerHTML}
+                            ${btnEditarHTML}
+                            ${btnEliminarHTML}
+                        </div>
                     </td>
                 </tr>
             `;
@@ -93,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
         asignarEventosBotones();
     };
 
-    // RENDERIZAR TABLA DE ANÁLISIS DINÁMICO
     const renderizarTablaAnalisis = (datos) => {
         tableBodyAnalisis.innerHTML = '';
         if (datos.length === 0) {
@@ -129,29 +133,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // CORRECCIÓN: Adaptamos los argumentos para admitir arreglos globales o filtrados de forma segura
-    const calcularKPIs = (cargasAAnalizar = todasLasCargas, analisisAAnalizar = todosLosAnalisis) => {
+    const calcularKPIs = (cargasAAnalizar = todasLasCargas) => {
         const mesActual = new Date().toISOString().substring(0, 7); 
         let gastoMes = 0;
         let totalLitrosMes = 0;
         let totalKmRecorridosMes = 0;
 
-        if (Array.isArray(cargasAAnalizar)) {
-            cargasAAnalizar.forEach(c => {
-                if (c.fecha && c.fecha.startsWith(mesActual)) {
-                    gastoMes += parseFloat(c.costo_total);
-                }
-            });
-        }
+        cargasAAnalizar.forEach(c => {
+            if (c.fecha && c.fecha.startsWith(mesActual)) {
+                gastoMes += parseFloat(c.costo_total);
+            }
+        });
 
-        if (Array.isArray(analisisAAnalizar)) {
-            analisisAAnalizar.forEach(a => {
-                 if (a.Fecha_Carga && a.Fecha_Carga.startsWith(mesActual) && parseFloat(a.Km_Recorridos) > 0) {
-                     totalKmRecorridosMes += parseFloat(a.Km_Recorridos);
-                     totalLitrosMes += parseFloat(a.Litros);
-                 }
-            });
-        }
+        todosLosAnalisis.forEach(a => {
+             if (a.Fecha_Carga && a.Fecha_Carga.startsWith(mesActual) && parseFloat(a.Km_Recorridos) > 0) {
+                 totalKmRecorridosMes += parseFloat(a.Km_Recorridos);
+                 totalLitrosMes += parseFloat(a.Litros);
+             }
+        });
 
         const rendimientoPromedio = totalLitrosMes > 0 ? (totalKmRecorridosMes / totalLitrosMes) : 0;
 
@@ -161,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (kpiRend) kpiRend.innerText = rendimientoPromedio > 0 ? rendimientoPromedio.toFixed(2) + ' km/L' : '0.00 km/L';
     };
 
-    // --- REGISTRO MANUAL ---
     document.getElementById('btn-guardar-combustible').addEventListener('click', async (e) => {
         e.preventDefault();
         const formData = new FormData(formCombustible);
@@ -170,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Rellena todos los campos obligatorios."); return;
         }
         const btnGuardar = document.getElementById('btn-guardar-combustible');
+        const originalText = btnGuardar.innerText;
         btnGuardar.innerText = "Calculando y Guardando..."; btnGuardar.disabled = true;
 
         try {
@@ -177,11 +176,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await res.json();
             if (result.success) {
                 modalCombustible.classList.remove('active');
-                await cargarCargas(); 
-                await cargarAnalisis();
+                cargarCargas(); 
+                cargarAnalisis();
             } else alert(result.message);
         } catch (err) { alert('Error de conexión.'); } 
-        finally { btnGuardar.innerText = "Guardar Registro"; btnGuardar.disabled = false; }
+        finally { btnGuardar.innerText = originalText; btnGuardar.disabled = false; }
     });
 
     const asignarEventosBotones = () => {
@@ -194,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 document.getElementById('visor-titulo').innerText = "Ticket de Combustible";
                 document.getElementById('visor-contenido').innerHTML = `
-                    <div style="text-align: center; margin-bottom: 20px;"><h3 style="color: var(--primary-color); font-size: 24px;">${costoF}</h3><p style="color: var(--text-muted);">Cargado: ${parseFloat(d.litros).toFixed(2)} L</p></div>
+                    <div style="text-align: center; margin-bottom: 20px;"><h3 style="color: var(--primary-color); font-size: 28px; font-weight:bold;">${costoF}</h3><p style="color: var(--text-muted);">Cargado: ${parseFloat(d.litros).toFixed(2)} L</p></div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px dashed #d1d5db; padding-top:15px;">
                         <div><small>Vehículo</small><p><strong>${d.placas}</strong></p></div>
                         <div><small>Fecha</small><p>${d.fecha}</p></div>
@@ -206,6 +205,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 modalVisor.classList.add('active');
             });
         });
+
+        document.querySelectorAll('.btn-editar').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.currentTarget.dataset.id;
+                const c = todasLasCargas.find(x => x.id == id);
+                if (c) {
+                    formCombustible.reset();
+                    
+                    let hiddenId = formCombustible.querySelector('input[name="id_carga"]');
+                    if(!hiddenId) {
+                        hiddenId = document.createElement('input');
+                        hiddenId.type = 'hidden'; hiddenId.name = 'id_carga';
+                        formCombustible.appendChild(hiddenId);
+                    }
+                    hiddenId.value = c.id;
+
+                    if (formCombustible.querySelector('[name="id_vehiculo"]')) formCombustible.querySelector('[name="id_vehiculo"]').value = c.id_vehiculo;
+                    if (formCombustible.querySelector('[name="fecha"]')) formCombustible.querySelector('[name="fecha"]').value = c.fecha;
+                    if (formCombustible.querySelector('[name="litros"]')) formCombustible.querySelector('[name="litros"]').value = c.litros;
+                    if (formCombustible.querySelector('[name="costo_total"]')) formCombustible.querySelector('[name="costo_total"]').value = c.costo_total;
+                    if (formCombustible.querySelector('[name="odometro"]')) formCombustible.querySelector('[name="odometro"]').value = c.odometro;
+                    if (formCombustible.querySelector('[name="estacion"]')) formCombustible.querySelector('[name="estacion"]').value = c.estacion;
+
+                    const modalTitle = document.querySelector('#modal-combustible .modal-header h2');
+                    if(modalTitle) modalTitle.innerText = 'Corregir Carga';
+                    
+                    const btnGuardar = document.getElementById('btn-guardar-combustible');
+                    if(btnGuardar) btnGuardar.innerText = 'Actualizar Registro';
+
+                    modalCombustible.classList.add('active');
+                }
+            });
+        });
         
         document.querySelectorAll('.btn-eliminar').forEach(btn => {
             btn.addEventListener('click', async (e) => {
@@ -214,14 +246,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     try {
                         const res = await fetch('/Back-end/cliente/combustible.php', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id }) });
                         const result = await res.json();
-                        if (result.success) { await cargarCargas(); await cargarAnalisis(); }
+                        if (result.success) { cargarCargas(); cargarAnalisis(); }
                     } catch (err) { alert('Error al intentar eliminar.'); }
                 }
             });
         });
     };
 
-    // --- FILTROS ---
     document.getElementById('btn-buscar-filtros').addEventListener('click', () => {
         const fInicio = document.getElementById('filtro-fecha-inicio').value;
         const fFin = document.getElementById('filtro-fecha-fin').value;
@@ -245,7 +276,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         renderizarTablaHistorial(filtradosData);
         renderizarTablaAnalisis(filtradosAnalisis);
-        calcularKPIs(filtradosData, filtradosAnalisis); // CORRECCIÓN: Actualiza KPIs reactivos al buscar
     });
 
     document.getElementById('btn-limpiar-filtros').addEventListener('click', () => {
@@ -254,10 +284,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('filtro-placas').value = '';
         renderizarTablaHistorial(todasLasCargas);
         renderizarTablaAnalisis(todosLosAnalisis);
-        calcularKPIs(todasLasCargas, todosLosAnalisis); // CORRECCIÓN: Restaura KPIs al limpiar
     });
 
-    // --- IMPORTACIÓN EXCEL / CSV (SHEETJS) ---
     document.getElementById('btn-siguiente-mapeo').addEventListener('click', () => {
         const inputArchivo = document.getElementById('archivo-excel');
         if (inputArchivo.files.length === 0) { alert('Sube un archivo de Excel o CSV.'); return; }
@@ -294,6 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if(tipo === 'litros' && ht.includes('litro')) select.value = index;
                     if(tipo === 'costo' && (ht.includes('costo') || ht.includes('importe'))) select.value = index;
                     if(tipo === 'odometro' && (ht.includes('odometro') || ht.includes('km') || ht.includes('kilom'))) select.value = index;
+                    if(tipo === 'estacion' && (ht.includes('estacion') || ht.includes('gasolinera'))) select.value = index;
                 });
             });
 
@@ -322,6 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const iLitros = document.getElementById('map-litros').value;
         const iCosto = document.getElementById('map-costo').value;
         const iOdometro = document.getElementById('map-odometro').value;
+        const iEstacion = document.getElementById('map-estacion').value; 
 
         if(!iPlacas || !iFecha || !iLitros || !iCosto) {
             alert("Las Placas, Fecha, Litros y Costo son obligatorios de mapear."); return;
@@ -341,7 +371,8 @@ document.addEventListener('DOMContentLoaded', () => {
             fecha: fixFecha(row[iFecha] ? String(row[iFecha]) : ''),
             litros: row[iLitros] || 0,
             costo_total: row[iCosto] || 0,
-            odometro: iOdometro && row[iOdometro] ? row[iOdometro] : 0
+            odometro: iOdometro && row[iOdometro] ? row[iOdometro] : 0,
+            estacion: iEstacion && row[iEstacion] ? String(row[iEstacion]) : 'No especificada' 
         })).filter(item => item.placas && item.fecha); 
 
         const btn = document.getElementById('btn-procesar-archivo');
@@ -359,15 +390,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 alert(mensaje);
                 modalImportar.classList.remove('active');
-                await cargarCargas();
-                await cargarAnalisis(); 
+                cargarCargas();
+                cargarAnalisis(); 
             } else alert(result.message || 'Error en el procesamiento.');
         } catch (e) { alert("Error conectando al servidor."); } 
         finally { btn.innerText = "Importar a Base de Datos"; btn.disabled = false; }
     });
 
-    // CERRAR MODALES
-    document.getElementById('btn-abrir-combustible').addEventListener('click', () => { formCombustible.reset(); modalCombustible.classList.add('active'); });
+    document.getElementById('btn-abrir-combustible').addEventListener('click', () => { 
+        formCombustible.reset(); 
+        const hiddenId = formCombustible.querySelector('input[name="id_carga"]');
+        if(hiddenId) hiddenId.value = ''; 
+        
+        const modalTitle = document.querySelector('#modal-combustible .modal-header h2');
+        if(modalTitle) modalTitle.innerText = 'Registrar Carga de Combustible';
+        const btnGuardar = document.getElementById('btn-guardar-combustible');
+        if(btnGuardar) btnGuardar.innerText = 'Guardar Registro';
+
+        modalCombustible.classList.add('active'); 
+    });
     document.getElementById('btn-cerrar-combustible').addEventListener('click', () => modalCombustible.classList.remove('active'));
     document.getElementById('btn-cancelar-combustible').addEventListener('click', () => modalCombustible.classList.remove('active'));
     document.getElementById('btn-cerrar-visor').addEventListener('click', () => modalVisor.classList.remove('active'));
@@ -375,8 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-abrir-importar').addEventListener('click', () => { document.getElementById('archivo-excel').value = ''; document.getElementById('btn-volver-importar').click(); modalImportar.classList.add('active'); });
     document.getElementById('btn-cerrar-importar').addEventListener('click', () => modalImportar.classList.remove('active'));
 
-    // INIT
     cargarVehiculosParaSelect();
     cargarCargas();
-    cargarAnalisis(); 
+    cargarAnalisis();
 });
