@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const comentarios = await resCom.json();
 
                     comentarios.forEach(c => {
-                        // AQUÍ SE CORRIGIÓ EL BUG: Validamos estrictamente que sea el SuperAdmin
+                        //  Validamos estrictamente que sea el SuperAdmin
                         const esAdmin = c.rol === 'SuperAdmin';
                         
                         if (esAdmin) {

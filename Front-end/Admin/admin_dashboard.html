@@ -15,7 +15,7 @@
             <nav class="sidebar-nav">
                 <a href="admin_dashboard.html" class="nav-item active">Vista Global</a>
                 <a href="../Admin/empresas/empresas.html" class="nav-item">Empresas</a>
-                <a href="../Admin/pagos/pagos.html" class="nav-item">Control de Pagos</a>
+                <a href="../Admin/pagos/pagos.html" class="nav-item">Control de Pagos</a>   
                 <a href="../Admin/soporte/tickets_admin.html" class="nav-item">Soporte Técnico</a>
                 <div style="margin-top: 40px;"></div>
                 <a href="#" class="nav-item" id="btn-logout-admin" style="color: #ef4444;">
@@ -48,18 +48,18 @@
                         <p class="kpi-value" id="kpi-vehiculos">0</p>
                     </div>
                     <div class="kpi-card">
-                        <h3>Tickets de Soporte Abiertos</h3>
+                        <h3>Tickets de Abiertos</h3>
                         <p class="kpi-value" id="kpi-tickets" style="color: var(--danger);">0</p>
                     </div>
                     <div class="kpi-card">
-                        <h3>Próximos a Vencer (Esta semana)</h3>
+                        <h3>Próximos a Vencer</h3>
                         <p class="kpi-value" id="kpi-vencimientos" style="color: var(--warning);">0</p>
                     </div>
                 </section>
                 
                 <div class="split-layout" style="display: flex; gap: 24px; margin-top: 24px; flex-wrap: wrap;">
                     
-                    <div class="table-panel" style="flex: 1; min-width: 300px; background-color: var(--card-bg); padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <div class="table-panel" style="flex: 2; min-width: 300px; background-color: var(--card-bg); padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                         <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--text-main);">Próximos Vencimientos</h2>
                         <table class="data-table" id="tabla-vencimientos">
                             <thead>
@@ -74,7 +74,7 @@
                         </table>
                     </div>
 
-                    <div class="table-panel" style="flex: 1; min-width: 300px; background-color: var(--card-bg); padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <div class="table-panel" style="flex: 2; min-width: 300px; background-color: var(--card-bg); padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                         <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--text-main);">Soporte Técnico Reciente</h2>
                         <table class="data-table" id="tabla-soporte">
                             <thead>
@@ -89,8 +89,29 @@
                         </table>
                     </div>
 
-                </div>
+                    <div class="table-panel" style="flex: 1.5; min-width: 300px; background-color: var(--card-bg); padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--text-main);">Registrar Administrador</h2>
+                        <form id="form-nuevo-admin">
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px;">Nombre Completo:</label>
+                                <input type="text" name="nombre" class="form-control" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #d1d5db;" placeholder="Ej. Juan Pérez" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px;">Correo Electrónico:</label>
+                                <input type="email" name="correo" class="form-control" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #d1d5db;" placeholder="admin@optiflota.com" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 20px;">
+                                <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px;">Contraseña:</label>
+                                <input type="password" name="password" class="form-control" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #d1d5db;" placeholder="Mínimo 8 caracteres" required>
+                            </div>
+                            <button type="submit" class="btn-primary" style="width: 100%; padding: 10px; border: none; border-radius: 4px; cursor: pointer; background-color: var(--primary-color); color: white; font-weight: bold;">
+                                Crear Administrador
+                            </button>
+                        </form>
+                        <div id="mensaje-admin" style="margin-top: 15px; font-size: 14px; font-weight: bold; text-align: center;"></div>
+                    </div>
 
+                </div>
             </main>
         </div>
     </div>

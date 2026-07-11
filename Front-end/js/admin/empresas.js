@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const esSuspendida = e.estado === 'Suspendida';
             const estadoHTML = esSuspendida ? '<span class="badge danger">Suspendida</span>' : '<span class="badge ok">Activa</span>';
             
-            // Reconstruimos tus botones con tus íconos SVG originales
+            // Reconstruimos botones con íconos SVG originales
             const btnBlockHTML = esSuspendida
                 ? `<button class="btn-icon ok btn-estado" title="Reactivar" data-id="${e.id}" data-estado="Activa" style="display: inline-flex; align-items: center; justify-content: center; color: var(--success);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></button>`
                 : `<button class="btn-icon btn-estado" title="Bloquear Acceso" data-id="${e.id}" data-estado="Suspendida" style="display: inline-flex; align-items: center; justify-content: center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="m8 8 8 8"></path></svg></button>`;
