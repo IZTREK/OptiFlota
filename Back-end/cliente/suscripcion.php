@@ -68,8 +68,10 @@ switch ($request_method) {
 
             // 2. Configurar Stripe
             // REEMPLAZAR POR EL REAL ESTE ES EL DE PRUEBA
-            // Aquí pondrás tu Secret Key de prueba (empieza con sk_test_...)
             \Stripe\Stripe::setApiKey('sk_test_51TrepOGz0qKL4xBEVqKrIBXd4tsdQmNLT7iNTTktNg3jE6H1yRb73nPFmH1207bSXyxKxo8XcMJMq7Ty6VlMRQPu00U6hJ0A27');
+
+            // Obtenemos la llave de idempotencia del Frontend (o generamos una por seguridad)
+            $idempotency_key = isset($_POST['idempotency_key']) ? $_POST['idempotency_key'] : uniqid('req_', true);
 
             // 3. Crear la sesión de pago (Checkout)
             $checkout_session = \Stripe\Checkout\Session::create([
@@ -90,6 +92,9 @@ switch ($request_method) {
                 // A dónde regresan tras pagar o cancelar
                 'success_url' => 'http://localhost:9090/Front-end/Cliente/suscripcion/suscripcion.html',
                 'cancel_url' => 'http://localhost:9090/Front-end/Cliente/suscripcion/suscripcion.html',
+            ], [
+                // AQUÍ PASAMOS LA LLAVE A STRIPE
+                'idempotency_key' => $idempotency_key
             ]);
 
             // 4. Actualizamos la BD con el ID de la sesión de Stripe

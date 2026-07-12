@@ -97,6 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData();
         formData.append('id_plan', idPlanSeleccionado);
         formData.append('monto', montoPlanSeleccionado);
+        
+        // Generar una llave de idempotencia única para este intento de pago
+        const idempotencyKey = crypto.randomUUID(); 
+        formData.append('idempotency_key', idempotencyKey);
 
         const btnEnviar = document.getElementById('btn-proceder-pago');
         btnEnviar.innerText = "Conectando con Stripe...";
