@@ -241,3 +241,19 @@ SELECT
     cc.confiabilidad AS Comentario_Confiabilidad
 FROM cargas_combustible cc
 JOIN vehiculos v ON cc.id_vehiculo = v.id;
+
+
+-- --------------------------------------------------------
+-- Usuario: admin@optiflota.com
+-- Contraseña en texto plano: admin123
+-- --------------------------------------------------------
+
+INSERT INTO usuarios (id_empresa, nombre, email, password_hash, rol, estado) 
+VALUES (
+    NULL, 
+    'Super Admin', 
+    'admin@optiflota.com', 
+    '$2y$10$Nu35w4pteLfc7BDCIkDPkecjw8wsH8Y2GMfIewUbXLT7zzW6WOxwq',
+    'SuperAdmin',
+    'Activo'
+);
