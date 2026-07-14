@@ -83,9 +83,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 montoPlanSeleccionado = precio;
                 
                 document.getElementById('titulo-modal-pago').innerText = `Adquirir: ${nombre}`;
+                
+                // Primero reseteamos el form, y LUEGO asignamos el valor
+                formPago.reset();
                 inputPlanSeleccionado.value = `${nombre} ($${parseFloat(precio).toLocaleString('es-MX')} / mes)`;
                 
-                formPago.reset();
                 document.getElementById('modal-pago').classList.add('active');
             });
         });
@@ -114,12 +116,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = result.init_point; // Redirigir al pago de Stripe
             } else {
                 alert(result.message);
-                btnEnviar.innerText = "Pagar con Tarjeta (Stripe)";
+                btnEnviar.innerText = "Pagar con Tarjeta";
                 btnEnviar.disabled = false;
             }
         } catch (err) {
             alert("Error de conexión al generar el pago.");
-            btnEnviar.innerText = "Pagar con Tarjeta (Stripe)";
+            btnEnviar.innerText = "Pagar con Tarjeta";
             btnEnviar.disabled = false;
         }
     });
