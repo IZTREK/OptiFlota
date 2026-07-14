@@ -8,7 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const cargarTickets = async () => {
         try {
-            const res = await fetch('/Back-end/admin/tickets.php');
+            // Añade un timestamp falso para evitar que el navegador guarde esto en caché durante las pruebas
+            const res = await fetch(`/Back-end/admin/tickets.php?_=${new Date().getTime()}`);
             if(res.status === 403) {
                 alert("No tienes sesión de administrador.");
                 window.location.href = '/Front-end/Cliente/login.html'; return;
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderizarTabla(todosLosTickets);
             }
         } catch (e) {
-            tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red;">Error al cargar tickets.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:red;">Error al cargar tickets.</td></tr>';
         }
     };
 
@@ -36,20 +37,34 @@ document.addEventListener('DOMContentLoaded', () => {
         return '<span class="badge ok">Resuelto</span>';
     };
 
+    const formatearUrgencia = (urgencia) => {
+        if (!urgencia) return '<span class="badge ok" style="background-color: #10b981; color: white;">Baja</span>';
+        const urg = urgencia.toLowerCase();
+        if (urg.includes('alta') || urg.includes('critica') || urg.includes('crítica')) return '<span class="badge danger" style="background-color: #ef4444; color: white;">Alta</span>';
+        if (urg.includes('media')) return '<span class="badge warning" style="background-color: #f59e0b; color: white;">Media</span>';
+        return '<span class="badge ok" style="background-color: #10b981; color: white;">Baja</span>';
+    };
+
     const renderizarTabla = (datos) => {
         tableBody.innerHTML = '';
         if (datos.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No hay tickets registrados.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No hay tickets registrados.</td></tr>';
             return;
         }
 
         datos.forEach(t => {
+            // Lógica para Vehículo o Soporte del sistema
+            const vehiculoInfo = t.marca_modelo ? `${t.marca_modelo} (${t.placas})` : '<span style="color: #6b7280; font-style: italic;">N/A (Soporte Sistema)</span>';
+
             tableBody.innerHTML += `
                 <tr>
                     <td>${t.fecha_incidente}</td>
                     <td><strong>${t.empresa}</strong></td>
                     <td>${t.ticket_folio}</td>
                     <td>${t.asunto_breve}</td>
+                    <td>${t.tipo_reporte}</td>
+                    <td>${vehiculoInfo}</td>
+                    <td>${formatearUrgencia(t.nivel_urgencia)}</td>
                     <td>${formatearEstado(t.estado)}</td>
                     <td class="actions">
                         <button class="btn-primary btn-atender" data-id="${t.id}" style="padding: 5px 10px;">Atender</button>
@@ -72,6 +87,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('ticket-modal-empresa').innerText = ticket.empresa;
                 document.getElementById('ticket-modal-fecha').innerText = ticket.fecha_incidente;
                 
+                // Mostrar datos en el modal
+                const modalUrgencia = document.getElementById('ticket-modal-urgencia');
+                if(modalUrgencia) modalUrgencia.innerHTML = formatearUrgencia(ticket.nivel_urgencia);
+
+                const modalTipo = document.getElementById('ticket-modal-tipo');
+                if(modalTipo) modalTipo.innerText = ticket.tipo_reporte;
+
+                const modalVehiculo = document.getElementById('ticket-modal-vehiculo');
+                if(modalVehiculo) {
+                    modalVehiculo.innerHTML = ticket.marca_modelo ? `${ticket.marca_modelo} (${ticket.placas})` : '<span style="color: #6b7280;">N/A (Soporte)</span>';
+                }
+                
                 // Actualizar estado en select
                 const selectEstado = document.getElementById('select-estado-ticket');
                 const est = ticket.estado.toLowerCase();
@@ -92,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if(dataChat.success) {
                         chatHistorial.innerHTML = '';
                         
-                        // Reporte inicial (Siempre gris del lado izquierdo)
                         chatHistorial.innerHTML += `
                             <div style="align-self: flex-start; max-width: 85%;">
                                 <small style="color: #6b7280; font-weight: 600;">Reporte Inicial (Cliente)</small>
@@ -103,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         `;
 
-                        // Respuestas
                         dataChat.chat.forEach(msg => {
                             const isSoporte = msg.rol === 'SuperAdmin' || !msg.rol; 
                             const align = isSoporte ? 'flex-end' : 'flex-start';

@@ -74,10 +74,20 @@
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
-                            <tr><th>Fecha</th><th>Empresa</th><th>Ticket ID</th><th>Asunto</th><th>Estado</th><th>Acciones</th></tr>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Empresa</th>
+                                <th>Ticket ID</th>
+                                <th>Asunto</th>
+                                <th>Tipo de Reporte</th>
+                                <th>Vehículo</th>
+                                <th>Urgencia</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
                         </thead>
                         <tbody>
-                            <tr><td colspan="6" style="text-align:center;">Cargando tickets...</td></tr>
+                            <tr><td colspan="9" style="text-align:center;">Cargando tickets...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -93,9 +103,14 @@
             </div>
             
             <div class="modal-body">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px;">
                     <p><strong>Cliente:</strong> <span id="ticket-modal-empresa">-</span></p>
                     <p><strong>Fecha:</strong> <span id="ticket-modal-fecha">-</span></p>
+                    <p><strong>Urgencia:</strong> <span id="ticket-modal-urgencia">-</span></p>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px;">
+                    <p><strong>Tipo:</strong> <span id="ticket-modal-tipo">-</span></p>
+                    <p><strong>Vehículo:</strong> <span id="ticket-modal-vehiculo">-</span></p>
                 </div>
                 
                 <div id="admin-chat-historial" style="background: #f9fafb; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb; margin-bottom: 20px; height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
