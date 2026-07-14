@@ -14,7 +14,7 @@ async function verificarSesion() {
         const currentUrl = window.location.pathname.toLowerCase();
 
         if (data.expirada) {
-            // NUEVO: Le permitimos estar en index.html O en suscripcion.html
+            // Le permitimos estar en index.html O en suscripcion.html
             if (!currentUrl.includes('index.html') && !currentUrl.includes('suscripcion.html')) {
                 window.location.href = '/Front-end/Cliente/index.html'; 
                 return;
@@ -67,9 +67,17 @@ function aplicarFeatureFlagsSidebar(permisos) {
     });
 }
 
-// NUEVO: Lógica para cerrar sesión en toda la plataforma
+// Lógica para cerrar sesión en toda la plataforma
 async function cerrarSesion(e) {
     e.preventDefault();
+    
+    // --- LÓGICA DE CONFIRMACIÓN AÑADIDA ---
+    const confirmar = confirm("¿Estás seguro de que deseas cerrar sesión?");
+    if (!confirmar) {
+        return; // Si el usuario cancela, no hacemos nada más
+    }
+    // --------------------------------------
+
     try {
         const response = await fetch('/Back-end/cliente/logout.php');
         const result = await response.json();
