@@ -1,5 +1,11 @@
 // Archivo: global.js
 
+// 0. Cargar el color personalizado del menú si existe (se ejecuta en todas las pantallas)
+const colorGuardado = localStorage.getItem('sidebarColorOptiflota');
+if (colorGuardado) {
+    document.documentElement.style.setProperty('--sidebar-bg', colorGuardado);
+}
+
 async function verificarSesion() {
     try {
         const response = await fetch('/Back-end/cliente/check_session.php'); 
@@ -14,13 +20,11 @@ async function verificarSesion() {
         const currentUrl = window.location.pathname.toLowerCase();
 
         if (data.expirada) {
-            // Le permitimos estar en index.html O en suscripcion.html
             if (!currentUrl.includes('index.html') && !currentUrl.includes('suscripcion.html')) {
                 window.location.href = '/Front-end/Cliente/index.html'; 
                 return;
             } 
             
-            // Si está en el dashboard, mostramos el modal de bloqueo
             if (currentUrl.includes('index.html')) {
                 const modalBloqueo = document.getElementById('modal-bloqueo-pago');
                 if(modalBloqueo) modalBloqueo.classList.add('active');
@@ -30,7 +34,6 @@ async function verificarSesion() {
         } else {
             aplicarFeatureFlagsSidebar(data.permisos);
             
-            // PINTAR NOMBRE E INICIALES MAGNÍFICAMENTE
             const spanEmpresa = document.querySelector('.user-profile span');
             const avatarCirculo = document.querySelector('.user-profile .avatar');
             
@@ -67,38 +70,31 @@ function aplicarFeatureFlagsSidebar(permisos) {
     });
 }
 
-// Lógica para cerrar sesión en toda la plataforma
 async function cerrarSesion(e) {
     e.preventDefault();
     
-    // --- LÓGICA DE CONFIRMACIÓN AÑADIDA ---
     const confirmar = confirm("¿Estás seguro de que deseas cerrar sesión?");
     if (!confirmar) {
-        return; // Si el usuario cancela, no hacemos nada más
+        return; 
     }
-    // --------------------------------------
 
     try {
         const response = await fetch('/Back-end/cliente/logout.php');
         const result = await response.json();
         
         if (result.success) {
-            // Limpiar almacenamiento local si es necesario y redirigir
             window.location.href = '/Front-end/Cliente/login.html';
         }
     } catch (error) {
         console.error("Error al intentar cerrar sesión:", error);
-        // Si hay error en la red, de todos modos forzamos la salida al login
         window.location.href = '/Front-end/Cliente/login.html';
     }
 }
 
 if (!window.location.pathname.toLowerCase().includes('login.html')) {
     document.addEventListener('DOMContentLoaded', () => {
-        // 1. Verificamos quién es y qué puede ver
         verificarSesion();
         
-        // 2. Encendemos el botón de Cerrar Sesión
         const btnLogout = document.getElementById('btn-logout');
         if (btnLogout) {
             btnLogout.addEventListener('click', cerrarSesion);
