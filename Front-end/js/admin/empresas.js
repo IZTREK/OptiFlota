@@ -54,6 +54,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${e.fecha_vencimiento}</td>
                     <td>${estadoHTML}</td>
                     <td class="actions">
+                        <a href="/Back-end/admin/impersonate.php?empresa_id=${e.id}" class="btn-icon" title="Entrar a dar Soporte" style="display: inline-flex; align-items: center; justify-content: center; color: #ffc107;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                        </a>
+                        
                         <button class="btn-icon btn-editar" title="Editar Suscripción" data-id="${e.id}" style="display: inline-flex; align-items: center; justify-content: center;">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                         </button>
@@ -93,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const inputPass = document.querySelector('input[name="password"]');
                 inputPass.value = '';
                 inputPass.placeholder = 'Déjalo vacío si no deseas cambiarla';
-                inputPass.removeAttribute('required'); // Ya no es obligatoria al editar
+                inputPass.removeAttribute('required'); 
                 
                 document.querySelector('input[name="vencimiento"]').value = emp.fecha_vencimiento;
                 
@@ -124,13 +128,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-abrir-modal').addEventListener('click', () => {
         document.querySelector('.modal-header h2').innerText = 'Dar de alta un nuevo cliente';
         formEmpresa.reset();
-        document.getElementById('id_empresa_input').value = ''; // Limpiar el ID oculto
+        document.getElementById('id_empresa_input').value = ''; 
         
         const inputPass = document.querySelector('input[name="password"]');
         inputPass.value = 'OptiFlota2026!';
         inputPass.setAttribute('required', 'true');
 
-        // Ponemos por defecto un mes a futuro
         const hoy = new Date();
         hoy.setMonth(hoy.getMonth() + 1);
         document.querySelector('input[name="vencimiento"]').value = hoy.toISOString().split('T')[0];
@@ -150,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Por favor completa los campos principales."); return;
         }
 
-        // Si hay ID oculto, significa que estamos editando. Si no, estamos creando.
         data.action = data.id_empresa ? 'editar_empresa' : 'crear_empresa';
 
         try {
