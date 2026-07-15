@@ -4,6 +4,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const inputMes = document.getElementById('filtro-mes');
     const btnFiltrar = document.getElementById('btn-filtrar-dashboard');
+    const colorSidebarInput = document.getElementById('color-sidebar'); // El nuevo botón de color
+
+    // --- LÓGICA DE PERSONALIZACIÓN DEL MENÚ ---
+    if (colorSidebarInput) {
+        // Mostrar en el input el color que ya estaba guardado
+        const colorGuardado = localStorage.getItem('sidebarColorOptiflota');
+        if (colorGuardado) {
+            colorSidebarInput.value = colorGuardado;
+        } else {
+            // Valor por defecto (Gris oscuro de tu CSS original)
+            colorSidebarInput.value = '#0f172a';
+        }
+
+        // Evento que cambia el color en tiempo real al usar el selector
+        colorSidebarInput.addEventListener('input', (e) => {
+            const nuevoColor = e.target.value;
+            document.documentElement.style.setProperty('--sidebar-bg', nuevoColor);
+            localStorage.setItem('sidebarColorOptiflota', nuevoColor);
+        });
+    }
+    // ------------------------------------------
 
     const fechaActual = new Date();
     const mesActual = fechaActual.getFullYear() + '-' + String(fechaActual.getMonth() + 1).padStart(2, '0');
