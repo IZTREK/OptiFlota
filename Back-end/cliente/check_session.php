@@ -32,20 +32,22 @@ try {
         // Validamos si la fecha ya pasó o si un administrador suspendió la cuenta
         $expirada = ($hoy > $empresa_data['fecha_vencimiento'] || $empresa_data['estado'] === 'Suspendida');
 
-        // 3. Enviamos los datos al JS (global.js leerá esto para ocultar el menú lateral)
+        // 3. Enviamos los datos al JS 
         echo json_encode([
             'success' => true,
             'data' => [
                 'empresa' => $empresa_data['empresa'],
                 'expirada' => $expirada,
+                // Si existe el respaldo del admin, es que está en modo soporte
+                'is_impersonating' => isset($_SESSION['admin_backup']) ? true : false,
                 'permisos' => [
-                    'mod_dashboard' => 1, // El Dashboard siempre debe verse
+                    'mod_dashboard' => 1, 
                     'mod_vehiculos' => $empresa_data['mod_vehiculos'],
                     'mod_combustible' => $empresa_data['mod_combustible'],
                     'mod_diagnosticos' => $empresa_data['mod_diagnosticos'],
                     'mod_mantenimiento' => $empresa_data['mod_mantenimiento'],
                     'mod_tickets' => $empresa_data['mod_tickets'],
-                    'mod_suscripcion' => 1 // La suscripción siempre se ve para poder cambiar de plan
+                    'mod_suscripcion' => 1 
                 ]
             ]
         ]);

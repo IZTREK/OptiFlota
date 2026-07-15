@@ -45,6 +45,35 @@ async function verificarSesion() {
                 avatarCirculo.innerText = iniciales;
             }
         }
+
+        // CODIGO DE SOPORTE
+        if (data.is_impersonating) {
+            if (!document.getElementById('impersonation-banner')) {
+                const banner = document.createElement('div');
+                banner.id = 'impersonation-banner';
+                banner.style.cssText = `
+                    background-color: #dc3545; 
+                    color: white; 
+                    text-align: center; 
+                    padding: 12px; 
+                    font-weight: bold;
+                    font-size: 14px;
+                    position: sticky; 
+                    top: 0; 
+                    z-index: 9999;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                `;
+                banner.innerHTML = `
+                    ⚠️ MODO SOPORTE: Estás navegando dentro de la cuenta de <strong>${data.empresa}</strong>. 
+                    <a href="/Back-end/admin/return_admin.php" style="color: #ffc107; text-decoration: underline; margin-left: 15px;">
+                        Terminar soporte y volver al panel de Administrador
+                    </a>
+                `;
+                document.body.prepend(banner);
+            }
+        }
+        // ------------------------------------------------------------
+
     } catch (error) {
         console.error("Error conectando con el servidor:", error);
     }
