@@ -6,9 +6,25 @@ document.addEventListener('DOMContentLoaded', () => {
     let todosLosTickets = [];
     let idTicketActual = null;
 
+    const cargarFiltroTipos = (tickets) => {
+        const selectTipo = document.getElementById('filtro-tipo');
+        // Si el ticket no tiene tipo, lo toma como 'Otro'
+        const tiposUnicos = [...new Set(tickets.map(t => t.tipo_reporte || 'Otro'))].filter(Boolean);
+        
+        const valorActual = selectTipo.value;
+        
+        selectTipo.innerHTML = '<option value="Todos">Todos</option>';
+        tiposUnicos.forEach(tipo => {
+            selectTipo.innerHTML += `<option value="${tipo}">${tipo}</option>`;
+        });
+        
+        if ([...selectTipo.options].some(o => o.value === valorActual)) {
+            selectTipo.value = valorActual;
+        }
+    };
+
     const cargarTickets = async () => {
         try {
-            // Añade un timestamp falso para evitar que el navegador guarde esto en caché durante las pruebas
             const res = await fetch(`/Back-end/admin/tickets.php?_=${new Date().getTime()}`);
             if(res.status === 403) {
                 alert("No tienes sesión de administrador.");
@@ -23,10 +39,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('kpi-proceso').innerText = data.kpis.proceso;
 
                 todosLosTickets = data.tickets;
+                
+                cargarFiltroTipos(todosLosTickets);
                 renderizarTabla(todosLosTickets);
             }
         } catch (e) {
-            tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:red;">Error al cargar tickets.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center;">Error al cargar tickets.</td></tr>';
         }
     };
 
@@ -38,23 +56,24 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const formatearUrgencia = (urgencia) => {
-        if (!urgencia) return '<span class="badge ok" style="background-color: #10b981; color: white;">Baja</span>';
+        if (!urgencia) return '<span class="badge ok">Baja</span>';
         const urg = urgencia.toLowerCase();
-        if (urg.includes('alta') || urg.includes('critica') || urg.includes('crítica')) return '<span class="badge danger" style="background-color: #ef4444; color: white;">Alta</span>';
-        if (urg.includes('media')) return '<span class="badge warning" style="background-color: #f59e0b; color: white;">Media</span>';
-        return '<span class="badge ok" style="background-color: #10b981; color: white;">Baja</span>';
+        if (urg.includes('alta') || urg.includes('critica') || urg.includes('crítica')) return '<span class="badge danger">Alta</span>';
+        if (urg.includes('media')) return '<span class="badge warning">Media</span>';
+        return '<span class="badge ok">Baja</span>';
     };
 
     const renderizarTabla = (datos) => {
         tableBody.innerHTML = '';
         if (datos.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No hay tickets registrados.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No se encontraron tickets con esos filtros.</td></tr>';
             return;
         }
 
         datos.forEach(t => {
-            // Lógica para Vehículo o Soporte del sistema
+            // Regresamos el estilo gris y cursiva para N/A en la tabla
             const vehiculoInfo = t.marca_modelo ? `${t.marca_modelo} (${t.placas})` : '<span style="color: #6b7280; font-style: italic;">N/A (Soporte Sistema)</span>';
+            const tipoReporte = t.tipo_reporte || 'Otro';
 
             tableBody.innerHTML += `
                 <tr>
@@ -62,12 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td><strong>${t.empresa}</strong></td>
                     <td>${t.ticket_folio}</td>
                     <td>${t.asunto_breve}</td>
-                    <td>${t.tipo_reporte}</td>
+                    <td>${tipoReporte}</td>
                     <td>${vehiculoInfo}</td>
                     <td>${formatearUrgencia(t.nivel_urgencia)}</td>
                     <td>${formatearEstado(t.estado)}</td>
                     <td class="actions">
-                        <button class="btn-primary btn-atender" data-id="${t.id}" style="padding: 5px 10px;">Atender</button>
+                        <button class="btn-primary btn-atender" data-id="${t.id}" style="padding: 6px 12px; font-size: 13px;">Atender</button>
                     </td>
                 </tr>
             `;
@@ -87,19 +106,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('ticket-modal-empresa').innerText = ticket.empresa;
                 document.getElementById('ticket-modal-fecha').innerText = ticket.fecha_incidente;
                 
-                // Mostrar datos en el modal
                 const modalUrgencia = document.getElementById('ticket-modal-urgencia');
                 if(modalUrgencia) modalUrgencia.innerHTML = formatearUrgencia(ticket.nivel_urgencia);
 
                 const modalTipo = document.getElementById('ticket-modal-tipo');
-                if(modalTipo) modalTipo.innerText = ticket.tipo_reporte;
+                if(modalTipo) modalTipo.innerText = ticket.tipo_reporte || 'Otro';
 
                 const modalVehiculo = document.getElementById('ticket-modal-vehiculo');
                 if(modalVehiculo) {
-                    modalVehiculo.innerHTML = ticket.marca_modelo ? `${ticket.marca_modelo} (${ticket.placas})` : '<span style="color: #6b7280;">N/A (Soporte)</span>';
+                    // Regresamos el estilo gris y cursiva para N/A en el modal (nota: usamos innerHTML)
+                    modalVehiculo.innerHTML = ticket.marca_modelo ? `${ticket.marca_modelo} (${ticket.placas})` : '<span style="color: #6b7280; font-style: italic;">N/A (Soporte)</span>';
                 }
                 
-                // Actualizar estado en select
                 const selectEstado = document.getElementById('select-estado-ticket');
                 const est = ticket.estado.toLowerCase();
                 if (est.includes('pendiente')) selectEstado.value = 'Pendiente';
@@ -108,9 +126,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 modal.classList.add('active');
 
-                // --- CARGAR CHAT HISTORIAL ---
                 const chatHistorial = document.getElementById('admin-chat-historial');
-                chatHistorial.innerHTML = '<p style="text-align:center; color:gray; font-size: 14px; margin-top:20px;">Cargando conversación...</p>';
+                chatHistorial.innerHTML = '<p style="text-align:center;">Cargando conversación...</p>';
 
                 try {
                     const resChat = await fetch(`/Back-end/admin/tickets.php?action=get_chat&id_ticket=${id}`);
@@ -121,8 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         chatHistorial.innerHTML += `
                             <div style="align-self: flex-start; max-width: 85%;">
-                                <small style="color: #6b7280; font-weight: 600;">Reporte Inicial (Cliente)</small>
-                                <div style="background: #e5e7eb; padding: 10px; border-radius: 8px; margin-top: 4px; color: #1f2937;">
+                                <small>Reporte Inicial (Cliente)</small>
+                                <div style="background: #e5e7eb; padding: 10px; border-radius: 8px; margin-top: 4px;">
                                     <strong>${ticket.asunto_breve}</strong><br>
                                     ${ticket.descripcion_detallada}
                                 </div>
@@ -137,24 +154,23 @@ document.addEventListener('DOMContentLoaded', () => {
                             
                             chatHistorial.innerHTML += `
                                 <div style="align-self: ${align}; max-width: 85%;">
-                                    <small style="color: #6b7280; font-weight: 600;">${sender} - ${msg.creado_en}</small>
-                                    <div style="background: ${bg}; padding: 10px; border-radius: 8px; margin-top: 4px; color: #1f2937;">
+                                    <small>${sender} - ${msg.creado_en}</small>
+                                    <div style="background: ${bg}; padding: 10px; border-radius: 8px; margin-top: 4px;">
                                         ${msg.comentario}
                                     </div>
                                 </div>
                             `;
                         });
                         
-                        chatHistorial.scrollTop = chatHistorial.scrollHeight; // Auto-scroll
+                        chatHistorial.scrollTop = chatHistorial.scrollHeight;
                     }
                 } catch(error) {
-                    chatHistorial.innerHTML = '<p style="color:red; text-align:center;">Error al cargar el historial.</p>';
+                    chatHistorial.innerHTML = '<p style="text-align:center;">Error al cargar el historial.</p>';
                 }
             });
         });
     };
 
-    // --- LÓGICA DEL MODAL Y FILTROS ---
     const cerrarAtencion = () => {
         modal.classList.remove('active');
         document.getElementById('admin-respuesta').value = '';
@@ -200,11 +216,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-buscar-filtros').addEventListener('click', () => {
         const fEmpresa = document.getElementById('filtro-empresa').value.toLowerCase();
         const fEstado = document.getElementById('filtro-estado').value.toLowerCase();
+        const fTipo = document.getElementById('filtro-tipo').value.toLowerCase();
 
         const filtrados = todosLosTickets.filter(t => {
             const matchEmp = t.empresa.toLowerCase().includes(fEmpresa);
             const matchEst = fEstado === 'todos' ? true : t.estado.toLowerCase() === fEstado;
-            return matchEmp && matchEst;
+            
+            const tipoReporteTicket = (t.tipo_reporte || 'Otro').toLowerCase();
+            const matchTipo = fTipo === 'todos' ? true : tipoReporteTicket === fTipo;
+            
+            return matchEmp && matchEst && matchTipo;
         });
         renderizarTabla(filtrados);
     });
@@ -212,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-limpiar-filtros').addEventListener('click', () => {
         document.getElementById('filtro-empresa').value = '';
         document.getElementById('filtro-estado').value = 'Todos';
+        document.getElementById('filtro-tipo').value = 'Todos';
         renderizarTabla(todosLosTickets);
     });
 
