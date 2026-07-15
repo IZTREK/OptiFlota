@@ -27,10 +27,12 @@ try {
     $stmtVencer = $db->query("SELECT COUNT(*) FROM empresas WHERE fecha_vencimiento BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)");
     $proximosVencer = $stmtVencer->fetchColumn();
 
-    $stmtTablaVenc = $db->query("SELECT nombre, DATE_FORMAT(fecha_vencimiento, '%d %b') as fecha_corte FROM empresas WHERE TRIM(LOWER(estado)) = 'activa' ORDER BY fecha_vencimiento ASC LIMIT 5");
+    //Mostrará los 10 vencimientos más próximos sin saturar el backend
+    $stmtTablaVenc = $db->query("SELECT nombre, DATE_FORMAT(fecha_vencimiento, '%d %b') as fecha_corte FROM empresas WHERE TRIM(LOWER(estado)) = 'activa' ORDER BY fecha_vencimiento ASC LIMIT 10");
     $listaVencimientos = $stmtTablaVenc->fetchAll(PDO::FETCH_ASSOC);
 
-    $stmtTablaTk = $db->query("SELECT e.nombre as empresa, t.asunto_breve as asunto FROM tickets t JOIN empresas e ON t.id_empresa = e.id WHERE TRIM(LOWER(t.estado)) != 'resuelto' ORDER BY t.creado_en DESC LIMIT 5");
+    //Mostrará los 10 tickets más recientes a tender
+    $stmtTablaTk = $db->query("SELECT e.nombre as empresa, t.asunto_breve as asunto FROM tickets t JOIN empresas e ON t.id_empresa = e.id WHERE TRIM(LOWER(t.estado)) != 'resuelto' ORDER BY t.creado_en DESC LIMIT 10");
     $listaTickets = $stmtTablaTk->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode([
