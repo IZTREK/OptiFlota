@@ -1,11 +1,5 @@
 // Archivo: global.js
 
-// 0. Cargar el color personalizado del menú si existe (se ejecuta en todas las pantallas)
-const colorGuardado = localStorage.getItem('sidebarColorOptiflota');
-if (colorGuardado) {
-    document.documentElement.style.setProperty('--sidebar-bg', colorGuardado);
-}
-
 async function verificarSesion() {
     try {
         const response = await fetch('/Back-end/cliente/check_session.php'); 
@@ -44,10 +38,17 @@ async function verificarSesion() {
                 let iniciales = palabras.length === 1 ? palabras[0].substring(0, 2).toUpperCase() : (palabras[0][0] + palabras[1][0]).toUpperCase();
                 avatarCirculo.innerText = iniciales;
             }
+
+            // --- CARGAR COLOR PERSONALIZADO ---
+            const nombreEmpresa = data.empresa.replace(/\s+/g, '_');
+            const colorGuardado = localStorage.getItem('sidebarColor_' + nombreEmpresa);
+            if (colorGuardado) {
+                document.documentElement.style.setProperty('--sidebar-bg', colorGuardado);
+            }
         }
 
-        // CODIGO DE SOPORTE
-        if (data.is_impersonating) {
+        // LA BARRA ROJA SOLO APARECE SI ES ADMIN 
+        if (data.is_impersonating === true) {
             if (!document.getElementById('impersonation-banner')) {
                 const banner = document.createElement('div');
                 banner.id = 'impersonation-banner';
@@ -71,8 +72,13 @@ async function verificarSesion() {
                 `;
                 document.body.prepend(banner);
             }
+        } else {
+            // Si por alguna razón la barra está ahí y NO es admin, la borramos
+            const bannerExistente = document.getElementById('impersonation-banner');
+            if (bannerExistente) {
+                bannerExistente.remove();
+            }
         }
-        // ------------------------------------------------------------
 
     } catch (error) {
         console.error("Error conectando con el servidor:", error);

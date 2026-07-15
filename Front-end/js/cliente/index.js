@@ -4,27 +4,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const inputMes = document.getElementById('filtro-mes');
     const btnFiltrar = document.getElementById('btn-filtrar-dashboard');
-    const colorSidebarInput = document.getElementById('color-sidebar'); // El nuevo botón de color
+    const colorSidebarInput = document.getElementById('color-sidebar'); 
 
-    // --- LÓGICA DE PERSONALIZACIÓN DEL MENÚ ---
+    // --- LÓGICA DE PERSONALIZACIÓN DEL MENÚ POR EMPRESA ---
     if (colorSidebarInput) {
-        // Mostrar en el input el color que ya estaba guardado
-        const colorGuardado = localStorage.getItem('sidebarColorOptiflota');
-        if (colorGuardado) {
-            colorSidebarInput.value = colorGuardado;
-        } else {
-            // Valor por defecto (Gris oscuro de tu CSS original)
-            colorSidebarInput.value = '#0f172a';
-        }
+        // Pedimos los datos de la sesión para saber en qué empresa estamos
+        fetch('/Back-end/cliente/check_session.php')
+            .then(res => res.json())
+            .then(result => {
+                if (result.success && result.data) {
+                    // Creamos una llave única usando el nombre de la empresa sin espacios
+                    const nombreEmpresa = result.data.empresa.replace(/\s+/g, '_');
+                    const storageKey = 'sidebarColor_' + nombreEmpresa;
 
-        // Evento que cambia el color en tiempo real al usar el selector
-        colorSidebarInput.addEventListener('input', (e) => {
-            const nuevoColor = e.target.value;
-            document.documentElement.style.setProperty('--sidebar-bg', nuevoColor);
-            localStorage.setItem('sidebarColorOptiflota', nuevoColor);
-        });
+                    // Mostrar en el input el color que ya estaba guardado para esta empresa
+                    const colorGuardado = localStorage.getItem(storageKey);
+                    if (colorGuardado) {
+                        colorSidebarInput.value = colorGuardado;
+                    } else {
+                        colorSidebarInput.value = '#0f172a'; // Valor por defecto
+                    }
+
+                    // Evento que cambia el color en tiempo real al usar el selector
+                    colorSidebarInput.addEventListener('input', (e) => {
+                        const nuevoColor = e.target.value;
+                        document.documentElement.style.setProperty('--sidebar-bg', nuevoColor);
+                        localStorage.setItem(storageKey, nuevoColor); // Se guarda bajo el nombre de la empresa
+                    });
+                }
+            });
     }
-    // ------------------------------------------
+    // ----------------------------------------------------------------------
 
     const fechaActual = new Date();
     const mesActual = fechaActual.getFullYear() + '-' + String(fechaActual.getMonth() + 1).padStart(2, '0');
