@@ -37,9 +37,13 @@ if ($request_method === 'GET' && isset($_GET['action']) && $_GET['action'] === '
 // === OBTENER TICKETS Y KPIs ===
 if ($request_method === 'GET') {
     try {
-        $query = "SELECT t.id, t.ticket_folio, t.fecha_incidente, e.nombre as empresa, t.asunto_breve, t.descripcion_detallada, t.estado 
+        // AQUI agregamos tipo_reporte y el LEFT JOIN para obtener el vehículo
+        $query = "SELECT t.id, t.ticket_folio, t.fecha_incidente, e.nombre as empresa, 
+                         t.asunto_breve, t.descripcion_detallada, t.estado, t.nivel_urgencia,
+                         t.tipo_reporte, v.marca_modelo, v.placas
                   FROM tickets t
                   JOIN empresas e ON t.id_empresa = e.id
+                  LEFT JOIN vehiculos v ON t.id_vehiculo = v.id
                   ORDER BY t.creado_en DESC";
         $stmt = $db->query($query);
         $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -69,16 +73,14 @@ elseif ($request_method === 'POST') {
     if (isset($data['action']) && $data['action'] === 'responder_ticket') {
         $id_ticket = $data['id_ticket'];
         $respuesta = $data['respuesta'];
-        $nuevo_estado = $data['estado']; // 'Pendiente', 'En Proceso', 'Resuelto'
+        $nuevo_estado = $data['estado'];
         
         try {
             $db->beginTransaction();
 
-            // 1. Actualizar el estado general del ticket
             $stmtStatus = $db->prepare("UPDATE tickets SET estado = ? WHERE id = ?");
             $stmtStatus->execute([$nuevo_estado, $id_ticket]);
 
-            // 2. Insertar el comentario del administrador
             if (!empty(trim($respuesta))) {
                 $stmtComment = $db->prepare("INSERT INTO tickets_comentarios (id_ticket, id_usuario, comentario) VALUES (?, ?, ?)");
                 $stmtComment->execute([$id_ticket, $_SESSION['id_admin'], $respuesta]);
@@ -88,7 +90,6 @@ elseif ($request_method === 'POST') {
             echo json_encode(['success' => true, 'message' => 'Ticket actualizado y respuesta guardada.']);
         } catch (PDOException $e) {
             $db->rollBack();
-            // Fallback por si la relación de usuario falla
             $stmtFallback = $db->prepare("UPDATE tickets SET estado = ? WHERE id = ?");
             $stmtFallback->execute([$nuevo_estado, $id_ticket]);
             echo json_encode(['success' => true, 'message' => 'Estado actualizado.']);

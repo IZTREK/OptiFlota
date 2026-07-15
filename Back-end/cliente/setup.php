@@ -24,7 +24,7 @@ try {
            ->execute([$id_empresa]);
         echo "<p>✅ Empresa '<strong>$nombre_empresa</strong>' actualizada al <strong>Plan PRO (Full Access)</strong>.</p>";
     } else {
-        // INSERCIÓN EXACTA respetando únicamente los apartados originales de tu tabla
+        // INSERCIÓN EXACTA respetando únicamente los apartados originales de la tabla
         $db->prepare("INSERT INTO empresas (nombre, id_plan, fecha_vencimiento, estado) VALUES (?, 3, DATE_ADD(CURDATE(), INTERVAL 1 YEAR), 'Activo')")
            ->execute([$nombre_empresa]);
         $id_empresa = $db->lastInsertId();
@@ -40,7 +40,7 @@ try {
            ->execute([$password_demo, $id_empresa, $usuario['id']]);
         echo "<p>✅ Usuario demo actualizado correctamente.</p>";
     } else {
-        // INSERCIÓN EXACTA respetando únicamente los apartados originales de tu tabla de usuarios
+        // INSERCIÓN EXACTA respetando únicamente los apartados originales de la tabla de usuarios
         $db->prepare("INSERT INTO usuarios (id_empresa, nombre, email, password_hash, rol, estado) 
                       VALUES (?, 'Admin Apex', ?, ?, 'Administrador', 'Activo')")
            ->execute([$id_empresa, $email_demo, $password_demo]);
