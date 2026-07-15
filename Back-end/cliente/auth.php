@@ -3,11 +3,9 @@ session_start();
 header('Content-Type: application/json');
 require_once '../config/database.php';
 
-$database = new Database();
-$db = $database->getConnection();
-$data = json_decode(file_get_contents("php://input"));
+$database = new Database();$db = $database->getConnection();$data = json_decode(file_get_contents("php://input"));
 
-if (!isset($data->email) || !isset($data->password)) {
+if (!isset($data->email) || !isset($data->password))  {
     echo json_encode(["success" => false, "message" => "Por favor, ingresa correo y contraseña."]);
     exit;
 }
@@ -22,22 +20,16 @@ try {
               JOIN planes_suscripcion p ON e.id_plan = p.id
               WHERE u.email = :email AND u.estado = 'Activo'";
               
-    $stmt = $db->prepare($query);
-    $stmt->bindParam(":email", $data->email);
-    $stmt->execute();
+    $stmt =$db->prepare($query);$stmt->bindParam(":email", $data->email);$stmt->execute();
 
     if ($stmt->rowCount() > 0) {
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row =$stmt->fetch(PDO::FETCH_ASSOC);
         
-        if (password_verify($data->password, $row['password_hash'])) {
-            $_SESSION['id_usuario'] = $row['id_usuario'];
-            $_SESSION['id_empresa'] = $row['id_empresa'];
-            $_SESSION['nombre'] = $row['nombre']; 
-            $_SESSION['empresa_nombre'] = $row['empresa'];
-            $_SESSION['plan'] = $row['plan'];
-            $_SESSION['fecha_vencimiento'] = $row['fecha_vencimiento']; 
-            
-            $_SESSION['permisos'] = [
+        if (password_verify($data->password,$row['password_hash'])) {
+            //Limpiar cualquier rastro de la sesión de soporte
+            session_unset();
+
+            $_SESSION['id_usuario'] = $row['id_usuario'];$_SESSION['id_empresa'] = $row['id_empresa'];$_SESSION['nombre'] = $row['nombre'];$_SESSION['empresa_nombre'] = $row['empresa'];$_SESSION['plan'] = $row['plan'];$_SESSION['fecha_vencimiento'] = $row['fecha_vencimiento'];$_SESSION['permisos'] = [
                 'mod_vehiculos' => $row['mod_vehiculos'],
                 'mod_combustible' => $row['mod_combustible'],
                 'mod_diagnosticos' => $row['mod_diagnosticos'],

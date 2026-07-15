@@ -23,6 +23,9 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST') {
         $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($admin && password_verify($password, $admin['password_hash'])) {
+            // Limpiar basura de la sesión
+            session_unset();
+
             // Creamos la sesión real
             $_SESSION['id_admin'] = $admin['id'];
             $_SESSION['nombre_admin'] = $admin['nombre'];
@@ -35,4 +38,4 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST') {
         echo json_encode(['success' => false, 'message' => 'Error de conexión a la BD.']);
     }
 }
-?>  
+?>

@@ -29,25 +29,25 @@ try {
 
     if ($empresa_data) {
         $hoy = date('Y-m-d');
-        // Validamos si la fecha ya pasó o si un administrador suspendió la cuenta
         $expirada = ($hoy > $empresa_data['fecha_vencimiento'] || $empresa_data['estado'] === 'Suspendida');
 
-        // 3. Enviamos los datos al JS 
+        //Verificamos si existe el respaldo del admin
+        $is_impersonating = isset($_SESSION['admin_backup']) ? true : false;
+
         echo json_encode([
             'success' => true,
             'data' => [
                 'empresa' => $empresa_data['empresa'],
                 'expirada' => $expirada,
-                // Si existe el respaldo del admin, es que está en modo soporte
-                'is_impersonating' => isset($_SESSION['admin_backup']) ? true : false,
+                'is_impersonating' => $is_impersonating, // Enviamos la bandera correcta al JS
                 'permisos' => [
-                    'mod_dashboard' => 1, 
+                    'mod_dashboard' => 1,
                     'mod_vehiculos' => $empresa_data['mod_vehiculos'],
                     'mod_combustible' => $empresa_data['mod_combustible'],
                     'mod_diagnosticos' => $empresa_data['mod_diagnosticos'],
                     'mod_mantenimiento' => $empresa_data['mod_mantenimiento'],
                     'mod_tickets' => $empresa_data['mod_tickets'],
-                    'mod_suscripcion' => 1 
+                    'mod_suscripcion' => 1
                 ]
             ]
         ]);
