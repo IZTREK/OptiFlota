@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('visor-titulo').innerText = "Ticket de Combustible";
                 document.getElementById('visor-contenido').innerHTML = `
                     <div style="text-align: center; margin-bottom: 20px;"><h3 style="color: var(--primary-color); font-size: 28px; font-weight:bold;">${costoF}</h3><p style="color: var(--text-muted);">Cargado: ${parseFloat(d.litros).toFixed(2)} L</p></div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px dashed #d1d5db; padding-top:15px;">
+                    <div class="responsive-grid" style=" border-top: 1px dashed #d1d5db; padding-top:15px;">
                         <div><small>Vehículo</small><p><strong>${d.placas}</strong></p></div>
                         <div><small>Fecha</small><p>${d.fecha}</p></div>
                         <div><small>Odómetro</small><p>${d.odometro} km</p></div>

@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const d = todosLosDiagnosticos.find(x => x.id == id);
                 document.getElementById('visor-titulo').innerText = "Detalle del Diagnóstico";
                 document.getElementById('visor-contenido').innerHTML = `
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="responsive-grid" style="">
                         <div><small style="color: var(--text-muted);">Vehículo</small><p><strong>${d.placas}</strong> (${d.marca_modelo})</p></div>
                         <div><small style="color: var(--text-muted);">Fecha</small><p>${d.fecha}</p></div>
                         <div><small style="color: var(--text-muted);">Evaluador</small><p>${d.evaluador}</p></div>

@@ -33,6 +33,7 @@
 
         <div class="main-content">
             <header class="topbar">
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰</button>
                 <div class="page-title"><h1>Gestión de Vehículos</h1></div>
                 <div class="user-profile"><span>Cargando...</span><div class="avatar">C</div></div>
             </header>
@@ -110,11 +111,11 @@
                 <div id="paso-2-mapeo" style="display: none;">
                     <p style="color: var(--primary-color); font-weight: 600; font-size: 14px; margin-bottom: 15px;">Empareja los datos con las columnas de tu archivo.</p>
                     <div style="background-color: #f9fafb; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; margin-bottom: 10px;"><span style="font-size: 14px; font-weight: 500;">Placas (Obligatorio):</span><select class="select-mapeo-veh" data-type="placas" id="map-placas" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;"></select></div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; margin-bottom: 10px;"><span style="font-size: 14px; font-weight: 500;">Marca / Modelo:</span><select class="select-mapeo-veh" data-type="marca" id="map-marca" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;"></select></div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; margin-bottom: 10px;"><span style="font-size: 14px; font-weight: 500;">Año:</span><select class="select-mapeo-veh" data-type="anio" id="map-anio" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;"></select></div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; margin-bottom: 10px;"><span style="font-size: 14px; font-weight: 500;">Kilometraje:</span><select class="select-mapeo-veh" data-type="km" id="map-km" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;"></select></div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center;"><span style="font-size: 14px; font-weight: 500;">Estado:</span><select class="select-mapeo-veh" data-type="estado" id="map-estado" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;"></select></div>
+                        <div class="responsive-grid" style=" align-items: center; margin-bottom: 10px;"><span style="font-size: 14px; font-weight: 500;">Placas (Obligatorio):</span><select class="select-mapeo-veh" data-type="placas" id="map-placas" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;"></select></div>
+                        <div class="responsive-grid" style=" align-items: center; margin-bottom: 10px;"><span style="font-size: 14px; font-weight: 500;">Marca / Modelo:</span><select class="select-mapeo-veh" data-type="marca" id="map-marca" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;"></select></div>
+                        <div class="responsive-grid" style=" align-items: center; margin-bottom: 10px;"><span style="font-size: 14px; font-weight: 500;">Año:</span><select class="select-mapeo-veh" data-type="anio" id="map-anio" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;"></select></div>
+                        <div class="responsive-grid" style=" align-items: center; margin-bottom: 10px;"><span style="font-size: 14px; font-weight: 500;">Kilometraje:</span><select class="select-mapeo-veh" data-type="km" id="map-km" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;"></select></div>
+                        <div class="responsive-grid" style=" align-items: center;"><span style="font-size: 14px; font-weight: 500;">Estado:</span><select class="select-mapeo-veh" data-type="estado" id="map-estado" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;"></select></div>
                     </div>
                 </div>
             </div>
@@ -129,5 +130,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="../../js/cliente/global.js"></script>
     <script src="../../js/cliente/vehiculos.js"></script>
+<script src="../../js/responsive.js"></script>
 </body>
 </html>

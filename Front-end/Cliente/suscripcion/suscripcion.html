@@ -34,6 +34,7 @@
 
         <div class="main-content">
             <header class="topbar">
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰</button>
                 <div class="page-title"><h1>Mi Suscripción</h1></div>
                 <div class="user-profile">
                     <span>Cargando...</span>
@@ -50,7 +51,7 @@
 
                     <h3 style="margin-top: 30px; margin-bottom: 20px;">Planes Disponibles</h3>
                     
-                    <div class="plans-container" id="plans-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                    <div class="plans-container" id="plans-container" class="responsive-grid" style="">
                         <p style="text-align: center; width: 100%; color: var(--text-muted);">Cargando planes del servidor...</p>
                     </div>
 
@@ -83,5 +84,6 @@
 
     <script src="../../js/cliente/global.js"></script>
     <script src="../../js/cliente/suscripcion.js"></script>
+<script src="../../js/responsive.js"></script>
 </body>
 </html>

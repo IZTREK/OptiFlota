@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <h3 style="color: var(--primary-color); font-size: 28px; font-weight: bold; margin-bottom: 5px;">${costoF}</h3>
                             <p style="color: var(--text-muted); font-size: 14px;">Servicio ${m.tipo}</p>
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding-bottom: 20px;">
+                        <div class="responsive-grid" style=" padding-bottom: 20px;">
                             <div><small style="color: var(--text-muted); font-size: 12px; display: block; margin-bottom: 4px;">Vehículo</small><p style="font-size: 14px; font-weight: 600; margin:0;">${m.placas}</p></div>
                             <div><small style="color: var(--text-muted); font-size: 12px; display: block; margin-bottom: 4px;">Fecha</small><p style="font-size: 14px; margin:0;">${m.fecha}</p></div>
                             <div style="grid-column: span 2;"><small style="color: var(--text-muted); font-size: 12px; display: block; margin-bottom: 4px;">Detalle de los Trabajos</small><p style="font-size: 14px; margin:0;">${m.detalle}</p></div>
