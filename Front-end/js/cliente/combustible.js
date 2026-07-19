@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('/Back-end/cliente/combustible.php?action=get_analisis');
             todosLosAnalisis = await res.json();
             renderizarTablaAnalisis(todosLosAnalisis);
-            // 🐛 FIX DEL BUG AQUI: Volvemos a calcular los KPIs asegurándonos de que ya llegaron los datos de Rendimiento
+            //  Volvemos a calcular los KPIs asegurándonos de que ya llegaron los datos de Rendimiento
             calcularKPIs(); 
         } catch (e) {
             tableBodyAnalisis.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Error de conexión al cargar análisis.</td></tr>`;
